@@ -391,9 +391,8 @@
 	</head>
 	<body id="body">
 		<div id="popups"></div>
-		<div id="backToDashnet"><cap><a class="button" href="https://dashnet.org/" target="_blank">&lt; back to DashNet</a> <a class="button" href="https://discordapp.com/invite/cookie" target="_blank">official Discord</a></cap></div>
 		<div id="main"></div>
-		<div id="credits">by <a href="http://orteil.dashnet.org/" target="_blank">Orteil</a>, 2018</div>
+		<div id="credits">original base by <a href="http://orteil.dashnet.org/" target="_blank">Orteil</a></div>
 	</body>
 </html>
 
@@ -509,7 +508,7 @@ G={
 	init:function()
 	{
 		G.launched=true;
-		
+
 		G.popup=function(text,func)
 		{
 			var str=`
@@ -557,16 +556,18 @@ G={
 		new G.perk({name:`meek`,desc:`Very fragile and physically inept.`});
 		new G.perk({name:`naive`,desc:`Gullible and easy to mislead.`});
 		new G.perk({name:`devious`,desc:`Will manipulate and betray others if given the chance.`});
-		new G.perk({name:`seductive`,desc:`Capable of romancing others into doing their bidding.`});
-		new G.perk({name:`suicidal`,desc:`Probably won't survive very long.`});
+		//new G.perk({name:`seductive`,desc:`Capable of romancing others into doing their bidding.`});
+		//new G.perk({name:`suicidal`,desc:`Probably won't survive very long.`});
 		new G.perk({name:`cute`,desc:`Everybody likes them! Others may go out of their way to protect them.`});
 		new G.perk({name:`annoying`,desc:`Horrible to be around. Tends to get killed off first.`});
 		new G.perk({name:`scrappy`,desc:`Finds more resources than most.`});
 		new G.perk({name:`survivalist`,desc:`Strives better alone, and will not let others get in their way.`});
 		new G.perk({name:`rich`,desc:`Armed with a large fortune to cater every whim.`});
 		new G.perk({name:`inventor`,desc:`Can devise strange machines for various purposes.`});
-		new G.perk({name:`goth`,desc:`Channels the dark energies.`});
+		//new G.perk({name:`goth`,desc:`Channels the dark energies.`});
 		new G.perk({name:`lunatic`,desc:`Susceptible to gain and lose random perks regularly.`});
+		new G.perk({name:`volleyball freak`,desc:`Loves volleyball.`});
+		new G.perk({name:`fighter`,desc:`Loves to fight.`});
 		
 		G.glob={type:'status'};
 			G.glob.disable=true;//mark the character as disabled; disabled characters cannot do any actions that don't specifically call for this perk
@@ -579,7 +580,7 @@ G={
 		new G.perk({name:`has killed`,desc:`Caused someone's death.`,disable:false});
 		new G.perk({name:`set trap`,desc:`Laid down some traps that others may get caught in...`,disable:false});
 		
-		new G.perk({name:`scratched`,desc:`Lightly scratched and bleeding a little bit.`});
+		new G.perk({name:`scratched`,desc:`Lightly scratched and bleeding a little bit.`,disable:false});
 		new G.perk({name:`bruised`,desc:`Been pounded badly.`,disable:false});
 		new G.perk({name:`cut up`,desc:`Received some slicing damage.`,disable:false});
 		new G.perk({name:`burnt`,desc:`Singed quite a lot. Everything hurts.`});
@@ -625,7 +626,7 @@ G={
 		new G.perk({name:`wish ring`,desc:`Will unpredictably respond to wishes in dire situations.`});
 		
 			G.glob.def=false;
-		new G.perk({name:`leather scraps`,desc:`Tribal-looking clothing. Provides minimal protection.`});
+		//new G.perk({name:`leather scraps`,desc:`Tribal-looking clothing. Provides minimal protection.`});
 		//new G.perk({name:`bikini`,desc:`Quite alluring, but not much help in combat situations.`});
 		new G.perk({name:`dapper suit`,desc:`Turns anyone into a snappy dresser.`});
 		new G.perk({name:`parka`,desc:`Keeps you protected from the elements and, you suppose, some of the wimpier physical attacks.`});
@@ -638,6 +639,8 @@ G={
 		G.setupData=0;
 		G.creator=function()
 		{
+			G.roundLog=[];
+			G.importedGame=false;
 			G.exportSetup=function(data)
 			{
 				var o={
@@ -752,6 +755,61 @@ G={
 					return true;
 				}
 			}
+			G.exportGame=function()
+			{
+				var roundData = "";
+				for(var i=G.roundLog.length-1;i >= 0; i--)
+				{
+					roundData += G.roundLog[i] + "\n<nextRound>\n";
+				}
+				roundData = roundData.substring(0,roundData.length-12);
+
+				var box=`
+						<header>Exporting setup</header>
+						<div>Copy this text. You can later import your setup by pasting this back in the import menu.</div>
+						<textarea id="textareaPrompt" style="width:100%;height:128px;" readonly>${roundData}</textarea>
+					`;
+				G.popup(box,function(){
+						l('textareaPrompt').focus();
+						l('textareaPrompt').select();
+					});
+			}
+			G.importGame=function(str)
+			{
+				if (!str)
+				{
+					var str=`
+						<header>Importing setup</header>
+						<div style="overflow:hidden;"><div id="importDesc">Paste in the text you were given on setup export.</div></div>
+						<textarea id="textareaPrompt" style="width:100%;height:128px;"></textarea>
+					`;
+					G.popup(str,function(){
+						l('textareaPrompt').focus();
+						l('closePopup').innerHTML='Cancel';
+						l('closePopup').insertAdjacentHTML('beforebegin','<div id="confirmPopup" class="button bigButton">Load</div>');
+						addEvent(l('confirmPopup'),'click',function(){
+							var str=l('textareaPrompt').value;
+							if(str != "")
+							{
+								G.importGame(str);
+								G.closePopup();
+								G.importedGame = true;
+								G.start();
+							}
+							else {l('importDesc').innerHTML=`<span style="color:#e2461f;">Looks like that's not a valid game HTML, sorry!</span>`;triggerAnim(l('importDesc'),'pucker');}
+						});
+					});
+				}
+				else
+				{
+					var oldRound = str.split("\n<nextRound>\n");
+					for(var i in oldRound)
+					{
+						console.log("CURRENT ROUND: " + oldRound[i]);
+						G.roundLog.push(oldRound[i]);
+					}
+				}
+			}
 			l('main').innerHTML=`
 				<div class="box blue">
 					<div><cap>Hey there!</cap></div>
@@ -764,7 +822,7 @@ G={
 					<div style="clear:both;"></div>
 				</div>
 				<!--<div class="box red"><b>Warning :</b> may contain traces of bugs.</div>-->
-				<div style="text-align:left;overflow:hidden;"><div class="button" id="importSetup">Import an existing setup...</div> <div class="button" id="exportSetup">Export this setup...</div><div style="float:right;"><div class="button" id="start2">Start round 1 &gt;</div></div></div>
+				<div style="text-align:left;overflow:hidden;"><div class="button" id="importSetup">Import an existing setup...</div> <div class="button" id="exportSetup">Export this setup...</div><div class="button" id="importGame">Import a game...</div><div style="float:right;"><div class="button" id="start2">Start round 1 &gt;</div></div></div>
 				<header>Teams</header>
 				<div id="creator"></div>
 				<div style="text-align:left;"><div class="button" id="addTeam">Add team</div></div>
@@ -776,6 +834,7 @@ G={
 			addEvent(l('start2'),'click',function(){G.start();});
 			addEvent(l('importSetup'),'click',function(){G.importSetup();});
 			addEvent(l('exportSetup'),'click',function(){G.exportSetup();});
+			addEvent(l('importGame'),'click',function(){G.importGame();});
 			G.teams=[];
 			var domN=0;
 			
@@ -1538,10 +1597,9 @@ G={
 				|travels to higher ground.
 				|thinks about [home|winning].
 				|climbs a tree to rest.
-				|sets up a camp.
-			]`);
-			
-			// Daytime only (fix later)
+				|sets up camp.
+			]`);			
+			// Day acts
 			new G.act(1,[''], `
 				[1] [tries to sleep through the entire day.
 				|picks flowers.
@@ -1552,8 +1610,7 @@ G={
 				|collects fruit from a tree.
 				|discovers a [cave|river|lake|hole].
 			]`,p=>{},tag='day');
-
-			// Nighttime only (fix later)
+			// Night acts
 			new G.act(1,[''], `
 				[1] [goes to sleep.
 				|starts a fire.
@@ -1570,13 +1627,14 @@ G={
 
 			// Idle with 2
 			new G.act(0.2,['','any'],`[1] [scares [2] off.
-				|works with [2] for the day.
 				|and [2] hunt for other tributes.
 				|and [2] tell stories about each other.
 				|and [2] talk about the tributes still alive.
 				|begs for [2] to kill [1:them]. [2:g|He refuses|She refuses|They refuse], keeping [1] alive.
 				|lets [2] into [1:their] shelter.
-			]`,p=>{},tag='day')
+			]`)
+			// Day acts
+			new G.act(0.2,['','any'],`[1] works with [2] for the day.`,p=>{},tag='day')
 			// Night acts
 			new G.act(0.2,['','any'],`[1] and [2] run into each other and decide to truce for the night.`,p=>{},tag='night')							
 
@@ -1587,16 +1645,16 @@ G={
 			]`);
 			new G.act(0.2,['','any','any'],`[ [1], [2], and [3] sleep in shifts.
 				|[1], [2], and [3] tell ghost stories to lighten the mood.
-			]`,p=>{},tag='day');
+			]`,p=>{},tag='night');
 
-
+			// Idle with 4
 			new G.act(0.1,['','any','any','any'],`[1], [2], [3], and [4] go hunting for other tributes`);
-			// Night idle with 4
+			// Night acts
 			new G.act(0.1,['','any','any','any'],`[
 				[1], [2], [3], and [4] sleep in shifts.
 				|[1], [2], [3], and [4] tell ghost stories to lighten the mood.
 				|[1] fends [2], [3], and [4] away from [1:their] fire.
-			]`,p=>{},tag='day');
+			]`,p=>{},tag='night');
 
 			// Idle with 5
 			new G.act(0.05,['','any','any','any','any'],`[1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
@@ -1613,7 +1671,7 @@ G={
 
 				for(var j in itemsToLose)
 				{
-					p[5].lose(itemsToLose[i]);
+					p[5].lose(itemsToLose[j]);
 				}
 			});
 
@@ -1632,6 +1690,30 @@ G={
 				p[2].lose('burnt');
 				p[2].lose('bleeding out');
 			});	
+
+			new G.act(1,['volleyball'],`[1] practices [1:their] [set|jump serve|float serve|overhand serve|underhand serve|spikes|line shot|cut shot|setter dump].`);
+			new G.act(1,['volleyball_freak'],`[1] thinks about [volleyball|going to Nationals|playing volleyball with someone].`);
+				new G.act(0.1,['volleyball_freak', '+ !volleyball_freak'],`[1] teaches [2] how to play volleyball.`,p=>{p[2].gain('volleyball freak')});
+			
+			new G.act(1,['fighter'],`[1] [wants to fight someone|starts to train|wants a good match|is thinking about fighting someone strong].`);
+				new G.act(0.5,['fighter','fighter'],`[1] and [2] [train together.|fight against each other as training.]`);
+			new G.act(0.4,['fighter','- any'],`[
+				[1] defeats [2] in a fight, but lets [2:them] go so [2:they] can get stronger.
+				|To prove [1:their] strength, [1] defeats [2] in a fight.
+				|[1] challenges [2] to a fight, beating them.
+			]`,p=>{p[2].gain('bruised');});
+			new G.act(0.4,['fighter','- any'],`[1] challenges [2] to a fight, but [2] was too strong, defeating [1].`,p=>{p[1].gain('bruised');});
+			// Bringing back unknown sponsors
+			new G.act(0.3*0.05,['!volleyball'],`[BLUE][1] receives a volleyball from an unknown sponsor.`,p=>{p[1].gain('volleyball');});
+			new G.act(0.3*0.05,['scratched|bruised|cut_up|burnt|bleeding_out'],`[BLUE][1] receives a first-aid kit from an unknown sponsor.`,p=>
+			{
+				p[2].lose('scratched');
+				p[2].lose('bruised');
+				p[2].lose('cut up');
+				p[2].lose('burnt');
+				p[2].lose('bleeding out');
+			});
+			new G.act(0.3*0.05,['!grenade'],`[BLUE][1] receives a grenade from an unknown sponsor.`,p=>{p[1].gain('grenade');});
 
 
 
@@ -1660,12 +1742,12 @@ G={
 				new G.act(0.5,['naive alive:1'],`[1] looks around. Where did everybody go?`);
 			new G.act(1,['devious alive:>1'],`[1] [is looking for an easy out|looks for someone dumb enough to believe [1:them]].`);
 				new G.act(0.5,['!devious|sociopath','+ devious'],`[1] does [1:their] best to avoid [2].`);
-			new G.act(1,['seductive alive:>1'],`[1] [doesn't care much for this place|tries to get others to notice [1:them]].`);
-				new G.act(0.5,['seductive alive:1'],`There's nobody left to notice [1]...`);
-				new G.act(0.5,['','+ seductive'],`[1] can't take [1:their] eyes off [2]...`);
-				new G.act(0.5,['seductive','+ naive'],`[1] whispers some things in [2]'s ear, but [2] is a bit too innocent to understand.`);
-				new G.act(0.5,['seductive','+ rich'],`[1] hits on [2], but [2] finds it suspicious...`);
-			new G.act(1,['suicidal'],`[1] [wishes [1:g|he was|she was|they were] dead|longs for death].`);
+			// new G.act(1,['seductive alive:>1'],`[1] [doesn't care much for this place|tries to get others to notice [1:them]].`);
+			// 	new G.act(0.5,['seductive alive:1'],`There's nobody left to notice [1]...`);
+			// 	new G.act(0.5,['','+ seductive'],`[1] can't take [1:their] eyes off [2]...`);
+			// 	new G.act(0.5,['seductive','+ naive'],`[1] whispers some things in [2]'s ear, but [2] is a bit too innocent to understand.`);
+			// 	new G.act(0.5,['seductive','+ rich'],`[1] hits on [2], but [2] finds it suspicious...`);
+			// new G.act(1,['suicidal'],`[1] [wishes [1:g|he was|she was|they were] dead|longs for death].`);
 			new G.act(1,['cute'],`[1] [is being adorable as always|does something really cute].`);
 			new G.act(1,['annoying teamalive:>1'],`[1] [rambles on about something nobody cares about|keeps trying to tell a joke, but it always falls flat].`);
 				new G.act(0.5,['annoying','+ annoying'],`[[1] is glad to have someone like [2] [to tell really bad puns to|to have boring conversations with].|[1] and [2] giggle like idiots. Better not ask.]`);
@@ -1675,7 +1757,7 @@ G={
 			new G.act(1,['rich'],`[1] [feels protected by [1:their] wealth|finds all this below his concern].`);
 			new G.act(1,['inventor'],`[1] [is thinking of plans to get out of here|is cooking up a genius idea].`);
 				new G.act(0.5,['inventor','+ scrappy'],`[1] asks [2] if [2:g|he's|she's|they've] found anything useful.`);
-			new G.act(1,['goth'],`[1] [mopes around uselessly|thinks of a dark, dark poem].`);
+			// new G.act(1,['goth'],`[1] [mopes around uselessly|thinks of a dark, dark poem].`);
 			new G.act(1,['lunatic'],`[1] [isn't sure whether to cry, laugh, or tear [1:their] hair out|is looking particularly erratic today].`);
 			
 			new G.act(1,['survivalist|sociopath alive:1 dead:>0'],`[1] [always knew [1:they]'d be the last to survive|made it out alive, it seems].`);
@@ -1690,9 +1772,9 @@ G={
 			new G.act(1,['sword !peaceful'],`[1] swooshes the air with [1:their] sword.`);
 			new G.act(1,['axe !naive|peaceful'],`[1] is ready to use [1:their] axe if [1:g|he has|she has|they have] to.`);
 			new G.act(1,['handgun !peaceful'],`[1] aims [1:their] handgun in the distance.`);
-				new G.act(0.3,['handgun suicidal'],`[1] looks at the end of [1:their] handgun, then puts it to [1:their] head. Yeah... that oughta do it.`);
+				// new G.act(0.3,['handgun suicidal'],`[1] looks at the end of [1:their] handgun, then puts it to [1:their] head. Yeah... that oughta do it.`);
 			new G.act(1,['shotgun !naive|peaceful'],`[1] reloads [1:their] shotgun, just in case.`);
-				new G.act(0.3,['shotgun suicidal'],`[1] looks at the end of [1:their] shotgun, then puts it to [1:their] head. Yeah... that oughta do it.`);
+				// new G.act(0.3,['shotgun suicidal'],`[1] looks at the end of [1:their] shotgun, then puts it to [1:their] head. Yeah... that oughta do it.`);
 			new G.act(1,['grenade !peaceful'],`[1] juggles a bit with [1:their] grenade, kind of wanting to use it...`);
 			new G.act(1,['rocket_launcher !peaceful'],`[1] loves the way [1:their] rocket launcher feels on [1:their] shoulder.`);
 			new G.act(1,['slingshot !naive|peaceful'],`[1] gathers ammo for [1:their] slingshot.`);
@@ -1702,8 +1784,6 @@ G={
 			new G.act(1,['magic_wand'],`[1] waves [1:their] magic wand around, sending sparkles everywhere.`);
 			new G.act(1,['ancient_scepter'],`[1] polishes [1:their] ancient scepter, making the magic orb shine.`);
 			
-			// Custom Item Idle
-			new G.act(1,['volleyball'],`[1] practices [1:their] [set|jump serve|jump float|spike|line shot|cut shot|wipe].`);
 
 			new G.act(1,['pet_wolf'],`[[1] pets [1:their] pet wolf to soothe him.|[1]'s pet wolf licks [1:their] [ear|cheek|face]!|[1] teaches [1:their] pet wolf a trick.|[1]'s pet wolf growls contentedly.]`);
 				new G.act(0.05,['dead pet_wolf'],`[1]'s pet wolf lets out a sad howl...`);
@@ -1717,7 +1797,7 @@ G={
 			
 			new G.act(1,['wish_ring'],`[1] ponders about how best to use [1:their] wish ring.`);
 			
-			new G.act(0.5,['leather_scraps'],`[1] wearing leather scraps is a sight to behold.`);
+			//new G.act(0.5,['leather_scraps'],`[1] wearing leather scraps is a sight to behold.`);
 			//new G.act(0.5,['bikini'],`[1] [is very proud of|flaunts|looks really good in] [1:their] bikini.`);
 			//	new G.act(0.5,['bikini seductive','+'],`Everybody is staring at [1] in [1:their] bikini...`);
 			//	new G.act(0.5,['','+ bikini seductive',''],`[1] gets distracted staring at [2]'s bikini.`);
@@ -1728,7 +1808,7 @@ G={
 			
 			//finding items
 			var itemFindMult=0.3;
-			new G.act(itemFindMult*0.3,['!leather_scraps'],`[BLUE][1] finds some leather scraps, just enough to patch together some rudimentary clothing.<br>It looks rather caveman-like.`,p=>{p[1].gain('leather scraps');});
+			//new G.act(itemFindMult*0.3,['!leather_scraps'],`[BLUE][1] finds some leather scraps, just enough to patch together some rudimentary clothing.<br>It looks rather caveman-like.`,p=>{p[1].gain('leather scraps');});
 			//new G.act(itemFindMult*0.05,['!bikini !survivalist'],`[BLUE][1] finds a lovely bikini and puts it on!<br>It's quite revealing.`,p=>{p[1].gain('bikini');});
 			new G.act(itemFindMult*0.03,['!dapper_suit !survivalist'],`[BLUE][1] finds a dapper suit and puts it on!<br>It's rather fetching.`,p=>{p[1].gain('dapper suit');});
 			new G.act(itemFindMult*0.03,['!knight_armor'],`[BLUE][1] somehow finds a full suit of medieval armor and puts it on!<br>It gleams with a dazzling shine.`,p=>{p[1].gain('knight armor');});
@@ -1752,7 +1832,8 @@ G={
 			new G.act(itemFindMult*0.04,['!wish_ring'],`[BLUE][1] was lost in [1:their] thoughts... The next thing [1:g|he knows|she knows|they know], [1:g|he's|she's|they've] found a wish ring.<br>Hopefully [1:they]'ll be responsible with it.`,p=>{p[1].gain('wish ring');});
 			
 			// Custom Item Find
-			new G.act(itemFindMult*0.08,['!volleyball'],`[BLUE][1] finds a volleyball on the ground!`,p=>{p[1].gain('volleyball');});
+			new G.act(itemFindMult*0.04,['!volleyball'],`[BLUE][1] finds a volleyball on the ground!`,p=>{p[1].gain('volleyball');});
+			new G.act(itemFindMult*0.1,['volleyball_freak !volleyball'],`[BLUE][1] finds a volleyball on the ground!`,p=>{p[1].gain('volleyball');});
 
 			//todo : scrappy, rich, inventor
 			
@@ -1762,8 +1843,8 @@ G={
 				new G.act(0.1,['lunatic kind'],`[RED]Kindness seems to leave [1]'s shifting personality.`,p=>{p[1].lose('kind');});
 			new G.act(0.1,['lunatic !devious'],`[RED][1]'s bad brain turns [1:them] into a horrible person...`,p=>{p[1].gain('devious');});
 				new G.act(0.1,['lunatic devious'],`[BLUE][1] seems to assume a slightly less cynical worldview.`,p=>{p[1].lose('devious');});
-			new G.act(0.1,['lunatic !suicidal'],`[RED][1]'s bad brain saps [1:their] will to live...`,p=>{p[1].gain('suicidal');});
-				new G.act(0.1,['lunatic suicidal'],`[BLUE][1] seems to find a new will to live.`,p=>{p[1].lose('suicidal');});
+			// new G.act(0.1,['lunatic !suicidal'],`[RED][1]'s bad brain saps [1:their] will to live...`,p=>{p[1].gain('suicidal');});
+				// new G.act(0.1,['lunatic suicidal'],`[BLUE][1] seems to find a new will to live.`,p=>{p[1].lose('suicidal');});
 			new G.act(0.1,['lunatic !annoying'],`[RED][1]'s bad brain turns [1:them] into an absolute pain to deal with.`,p=>{p[1].gain('annoying');});
 				new G.act(0.1,['lunatic annoying'],`[BLUE][1] seems to calm down, understanding that they're not that interesting.`,p=>{p[1].lose('annoying');});
 			new G.act(0.05,['lunatic'],`[BLUE][1] calms down for good, no longer subject to the whims of a changing brain.`,p=>{p[1].lose('lunatic');});
@@ -1779,7 +1860,7 @@ G={
 			
 			new G.act(1,['shell-shocked'],`[1] [sits there with a blank stare.|has a blank expression and seems unresponsive to what's going on...|sobs quietly...|starts sobbing uncontrollably.|just wants it to end already...|is on the verge of a nervous breakdown...]`);
 			new G.act(0.2,['shell-shocked|terrified|dazed any'],`[1] snaps out of it!`,p=>{p[1].lose('shell-shocked');p[1].lose('terrified');p[1].lose('dazed');});
-			new G.act(0.1,['shell-shocked !suicidal'],`[RED][1] doesn't want to carry on...<br>[1] is now suicidal.`,p=>{p[1].gain('suicidal');});
+			// new G.act(0.1,['shell-shocked !suicidal'],`[RED][1] doesn't want to carry on...<br>[1] is now suicidal.`,p=>{p[1].gain('suicidal');});
 			
 			var coldBloodKiller='!peaceful|kind|naive';
 			
@@ -1789,7 +1870,7 @@ G={
 			new G.act(0.05,[coldBloodKiller,'+ '+coldBloodKiller,'- any'],`[RED][1] and [2] [team up and ambush [3]|come at [3] from both sides|ambush [3]|attack [3] from behind|manage to sneak-attack [3]], [murdering|killing|slaughtering] [3:them]!`,p=>{p[1].kill(p[3],`ambush`,p[2]);});
 			new G.act(0.15,[coldBloodKiller,'-'],`[RED][1] tries to kill [2], but [2] retaliates and kills [1:them] instead.`,p=>{p[2].kill(p[1],`retaliation`);});
 			new G.act(0.15,[coldBloodKiller,'- any','+ !sociopath any'],`[RED][1] [kills|murders|attacks and kills] [2] [in front of [3]|before [3] can react]!<br>[There is nothing [3] can do...|[3] rushes to help, but [[2] dies in [3:their] arms|it's already too late]...]`,p=>{p[1].kill(p[2],`ambush`);p[3].gain('shell-shocked');});
-			new G.act(0.15,[coldBloodKiller,'- any','+ leader|kind|bulky !survivalist|devious|sociopath'],`[RED][1] attempts to kill [2], but [3] intervenes just in time!<br>[3] had to kill [1] to protect [2]'s life...`,p=>{p[3].kill(p[1],`retaliation`);});
+			new G.act(0.15,[coldBloodKiller,'- any','+ leader|kind|bulky|fighter !survivalist|devious|sociopath'],`[RED][1] attempts to kill [2], but [3] intervenes just in time!<br>[3] had to kill [1] to protect [2]'s life...`,p=>{p[3].kill(p[1],`retaliation`);});
 			new G.act(0.15,[coldBloodKiller,'- any','+ leader|kind !survivalist|devious|sociopath'],`[RED][1] attempts to kill [2], but [3] intervenes to protect [2:them]!<br>Unfortunately, [3] dies in the attempt...`,p=>{p[1].kill(p[3],`failed retaliation`);});
 			new G.act(0.05,['!survivalist|devious|sociopath|unstable|lunatic !peaceful|kind deaths:>0','- any'],`[RED][1] really doesn't want to, but [1:g|he finds himself|she finds herself|they find themself] having to get rid of [2].`,p=>{p[1].kill(p[2],`murder`);});
 			
@@ -1813,7 +1894,7 @@ G={
 			new G.act(0.3,[coldBloodKiller+' rocket_launcher','- any'],`[RED][1] fires a rocket at [2], who gets absolutely blown to bits.`,p=>{p[1].kill(p[2],`rocket launcher`);});
 				new G.act(0.2,[coldBloodKiller+' rocket_launcher','- any','+ any'],`[RED][1] fires a rocket at a group of enemies.<br>[2] and [3] are caught in the explosion and are absolutely blown to bits.`,p=>{p[1].kill(p[2],`rocket launcher`);p[1].kill(p[3],`rocket launcher`);});
 				new G.act(0.1,[coldBloodKiller+' rocket_launcher','- any','+ any','+ any'],`[RED][1] fires a rocket at a group of enemies.<br>[2], [3] and [4] are caught in the explosion and are absolutely blown to bits.`,p=>{p[1].kill(p[2],`rocket launcher`);p[1].kill(p[3],`rocket launcher`);p[1].kill(p[4],`rocket launcher`);});
-			new G.act(0.4,[coldBloodKiller+' slingshot','- any'],`[RED][1] uses [1:their] slingshot to pelt [2] with rocks, which is more annoying than anything, really.`);
+			new G.act(0.4,[coldBloodKiller+' slingshot','- any'],`[1] uses [1:their] slingshot to pelt [2] with rocks, which is more annoying than anything, really.`);
 			new G.act(0.4,[coldBloodKiller+' bow','- any'],`[RED][[1] spots [2] in the distance, and draws her bow. [1:g|His|Her|Their] arrow flies off, and pierces [2]'s|[1]'s arrow flies straight and true, piercing [2]'s] [heart|head|chest|stomach]!`,p=>{p[1].kill(p[2],`arrow`);});
 				new G.act(0.2,[coldBloodKiller+' bow','- any'],`[1] fires an arrow at [2], but misses...`);
 			new G.act(0.4,[coldBloodKiller+' flamethrower','- any'],`[RED]Armed with [1:their] flamethrower, [1] [incinerates|torches|burns] [2] to a crisp!`,p=>{p[1].kill(p[2],`flamethrower`);});
@@ -1861,12 +1942,12 @@ G={
 				new G.act(0.1,['peaceful|kind','sheep'],`[1] gently pets [2], who is a sheep.`);
 			
 			new G.act(0.3,['devious|sociopath|lunatic|survivalist','+ annoying'],`[RED][1] can't take it anymore and snaps [2]'s neck.`,p=>{p[1].kill(p[2],`too annoying to live`);});
-			new G.act(0.3,['suicidal'],`[RED][1] can't take it anymore...<br>[1] has taken [1:their] own life.`,p=>{p[1].kill(p[1],`suicide`);});
-				new G.act(0.3,['suicidal handgun'],`[RED][1] can't take it anymore...<br>[1] takes [1:their] own life with [1:their] handgun.`,p=>{p[1].kill(p[1],`handgun suicide`);});
-				new G.act(0.3,['suicidal shotgun'],`[RED][1] can't take it anymore...<br>[1] takes [1:their] own life with [1:their] shotgun.`,p=>{p[1].kill(p[1],`shotgun suicide`);});
-				new G.act(1,['suicidal alive:1'],`[RED][1] finds no point in being alive if [1:g|he's|she's|they're] the only one left.<br>[1] has taken [1:their] own life...`,p=>{p[1].kill(p[1],`suicide`);});
-				new G.act(0.5,['suicidal alive:1'],`[BLUE][1] is all alone. [1:g|He looks|She looks|They look] around, not a soul to be seen...<br>It's quite peaceful, actually.<br>[1] is no longer suicidal.`,p=>{p[1].lose('suicidal');});
-				new G.act(0.1,['!suicidal !survivalist|sociopath alive:1'],`[RED]There's nobody left except for [1]. What a bleak existence...<br>[1] is feeling suicidal.`,p=>{p[1].gain('suicidal');});
+			// new G.act(0.3,['suicidal'],`[RED][1] can't take it anymore...<br>[1] has taken [1:their] own life.`,p=>{p[1].kill(p[1],`suicide`);});
+			// 	new G.act(0.3,['suicidal handgun'],`[RED][1] can't take it anymore...<br>[1] takes [1:their] own life with [1:their] handgun.`,p=>{p[1].kill(p[1],`handgun suicide`);});
+			// 	new G.act(0.3,['suicidal shotgun'],`[RED][1] can't take it anymore...<br>[1] takes [1:their] own life with [1:their] shotgun.`,p=>{p[1].kill(p[1],`shotgun suicide`);});
+			// 	new G.act(1,['suicidal alive:1'],`[RED][1] finds no point in being alive if [1:g|he's|she's|they're] the only one left.<br>[1] has taken [1:their] own life...`,p=>{p[1].kill(p[1],`suicide`);});
+			// 	new G.act(0.5,['suicidal alive:1'],`[BLUE][1] is all alone. [1:g|He looks|She looks|They look] around, not a soul to be seen...<br>It's quite peaceful, actually.<br>[1] is no longer suicidal.`,p=>{p[1].lose('suicidal');});
+			// 	new G.act(0.1,['!suicidal !survivalist|sociopath alive:1'],`[RED]There's nobody left except for [1]. What a bleak existence...<br>[1] is feeling suicidal.`,p=>{p[1].gain('suicidal');});
 			
 			new G.act(0.5,['survivalist !set_trap'],`[1] sets down a trap.`,p=>{p[1].gain('set trap');});
 				new G.act(0.5,['!survivalist','set_trap'],`[RED][1] gets caught in one of [2]'s traps!<br>All [1:they] can do now is hope to be freed...`,p=>{p[2].lose('set trap');p[1].gain('trapped');});
@@ -1932,8 +2013,8 @@ G={
 			
 			new G.act(FORCE,['revived dead any'],`[1] was about to live again, but is, sadly, still dead.`,p=>{p[1].lose('revived');});
 			
-			new G.act(FORCE,['revived !suicidal !dead every'],`[1] feels [1:themself], unsure what just happened. Guess [1:g|he's|she's|they're] alive again.`,p=>{p[1].lose('sheep');p[1].lose('revived');});
-			new G.act(FORCE,['revived suicidal !dead every'],`[1] feels [1:themself], unsure what just happened. Guess [1:g|he's|she's|they're] alive again.<br>Goddammit.`,p=>{p[1].lose('sheep');p[1].lose('revived');});
+			// new G.act(FORCE,['revived !suicidal !dead every'],`[1] feels [1:themself], unsure what just happened. Guess [1:g|he's|she's|they're] alive again.`,p=>{p[1].lose('sheep');p[1].lose('revived');});
+			// new G.act(FORCE,['revived suicidal !dead every'],`[1] feels [1:themself], unsure what just happened. Guess [1:g|he's|she's|they're] alive again.<br>Goddammit.`,p=>{p[1].lose('sheep');p[1].lose('revived');});
 			
 			/*
 			//just a test
@@ -2589,6 +2670,7 @@ G={
 					str+=`</cap></div>`;
 					l('tally').innerHTML=str;
 					l('tally').style.display='block';
+
 				}
 				else l('tally').style.display='none';
 			}
@@ -2597,7 +2679,7 @@ G={
 				<div class="box red" id="summary">
 					<div>A horrible struggle for survival is taking place.</div>
 				</div>
-				<div style="text-align:left;overflow:hidden;"><div class="button" id="backToCreator">&lt; Go back to team setup</div><div class="button" id="exportSetup">Export initial setup...</div><span style="float:right;"><div class="button" id="viewDetails">Details...</div><div class="button" id="nextRound2">Next round &gt;</div></span></div>
+				<div style="text-align:left;overflow:hidden;"><div class="button" id="backToCreator">&lt; Go back to team setup</div><div class="button" id="exportSetup">Export initial setup...</div><div class="button" id="exportGame">Export this game...</div><span style="float:right;"><div class="button" id="viewDetails">Details...</div><div class="button" id="nextRound2">Next round &gt;</div></span></div>
 				<header id="roundN"></header>
 				<div style="height:23px;margin-top:-30px;margin-bottom:11px;clear:both;overflow:hidden;">
 					<div class="button" id="logBackFull" style="float:left;">&lt; &lt;</div>
@@ -2629,13 +2711,14 @@ G={
 			addEvent(l('backToCreator2'),'click',function(){G.creator();});
 			addEvent(l('backToCreator3'),'click',function(){G.creator();});
 			addEvent(l('exportSetup'),'click',function(){G.exportSetup(G.setupData);});
+			addEvent(l('exportGame'),'click',function(){G.exportGame();});
 			
 			addEvent(l('logBack'),'click',function(){G.logBack();});
 			addEvent(l('logBackFull'),'click',function(){G.logBack(true);});
 			addEvent(l('logForward'),'click',function(){G.logForward();});
 			addEvent(l('logForwardFull'),'click',function(){G.logForward(true);});
 			
-			G.roundLog=[];
+			if(!G.importedGame) G.roundLog=[];
 			G.logPos=0;//how many rounds back we are
 			G.updateLogButtons=function()
 			{
@@ -2670,7 +2753,7 @@ G={
 				G.updateLogButtons();
 			}
 			
-			G.nextRound();
+			if(!G.importedGame) G.nextRound();
 		}
 		
 		G.autoroundOn=false;
