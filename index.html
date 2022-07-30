@@ -579,6 +579,7 @@ G={
 		new G.perk({name:`terrified`,desc:`Running away from somethig horrifying.`});
 		new G.perk({name:`has killed`,desc:`Caused someone's death.`,disable:false});
 		new G.perk({name:`set trap`,desc:`Laid down some traps that others may get caught in...`,disable:false});
+		new G.perk({name:`set landmine`,desc:`Laid down a landmine that others might trigger...`,disable:false});
 		
 		new G.perk({name:`scratched`,desc:`Lightly scratched and bleeding a little bit.`,disable:false});
 		new G.perk({name:`bruised`,desc:`Been pounded badly.`,disable:false});
@@ -618,6 +619,7 @@ G={
 
 		// Custom items
 		new G.perk({name:`volleyball`,desc:`An ordinary volleyball.`});
+		new G.perk({name:`knives`,desc:`For stabbing or throwing.`});
 		
 		new G.perk({name:`pet wolf`,desc:`A ravenous pet wolf to devour your opponents.`});
 		new G.perk({name:`pet tiger`,desc:`A fierce pet tiger to tear your opponents to shreds.`});
@@ -633,6 +635,9 @@ G={
 		new G.perk({name:`knight armor`,desc:`Excellent physical protection, but heavy and uncomfortable.`});
 		new G.perk({name:`combat gear`,desc:`Used by military forces. Provides near-perfect protection from all but the deadliest attacks.`});
 		new G.perk({name:`wizard robe`,desc:`Can greatly amplify magic powers. Comes with a pointy hat.`});
+
+		// Custom hidden items
+		new G.perk({name:`landmine`,desc:`An explosive trap.`});
 		
 		
 		//creator
@@ -1406,6 +1411,7 @@ G={
 					
 					for (var i=0;i<this.people.length;i++)
 					{
+						console.log("thing:" + this.people[i]);
 						var req=this.people[i].split(' ');
 						//if (req.indexOf('team')==-1 && req.indexOf('dead')==-1) req.unshift('!dead');
 						
@@ -1623,7 +1629,12 @@ G={
 				|stays awake all night.
 				|screams for help.
 				|sees a fire, but stays hidden.
+				|cooks [1:their] food before putting [1:their] fire out.
 			]`,p=>{},tag='night');
+			new G.act(0.5,['scratched'],`[1] fails to treat [1:their] scratches.`);
+			new G.act(0.5,['bruised'],`[1] fails to treat [1:their] bruises.`);
+			new G.act(0.5,['cut_up'],`[1] fails to treat [1:their] cuts.`);
+			new G.act(0.5,['burnt'],`[1] fails to treat [1:their] burns.`);
 
 			// Idle with 2
 			new G.act(0.2,['','any'],`[1] [scares [2] off.
@@ -1634,14 +1645,17 @@ G={
 				|lets [2] into [1:their] shelter.
 			]`)
 			// Day acts
-			new G.act(0.2,['','any'],`[1] works with [2] for the day.`,p=>{},tag='day')
+			new G.act(0.2,['','any'],`[1] [works with [2] for the day.
+				|chases [2].
+				|runs away from [2].
+			]`,p=>{},tag='day')
 			// Night acts
 			new G.act(0.2,['','any'],`[1] and [2] run into each other and decide to truce for the night.`,p=>{},tag='night')							
 
 			// Idle with 3
 			new G.act(0.2,['','any','any'],`[ [1] overhears [2] and [3] talking in the distance.
 				|[1], [2], and [3] go hunting for other tributes.
-				|[1], [2], and [3] discuss the games and what might happen.
+				|[1], [2], and [3] discuss the games and what might happen next.
 			]`);
 			new G.act(0.2,['','any','any'],`[ [1], [2], and [3] sleep in shifts.
 				|[1], [2], and [3] tell ghost stories to lighten the mood.
@@ -1657,7 +1671,7 @@ G={
 			]`,p=>{},tag='night');
 
 			// Idle with 5
-			new G.act(0.05,['','any','any','any','any'],`[1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
+			new G.act(0.05,['','any','any','any','any'],`[RED][1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
 			,p=>
 			{
 				var itemsToLose = [];
@@ -1678,11 +1692,18 @@ G={
 			// Team Idles?
 			
 			// Acts related to injuries
-			new G.act(0.1,[''],`[1] is pricked by thorns while trying to gather berries.`,p=>{p[1].gain('scratched');});
-			new G.act(0.1,['','- any'],`[1] defeats [2] in a fight, but spares [2:their] life.`,p=>{p[2].gain('bruised');});
-			new G.act(0.1,['','- any'],`[1] injures [1:g|himself|herself|themself] while running away from [2].`,p=>{p[1].gain('bruised');});
+			new G.act(0.1,[''],`[RED][1] is pricked by thorns while trying to gather berries.`,p=>{p[1].gain('scratched');});
+			new G.act(0.1,['','- any'],`[RED][1] defeats [2] in a fight, but spares [2:them], leaving [2:them] bruised.`,p=>{p[2].gain('bruised');});
+				new G.act(0.1,['','- any'],`[RED][1] attacks [2], but [2:g|he manages|she manages|they manage] to escape, bruised.`,p=>{p[2].gain('bruised');});
+			new G.act(0.1,['','- any'],`[RED][1] injures [1:g|himself|herself|themself] while running away from [2].`,p=>{p[1].gain('bruised');});
 			
-			new G.act(0.2,['','scratched|bruised|cut_up|burnt|bleeding_out'],`[1] treats [2]'s injuries.`,p=>
+			new G.act(0.1,['scratched|bruised|cut_up'],`[BLUE][1] tends to their wounds.`,p=>
+			{
+				p[1].lose('scratched');
+				p[1].lose('bruised');
+				p[1].lose('cut up');
+			});	
+			new G.act(0.2,['','+ scratched|bruised|cut_up|burnt|bleeding_out'],`[BLUE][1] treats [2]'s injuries.`,p=>
 			{
 				p[2].lose('scratched');
 				p[2].lose('bruised');
@@ -1700,7 +1721,7 @@ G={
 			new G.act(0.4,['fighter','- any'],`[
 				[1] defeats [2] in a fight, but lets [2:them] go so [2:they] can get stronger.
 				|To prove [1:their] strength, [1] defeats [2] in a fight.
-				|[1] challenges [2] to a fight, beating them.
+				|[1] challenges [2] to a fight, beating [2:them].
 			]`,p=>{p[2].gain('bruised');});
 			new G.act(0.4,['fighter','- any'],`[1] challenges [2] to a fight, but [2] was too strong, defeating [1].`,p=>{p[1].gain('bruised');});
 			// Bringing back unknown sponsors
@@ -1714,6 +1735,11 @@ G={
 				p[2].lose('bleeding out');
 			});
 			new G.act(0.3*0.05,['!grenade'],`[BLUE][1] receives a grenade from an unknown sponsor.`,p=>{p[1].gain('grenade');});
+			new G.act(0.3*0.05,['!landmine'],`[BLUE][1] receives a landmine from an unknown sponsor.`,p=>{p[1].gain('landmine');});
+
+			new G.act(0.5,['landmine'],`[1] arms their landmine and hides it somewhere.`,p=>{p[1].gain('set landmine'); p[1].lose('landmine');});
+				new G.act(0.2,['!survivalist landmine'],`[RED][1] accidentally detonates their landmine while trying to arm it.`,p=>{p[1].die('self landmine');});
+				new G.act(0.5,['set_landmine','any'],`[RED][1] steps on [2]'s landmine'.`,p=>{p[1].kill(p[2],'landmine');});
 
 
 
@@ -1889,11 +1915,13 @@ G={
 			new G.act(0.4,[coldBloodKiller+' shotgun','- any'],`[RED][1] creeps up behind [2] and shoots [2:them] point-blank with [1:their] shotgun!`,p=>{p[1].kill(p[2],`shotgun`);});
 				new G.act(0.2,[coldBloodKiller+' shotgun','- any'],`[1] fires [1:their] shotgun at [2], but misses...`);
 			new G.act(0.4,[coldBloodKiller+' grenade','- any'],`[RED][1] tosses a live grenade at [2], who is instantly blown to smithereens!`,p=>{p[1].kill(p[2],`grenade`);p[1].lose('grenade');});
-				new G.act(0.2,[coldBloodKiller+' grenade','- any','+ any'],`[RED][1] tosses a live grenade at a group of enemies.<br>[2] and [3] are caught in the explosion and are blown to smithereens!`,p=>{p[1].kill(p[2],`grenade`);p[1].kill(p[3],`grenade`);p[1].lose('grenade');});
-				new G.act(0.1,[coldBloodKiller+' grenade','- any','+ any','+ any'],`[RED][1] tosses a live grenade at a group of enemies.<br>[2], [3] and [4] are caught in the explosion and are blown to smithereens!`,p=>{p[1].kill(p[2],`grenade`);p[1].kill(p[3],`grenade`);p[1].kill(p[4],`grenade`);p[1].lose('grenade');});
+				new G.act(0.3,[coldBloodKiller+' grenade','- any','+ any'],`[RED][1] tosses a live grenade at a group of enemies.<br>[2] and [3] are caught in the explosion and are blown to smithereens!`,p=>{p[1].kill(p[2],`grenade`);p[1].kill(p[3],`grenade`);p[1].lose('grenade');});
+				new G.act(0.3,[coldBloodKiller+' grenade','- any','+ any','+ any'],`[RED][1] tosses a live grenade at a group of enemies.<br>[2], [3] and [4] are caught in the explosion and are blown to smithereens!`,p=>{p[1].kill(p[2],`grenade`);p[1].kill(p[3],`grenade`);p[1].kill(p[4],`grenade`);p[1].lose('grenade');});
+				new G.act(0.2,[coldBloodKiller+' grenade','- any','+ any','+ any','+ any'],`[RED][1] tosses a live grenade at a group of enemies.<br>[2], [3], [4], and [5] are caught in the explosion and are blown to smithereens!`,p=>{p[1].kill(p[2],`grenade`);p[1].kill(p[3],`grenade`);p[1].kill(p[4],`grenade`);p[1].kill(p[5],`grenade`);p[1].lose('grenade');});
 			new G.act(0.3,[coldBloodKiller+' rocket_launcher','- any'],`[RED][1] fires a rocket at [2], who gets absolutely blown to bits.`,p=>{p[1].kill(p[2],`rocket launcher`);});
 				new G.act(0.2,[coldBloodKiller+' rocket_launcher','- any','+ any'],`[RED][1] fires a rocket at a group of enemies.<br>[2] and [3] are caught in the explosion and are absolutely blown to bits.`,p=>{p[1].kill(p[2],`rocket launcher`);p[1].kill(p[3],`rocket launcher`);});
-				new G.act(0.1,[coldBloodKiller+' rocket_launcher','- any','+ any','+ any'],`[RED][1] fires a rocket at a group of enemies.<br>[2], [3] and [4] are caught in the explosion and are absolutely blown to bits.`,p=>{p[1].kill(p[2],`rocket launcher`);p[1].kill(p[3],`rocket launcher`);p[1].kill(p[4],`rocket launcher`);});
+				new G.act(0.2,[coldBloodKiller+' rocket_launcher','- any','+ any','+ any'],`[RED][1] fires a rocket at a group of enemies.<br>[2], [3] and [4] are caught in the explosion and are absolutely blown to bits.`,p=>{p[1].kill(p[2],`rocket launcher`);p[1].kill(p[3],`rocket launcher`);p[1].kill(p[4],`rocket launcher`);});
+				new G.act(0.1,[coldBloodKiller+' rocket_launcher','- any','+ any','+ any'],`[RED][1] fires a rocket at a group of enemies.<br>[2], [3], [4], and [5] are caught in the explosion and are absolutely blown to bits.`,p=>{p[1].kill(p[2],`rocket launcher`);p[1].kill(p[3],`rocket launcher`);p[1].kill(p[4],`rocket launcher`);p[1].kill(p[5],`rocket launcher`);});
 			new G.act(0.4,[coldBloodKiller+' slingshot','- any'],`[1] uses [1:their] slingshot to pelt [2] with rocks, which is more annoying than anything, really.`);
 			new G.act(0.4,[coldBloodKiller+' bow','- any'],`[RED][[1] spots [2] in the distance, and draws her bow. [1:g|His|Her|Their] arrow flies off, and pierces [2]'s|[1]'s arrow flies straight and true, piercing [2]'s] [heart|head|chest|stomach]!`,p=>{p[1].kill(p[2],`arrow`);});
 				new G.act(0.2,[coldBloodKiller+' bow','- any'],`[1] fires an arrow at [2], but misses...`);
@@ -1911,9 +1939,30 @@ G={
 				new G.act(0.5,[coldBloodKiller+' !ancient_scepter magic_wand','- ancient_scepter !peaceful'],`[RED][1] challenges [2] to a magic duel with [1:their] magic wand!<br>Unfortunately for [1:them], [2] has an ancient scepter, and after a few colorful puffs and sparks, there's not much left of [1].`,p=>{p[2].kill(p[1],`magic duel`);});
 			
 
-			// Custom Item Killing
-			new G.act(0.6,[coldBloodKiller+' volleyball','- any'],`[RED][1] spikes [1:their] volleyball through [2]'s [head|stomach]!`,p=>{p[1].kill(p[2],`volleyball`);});
-				new G.act(0.6,[coldBloodKiller+' volleyball','+ any','- any'],`[RED][2] sets the volleyball to [1] so [1:they] can spike it through [3]'s [head|chest|stomach|body]!`,p=>{p[1].kill(p[3],`volleyball`); p[2].kill(p[3],`volleyball`);});
+
+			// Custom killing
+			new G.act(0.5,[coldBloodKiller+' volleyball','- any'],`[RED][1] spikes [1:their] volleyball through [2]'s [head|stomach]!`,p=>{p[1].kill(p[2],`volleyball`);});
+				new G.act(0.5,[coldBloodKiller+' volleyball','+ any','- any'],`[RED][2] sets the volleyball to [1] so [1:they] can spike it through [3]'s [head|chest|stomach|body]!`,p=>{p[1].kill(p[3],`volleyball`,p[2]);});
+				new G.act(0.7,[coldBloodKiller+' volleyball_freak volleyball','- any'],`[RED][1] spikes [1:their] volleyball through [2]'s [head|stomach]!`,p=>{p[1].kill(p[2],`volleyball`);});
+
+			new G.act(0.4,[coldBloodKiller+' knives','- any'],`[RED][1] throws [1:their] knives through [2]'s [head|stomach|chest|neck]!`,p=>{p[1].kill(p[2],`knives`);});
+				new G.act(0.4,[coldBloodKiller+' knives','- any'],'[RED][1] stabs [2] in the back with their knife.',p=>{p[1].kill(p[2],`knives`);});
+				new G.act(0.2,[coldBloodKiller+' knives','- knives'],`[RED][1] pushes [2] off a cliff during a knife fight.`,p=>{p[1].kill(p[2],`knives`);});
+				new G.act(0.2,[coldBloodKiller+' knives','- knives'],`[RED][1] kills [2] during their knife fight!.`,p=>{p[1].kill(p[2],`knives`);});
+
+			new G.act(0.11,[coldBloodKiller,'- any'],`[RED][1] tracks down and kills [2].`,p=>{p[1].kill(p[2],`murder`);});
+				new G.act(0.09,[coldBloodKiller+' +',coldBloodKiller+' +','- any'],`[RED][1] and [2] track down and kill [3].`,p=>{p[1].kill(p[3],`murder`,p[2]);});
+				new G.act(0.07,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','- any'],`[RED][1], [2], and [3] track down and kill [4].`,p=>{p[1].kill(p[4],`murder`,[p[2],p[3]]);});
+				new G.act(0.05,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','- any'],`[RED][1], [2], [3], and [4] track down and kill [5].`,p=>{p[1].kill(p[5],`murder`,[p[2],p[3],p[4]]);});
+				new G.act(0.03,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','- any'],`[RED][1], [2], [3], [4], and [5] track down and kill [6].`,p=>{p[1].kill(p[6],`murder`,[p[2],p[3],p[4],p[5]]);});
+
+			new G.act(0.02,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','-','-','-'],`[RED][1], [2], and [3] successfully ambush and kill [4], [5], and [6].`,p=>{p[1].kill(p[4],`murder`,[p[2],p[3]]);p[1].kill(p[5],`murder`,[p[2],p[3]]);p[6].kill(p[4],`murder`,[p[2],p[3]]);});
+				new G.act(0.02,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','-','-','-'],`[RED][1], [2], and [3] unsuccessfully ambush [4], [5], and [6], who kill them instead.`,p=>{p[4].kill(p[1],`retaliation`,[p[5],p[6]]);p[4].kill(p[2],`retaliation`,[p[5],p[6]]);p[4].kill(p[3],`retaliation`,[p[5],p[6]]);});
+
+			new G.act(0.1,[coldBloodKiller + ' fighter|bulky','-'],`[RED][1] overpowers [2], killing [2:them].`,p=>{p[1].kill(p[2],`murder`);});
+
+			new G.act(0.1,[coldBloodKiller + ' devious|sociopath','any'],`[RED][1] severely injures [2] and leaves [2:them] to die.`,p=>{p[1].kill(p[2],`murder`);});
+				new G.act(0.1,[coldBloodKiller,'- any'],`[RED][1] severely injures [2] and leaves [2:them] to die.`,p=>{p[1].kill(p[2],`murder`);});
 
 
 			new G.act(0.2,[coldBloodKiller+' wish_ring','- any'],`[RED][1] wishes [2] would disappear... [1:g|His|Her|Their] wish ring shimmers for a second, and then -<br>...nobody seems to remember [2] ever existed at all.`,p=>{p[1].kill(p[2],`ceased to exist`);});
@@ -2233,32 +2282,32 @@ G={
 
 			G.eventActNames.push("Dark Meta Knight's Revenge");
 			new G.eventAct("Dark Meta Knight's Revenge",
-				['!dead'],
+				['!dead any'],
 				`[BLUE]Dark Meta Knight has spared [1].`
 			)
 			new G.eventAct("Dark Meta Knight's Revenge",
-				['!dead alive:>1'],
+				['!dead alive:>1 any'],
 				`[RED][1]'s soul was shattered by Dark Meta Knight!`,
 				p=>{p[1].die(`Dark Meta Knight`);}
 			)
 			new G.eventAct("Dark Meta Knight's Revenge",
-				['!dead alive:>2','any !dead alive:>2'],
+				['any !dead alive:>2','any !dead alive:>2'],
 				`[RED]Dark Meta Knight simultaneously killed [1] and [2]!`,
 				p=>{p[1].die(`Dark Meta Knight`); p[2].die(`Dark Meta Knight`);}
 			)
 
 			G.eventActNames.push("CUREY STORM");
 			new G.eventAct("CUREY STORM",
-				['!dead'],
+				['any !dead'],
 				`[BLUE]Curey has spared [1].`
 			)
 			new G.eventAct("CUREY STORM",
-				['!dead alive:>1'],
+				['any !dead alive:>1'],
 				`[RED][1] was killed by a flying basketball!`,
 				p=>{p[1].die(`Curey`);}
 			)
 			new G.eventAct("CUREY STORM",
-				['!dead alive:>2','- any !dead alive:>2'],
+				['any !dead alive:>2','- any !dead alive:>2'],
 				`[RED][1] tried to offer [2] to appease Curey. This fails and both are killed.`,
 				p=>{p[1].die(`Curey`); p[2].die(`Curey`);}
 			)
