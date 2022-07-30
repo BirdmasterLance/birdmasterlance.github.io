@@ -1637,41 +1637,78 @@ G={
 			new G.act(0.5,['burnt'],`[1] fails to treat [1:their] burns.`);
 
 			// Idle with 2
-			new G.act(0.2,['','any'],`[1] [scares [2] off.
+			new G.act(0.2,['',''],`[1] [scares [2] off.
 				|and [2] hunt for other tributes.
 				|and [2] tell stories about each other.
 				|and [2] talk about the tributes still alive.
 				|begs for [2] to kill [1:them]. [2:g|He refuses|She refuses|They refuse], keeping [1] alive.
 				|lets [2] into [1:their] shelter.
+				|and [2] hold hands.
 			]`)
 			// Day acts
-			new G.act(0.2,['','any'],`[1] [works with [2] for the day.
+			new G.act(0.2,['',''],`[1] [works with [2] for the day.
 				|chases [2].
 				|runs away from [2].
 			]`,p=>{},tag='day')
 			// Night acts
-			new G.act(0.2,['','any'],`[1] and [2] run into each other and decide to truce for the night.`,p=>{},tag='night')							
+			new G.act(0.2,['',''],`[1] and [2] run into each other and decide to truce for the night.`,p=>{},tag='night')							
 
 			// Idle with 3
-			new G.act(0.2,['','any','any'],`[ [1] overhears [2] and [3] talking in the distance.
+			new G.act(0.1,['','',''],`[ [1] overhears [2] and [3] talking in the distance.
 				|[1], [2], and [3] go hunting for other tributes.
 				|[1], [2], and [3] discuss the games and what might happen next.
 			]`);
-			new G.act(0.2,['','any','any'],`[ [1], [2], and [3] sleep in shifts.
+			new G.act(0.1,['','',''],`[ [1], [2], and [3] sleep in shifts.
 				|[1], [2], and [3] tell ghost stories to lighten the mood.
+				|[1], [2], and [3] cheerfully sing songs together.
+			]`,p=>{},tag='night');
+			// Team ver
+			new G.act(0.2,['','+','+'],`[ [1], [2], and [3] go hunting for other tributes.
+				|[1], [2], and [3] discuss the games and what might happen next.
+			]`);
+			new G.act(0.2,['','-','-'],`[1] overhears [2] and [3] talking in the distance.`)
+			new G.act(0.2,['','+','+'],`[ [1], [2], and [3] sleep in shifts.
+				|[1], [2], and [3] tell ghost stories to lighten the mood.
+				|[1], [2], and [3] cheerfully sing songs together.
 			]`,p=>{},tag='night');
 
 			// Idle with 4
-			new G.act(0.1,['','any','any','any'],`[1], [2], [3], and [4] go hunting for other tributes`);
+			new G.act(0.05,['','','',''],`[1], [2], [3], and [4] go hunting for other tributes`);
 			// Night acts
-			new G.act(0.1,['','any','any','any'],`[
+			new G.act(0.05,['','','',''],`[
 				[1], [2], [3], and [4] sleep in shifts.
 				|[1], [2], [3], and [4] tell ghost stories to lighten the mood.
 				|[1] fends [2], [3], and [4] away from [1:their] fire.
 			]`,p=>{},tag='night');
+			// Team ver
+			new G.act(0.1,['','+','+','+'],`[1], [2], [3], and [4] go hunting for other tributes`);
+			// Night acts
+			new G.act(0.1,['','+','+','+'],`[
+				[1], [2], [3], and [4] sleep in shifts.
+				|[1], [2], [3], and [4] tell ghost stories to lighten the mood.
+			]`,p=>{},tag='night');
+			new G.act(0.1,['','-','-','-'],`[1] fends [2], [3], and [4] away from [1:their] fire.`,p=>{},tag='night')
 
 			// Idle with 5
-			new G.act(0.05,['','any','any','any','any'],`[RED][1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
+			new G.act(0.025,['','','','',''],`[RED][1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
+			,p=>
+			{
+				var itemsToLose = [];
+				for(var i in p[5].perks)
+				{
+					if(p[5].perks[i].type == 'item')
+					{
+						itemsToLose.push(p[5].perks[i].name);
+					}
+				}
+
+				for(var j in itemsToLose)
+				{
+					p[5].lose(itemsToLose[j]);
+				}
+			});
+			// Team ver
+			new G.act(0.05,['','+','+','+',''],`[RED][1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
 			,p=>
 			{
 				var itemsToLose = [];
@@ -1739,7 +1776,7 @@ G={
 
 			new G.act(0.5,['landmine'],`[1] arms their landmine and hides it somewhere.`,p=>{p[1].gain('set landmine'); p[1].lose('landmine');});
 				new G.act(0.2,['!survivalist landmine'],`[RED][1] accidentally detonates their landmine while trying to arm it.`,p=>{p[1].die('self landmine');});
-				new G.act(0.5,['set_landmine','any'],`[RED][1] steps on [2]'s landmine'.`,p=>{p[1].kill(p[2],'landmine');});
+				new G.act(0.5,['any','set_landmine'],`[RED][1] steps on [2]'s landmine.`,p=>{p[1].kill(p[2],'landmine');});
 
 
 
@@ -1861,6 +1898,8 @@ G={
 			new G.act(itemFindMult*0.04,['!volleyball'],`[BLUE][1] finds a volleyball on the ground!`,p=>{p[1].gain('volleyball');});
 			new G.act(itemFindMult*0.1,['volleyball_freak !volleyball'],`[BLUE][1] finds a volleyball on the ground!`,p=>{p[1].gain('volleyball');});
 
+			new G.act(itemFindMult*0.04,['!volleyball'],`[BLUE][1] finds some knives!`,p=>{p[1].gain('knives');});
+
 			//todo : scrappy, rich, inventor
 			
 			//misc
@@ -1952,12 +1991,14 @@ G={
 
 			new G.act(0.11,[coldBloodKiller,'- any'],`[RED][1] tracks down and kills [2].`,p=>{p[1].kill(p[2],`murder`);});
 				new G.act(0.09,[coldBloodKiller+' +',coldBloodKiller+' +','- any'],`[RED][1] and [2] track down and kill [3].`,p=>{p[1].kill(p[3],`murder`,p[2]);});
-				new G.act(0.07,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','- any'],`[RED][1], [2], and [3] track down and kill [4].`,p=>{p[1].kill(p[4],`murder`,[p[2],p[3]]);});
-				new G.act(0.05,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','- any'],`[RED][1], [2], [3], and [4] track down and kill [5].`,p=>{p[1].kill(p[5],`murder`,[p[2],p[3],p[4]]);});
-				new G.act(0.03,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','- any'],`[RED][1], [2], [3], [4], and [5] track down and kill [6].`,p=>{p[1].kill(p[6],`murder`,[p[2],p[3],p[4],p[5]]);});
+				new G.act(0.06,[coldBloodKiller,coldBloodKiller,coldBloodKiller,'- any'],`[RED][1], [2], and [3] track down and kill [4].`,p=>{p[1].kill(p[4],`murder`,[p[2],p[3]]);});
+				new G.act(0.04,[coldBloodKiller,coldBloodKiller,coldBloodKiller,coldBloodKiller,'any'],`[RED][1], [2], [3], and [4] track down and kill [5].`,p=>{p[1].kill(p[5],`murder`,[p[2],p[3],p[4]]);});
+				new G.act(0.02,[coldBloodKiller,coldBloodKiller,coldBloodKiller,coldBloodKiller,coldBloodKiller,'any'],`[RED][1], [2], [3], [4], and [5] track down and kill [6].`,p=>{p[1].kill(p[6],`murder`,[p[2],p[3],p[4],p[5]]);});
 
-			new G.act(0.02,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','-','-','-'],`[RED][1], [2], and [3] successfully ambush and kill [4], [5], and [6].`,p=>{p[1].kill(p[4],`murder`,[p[2],p[3]]);p[1].kill(p[5],`murder`,[p[2],p[3]]);p[6].kill(p[4],`murder`,[p[2],p[3]]);});
-				new G.act(0.02,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','-','-','-'],`[RED][1], [2], and [3] unsuccessfully ambush [4], [5], and [6], who kill them instead.`,p=>{p[4].kill(p[1],`retaliation`,[p[5],p[6]]);p[4].kill(p[2],`retaliation`,[p[5],p[6]]);p[4].kill(p[3],`retaliation`,[p[5],p[6]]);});
+			new G.act(0.02,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','-','+','+'],`[RED][1], [2], and [3] successfully ambush and kill [4], [5], and [6].`,p=>{p[1].kill(p[4],`murder`,[p[2],p[3]]);p[1].kill(p[5],`murder`,[p[2],p[3]]);p[1].kill(p[6],`murder`,[p[2],p[3]]);});
+				new G.act(0.02,[coldBloodKiller+' +',coldBloodKiller+' +',coldBloodKiller+' +','-','+','+'],`[RED][1], [2], and [3] unsuccessfully ambush [4], [5], and [6], who kill them instead.`,p=>{p[4].kill(p[1],`retaliation`,[p[5],p[6]]);p[4].kill(p[2],`retaliation`,[p[5],p[6]]);p[4].kill(p[3],`retaliation`,[p[5],p[6]]);});
+			new G.act(0.03,[coldBloodKiller,coldBloodKiller,coldBloodKiller,'','',''],`[RED][1], [2], and [3] successfully ambush and kill [4], [5], and [6].`,p=>{p[1].kill(p[4],`murder`,[p[2],p[3]]);p[1].kill(p[5],`murder`,[p[2],p[3]]);p[1].kill(p[6],`murder`,[p[2],p[3]]);});
+				new G.act(0.03,[coldBloodKiller,coldBloodKiller,coldBloodKiller,'','',''],`[RED][1], [2], and [3] unsuccessfully ambush [4], [5], and [6], who kill them instead.`,p=>{p[4].kill(p[1],`retaliation`,[p[5],p[6]]);p[4].kill(p[2],`retaliation`,[p[5],p[6]]);p[4].kill(p[3],`retaliation`,[p[5],p[6]]);});
 
 			new G.act(0.1,[coldBloodKiller + ' fighter|bulky','-'],`[RED][1] overpowers [2], killing [2:them].`,p=>{p[1].kill(p[2],`murder`);});
 
@@ -2280,13 +2321,15 @@ G={
 					return selected;
 				}
 
+			// #region Arena Events
+
 			G.eventActNames.push("Dark Meta Knight's Revenge");
 			new G.eventAct("Dark Meta Knight's Revenge",
-				['!dead any'],
+				['any !dead'],
 				`[BLUE]Dark Meta Knight has spared [1].`
 			)
 			new G.eventAct("Dark Meta Knight's Revenge",
-				['!dead alive:>1 any'],
+				['any !dead alive:>1'],
 				`[RED][1]'s soul was shattered by Dark Meta Knight!`,
 				p=>{p[1].die(`Dark Meta Knight`);}
 			)
@@ -2314,19 +2357,238 @@ G={
 
 			G.eventActNames.push("CHAD BOMB");
 			new G.eventAct("CHAD BOMB",
-				['!dead'],
+				['any !dead'],
 				`[BLUE][1] managed to avoid the gas.`
 			)
 			new G.eventAct("CHAD BOMB",
-				['!dead alive:>1'],
+				['any !dead alive:>1'],
 				`[RED][1] suffocated as they laughed from the gas.`,
 				p=>{p[1].die(`Chad`);}
 			)
 			new G.eventAct("CHAD BOMB",
-				['!dead alive:>2','- any !dead alive:>2'],
+				['any !dead alive:>2','- any !dead alive:>2'],
 				`[RED][1] and [2] were both caught in the gas.`,
 				p=>{p[1].die(`Chad`); p[2].die(`Chad`);}
 			)
+
+			G.eventActNames.push("Acid Rain");
+			new G.eventAct("Acid Rain",
+				['any !dead'],
+				`[BLUE][1] survives.`
+			)
+			new G.eventAct("Acid Rain",
+				['any !dead alive:>1'],
+				`[RED][1] is unable to find shelter and dies.`,
+				p=>{p[1].die(`Acid Rain`);}
+			)
+			new G.eventAct("Acid Rain",
+				['any !dead alive:>1'],
+				`[RED][1] trips face first into a puddle of acidic rain.`,
+				p=>{p[1].die(`Acid Rain`);}
+			)
+			new G.eventAct("Acid Rain",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] injures [2] and leaves [2:them] in the rain to die.`,
+				p=>{p[1].kill(p[2],`Acid Rain`);}
+			)
+			new G.eventAct("Acid Rain",
+				['any devious|sociopath !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] refuses to give [2] shelter, killing [2:them].`,
+				p=>{p[1].kill(p[2],`Acid Rain`);}
+			)
+			new G.eventAct("Acid Rain",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] shoves [2] into a pond of acidic rain, but [1:g|he is|she is|they are] pulled in by [2], killing both.`,
+				p=>{p[1].die(`Acid Rain`); p[2].die(`Acid Rain`);}
+			)
+
+			G.eventActNames.push("Acid Rain");
+			new G.eventAct("Acid Rain",
+				['any !dead'],
+				`[BLUE][1] survives.`
+			)
+			new G.eventAct("Acid Rain",
+				['any !dead alive:>1'],
+				`[RED][1] is unable to find shelter and dies.`,
+				p=>{p[1].die(`Acid Rain`);}
+			)
+			new G.eventAct("Acid Rain",
+				['any !dead alive:>1'],
+				`[RED][1] trips face first into a puddle of acidic rain.`,
+				p=>{p[1].die(`Acid Rain`);}
+			)
+			new G.eventAct("Acid Rain",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] injures [2] and leaves [2:them] in the rain to die.`,
+				p=>{p[1].kill(p[2],`Acid Rain`);}
+			)
+			new G.eventAct("Acid Rain",
+				['any devious|sociopath !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] refuses to give [2] shelter, killing [2:them].`,
+				p=>{p[1].kill(p[2],`Acid Rain`);}
+			)
+			new G.eventAct("Acid Rain",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] shoves [2] into a pond of acidic rain, but [1:g|he is|she is|they are] pulled in by [2], killing both.`,
+				p=>{p[1].die(`Acid Rain`); p[2].die(`Acid Rain`);}
+			)
+
+			G.eventActNames.push("Tornado");
+			new G.eventAct("Tornado",
+				['any !dead'],
+				`[BLUE][1] survives.`
+			)
+			new G.eventAct("Tornado",
+				['any !dead alive:>1'],
+				`[RED][1] is sucked into the tornado.`,
+				p=>{p[1].die(`Tornado`);}
+			)
+			new G.eventAct("Tornado",
+				['any !dead alive:>1'],
+				`[RED][1] is incapacitated by flying debris and dies.`,
+				p=>{p[1].die(`Tornado`);}
+			)
+			new G.eventAct("Tornado",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] injures [2] and pushes [2:them] close enough to be sucked into the tornado.`,
+				p=>{p[1].kill(p[2],`Tornado`);}
+			)
+			new G.eventAct("Tornado",
+				['any devious|sociopath !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] pushes [2] into an oncoming boulder.`,
+				p=>{p[1].kill(p[2],`Tornado`);}
+			)
+			new G.eventAct("Tornado",
+				['any !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] tries to save [2] from being sucked into the tornado, only to be sucked in as well.`,
+				p=>{p[1].die(`Tornado`); p[2].die(`Tornado`);}
+			)
+
+			G.eventActNames.push("Tracker Jackers");
+			new G.eventAct("Tracker Jackers",
+				['any !dead'],
+				`[BLUE][1] survives.`
+			)
+			new G.eventAct("Tracker Jackers",
+				['any !dead alive:>1'],
+				`[RED][1] is stung to death.`,
+				p=>{p[1].die(`Tracker Jackers`);}
+			)
+			new G.eventAct("Tracker Jackers",
+				['any !dead alive:>1'],
+				`[RED][1] slowly dies from the tracker jacker toxins.`,
+				p=>{p[1].die(`Tracker Jackers`);}
+			)
+			new G.eventAct("Tracker Jackers",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] knocks [2] unconscious and leaves [2:them] there as bait.`,
+				p=>{p[1].kill(p[2],`Tracker Jackers`);}
+			)
+			new G.eventAct("Tracker Jackers",
+				['any devious|sociopath !dead alive:>2','any !dead alive:>2'],
+				`[RED]While running away from tracker jackers, [1] grabs [2] and throws [2:them] to the ground.`,
+				p=>{p[1].kill(p[2],`Tracker Jackers`);}
+			)
+			new G.eventAct("Tracker Jackers",
+				['any !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] and [2] run out of places to run and are stung to death.`,
+				p=>{p[1].die(`Tracker Jackers`); p[2].die(`Tracker Jackers`);}
+			)
+
+			G.eventActNames.push("Tsunami");
+			new G.eventAct("Tsunami",
+				['any !dead'],
+				`[BLUE][1] survives.`
+			)
+			new G.eventAct("Tsunami",
+				['any !dead alive:>1'],
+				`[RED][1] is swept away.`,
+				p=>{p[1].die(`Tsunami`);}
+			)
+			new G.eventAct("Tsunami",
+				['any !dead alive:>1'],
+				`[RED][1] fatally injures [1:g|himself|herself|themself] on debris.`,
+				p=>{p[1].die(`Tsunami`);}
+			)
+			new G.eventAct("Tsunami",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] defeats [2] and throws [2:them] in the water to make sure [2:g|he dies|she dies|they die].`,
+				p=>{p[1].kill(p[2],`Tsunami`);}
+			)
+			new G.eventAct("Tsunami",
+				['any devious|sociopath !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] holds [2] underwater to drown.`,
+				p=>{p[1].kill(p[2],`Tsunami`);}
+			)
+			new G.eventAct("Tsunami",
+				['any !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] and [2] smash their heads together as the tsunami rolls in, leaving them both to drown.`,
+				p=>{p[1].die(`Tsunami`); p[2].die(`Tsunami`);}
+			)
+
+			G.eventActNames.push("Monkey Mutts");
+			new G.eventAct("Monkey Mutts",
+				['any !dead'],
+				`[BLUE][1] survives.`
+			)
+			new G.eventAct("Monkey Mutts",
+				['any !dead alive:>1'],
+				`[RED][1] dies from internal bleeding caused by a monkey mutt.`,
+				p=>{p[1].die(`Monkey Mutts`);}
+			)
+			new G.eventAct("Monkey Mutts",
+				['any !dead alive:>1'],
+				`[RED][1] is pummeled and killed by a troop of monkey mutts.`,
+				p=>{p[1].die(`Monkey Mutts`);}
+			)
+			new G.eventAct("Monkey Mutts",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] injures [2] and leaves [2:them] for the monkey mutts.`,
+				p=>{p[1].kill(p[2],`Monkey Mutts`);}
+			)
+			new G.eventAct("Monkey Mutts",
+				['any devious|sociopath !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] uses [2] as a shield from the monkey mutts.`,
+				p=>{p[1].kill(p[2],`Monkey Mutts`);}
+			)
+			new G.eventAct("Monkey Mutts",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED]While running, [1] falls over and grabs [2] on the way down.<br>The monkey mutts kill them.`,
+				p=>{p[1].die(`Monkey Mutts`); p[2].die(`Monkey Mutts`);}
+			)
+
+			G.eventActNames.push("Volcano");
+			new G.eventAct("Volcano",
+				['any !dead'],
+				`[BLUE][1] survives.`
+			)
+			new G.eventAct("Volcano",
+				['any !dead alive:>1'],
+				`[RED][1] is buried in ash.`,
+				p=>{p[1].die(`Volcano`);}
+			)
+			new G.eventAct("Volcano",
+				['any !dead alive:>1'],
+				`[RED][1] suffocates.`,
+				p=>{p[1].die(`Volcano`);}
+			)
+			new G.eventAct("Volcano",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] dips [1:their] weapon in lava and kills [2] with it.`,
+				p=>{p[1].kill(p[2],`Volcano`);}
+			)
+			new G.eventAct("Volcano",
+				['any devious|sociopath !dead alive:>2','any !dead alive:>2'],
+				`[RED][1] pushes [2] in the lava.`,
+				p=>{p[1].kill(p[2],`Volcano`);}
+			)
+			new G.eventAct("Volcano",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED]As [1] trips over [2] into the lava, [1:g|he grabs [2] and pulls|she grabs [2] and pulls|they grab [2] and pull] [2:them] down with [1:them].`,
+				p=>{p[1].die(`Volcano`); p[2].die(`Volcano`);}
+			)
+
+			// #endregion
 
 			let actsList=shuffle(G.actsForced).concat(shuffle(G.actsOther));
 			
@@ -2424,7 +2686,7 @@ G={
 				// Right here seems like the best place to determine whether an arena event is happening or not
 				// Maybe have cornucopia refill when there is only half of everyone left?
 
-				var arenaEvent = Math.floor((Math.random() * 50) + 1); // generates 1 to 10
+				var arenaEvent = Math.floor((Math.random() * 40) + 1); // generates 1 to 10
 
 				let chosenEvent = "";
 				if(arenaEvent == 1)
