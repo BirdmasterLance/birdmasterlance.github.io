@@ -1776,7 +1776,7 @@ G={
 
 			new G.act(0.5,['landmine'],`[1] arms their landmine and hides it somewhere.`,p=>{p[1].gain('set landmine'); p[1].lose('landmine');});
 				new G.act(0.2,['!survivalist landmine'],`[RED][1] accidentally detonates their landmine while trying to arm it.`,p=>{p[1].die('self landmine');});
-				new G.act(0.5,['any','set_landmine'],`[RED][1] steps on [2]'s landmine.`,p=>{p[1].kill(p[2],'landmine');});
+				new G.act(0.5,['any','set_landmine'],`[RED][1] steps on [2]'s landmine.`,p=>{p[2].kill(p[1],'landmine');});
 
 
 
