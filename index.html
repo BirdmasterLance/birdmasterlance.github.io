@@ -168,6 +168,10 @@
 		{background:url(bgRed.jpg) fixed,rgba(151,47,26,0.5);color:#ff9333;}
 		.box.blue
 		{background:url(bgBlue.jpg) fixed,rgba(16,54,94,0.5);color:#33e0ff;}
+		.box.yellow
+		{background:url(bgBlue.jpg) fixed,rgba(122, 113, 21, 0.5);color:rgb(255, 185, 46);}
+		.box.green
+		{background:url(bgBlue.jpg) fixed,rgba(21, 120, 69, 0.5);color:#29ffa6;}
 		.box.blue e{color:#fff;}
 		.team
 		{
@@ -1729,18 +1733,18 @@ G={
 			// Team Idles?
 			
 			// Acts related to injuries
-			new G.act(0.1,[''],`[RED][1] is pricked by thorns while trying to gather berries.`,p=>{p[1].gain('scratched');});
-			new G.act(0.1,['','- any'],`[RED][1] defeats [2] in a fight, but spares [2:them], leaving [2:them] bruised.`,p=>{p[2].gain('bruised');});
-				new G.act(0.1,['','- any'],`[RED][1] attacks [2], but [2:g|he manages|she manages|they manage] to escape, bruised.`,p=>{p[2].gain('bruised');});
-			new G.act(0.1,['','- any'],`[RED][1] injures [1:g|himself|herself|themself] while running away from [2].`,p=>{p[1].gain('bruised');});
+			new G.act(0.1,[''],`[YELLOW][1] is pricked by thorns while trying to gather berries.`,p=>{p[1].gain('scratched');});
+			new G.act(0.1,['','- any'],`[YELLOW][1] defeats [2] in a fight, but spares [2:them], leaving [2:them] bruised.`,p=>{p[2].gain('bruised');});
+				new G.act(0.1,['','- any'],`[YELLOW][1] attacks [2], but [2:g|he manages|she manages|they manage] to escape, bruised.`,p=>{p[2].gain('bruised');});
+			new G.act(0.1,['','- any'],`[YELLOW][1] injures [1:g|himself|herself|themself] while running away from [2].`,p=>{p[1].gain('bruised');});
 			
-			new G.act(0.1,['scratched|bruised|cut_up'],`[BLUE][1] tends to their wounds.`,p=>
+			new G.act(0.1,['scratched|bruised|cut_up'],`[GREEN][1] tends to [1:their] wounds.`,p=>
 			{
 				p[1].lose('scratched');
 				p[1].lose('bruised');
 				p[1].lose('cut up');
 			});	
-			new G.act(0.2,['','+ scratched|bruised|cut_up|burnt|bleeding_out'],`[BLUE][1] treats [2]'s injuries.`,p=>
+			new G.act(0.2,['','+ scratched|bruised|cut_up|burnt|bleeding_out'],`[GREEN][1] treats [2]'s injuries.`,p=>
 			{
 				p[2].lose('scratched');
 				p[2].lose('bruised');
@@ -1755,7 +1759,7 @@ G={
 			
 			new G.act(1,['fighter'],`[1] [wants to fight someone|starts to train|wants a good match|is thinking about fighting someone strong].`);
 				new G.act(0.5,['fighter','fighter'],`[1] and [2] [train together.|fight against each other as training.]`);
-			new G.act(0.4,['fighter','- any'],`[
+			new G.act(0.4,['fighter','- any'],`[YELLOW][
 				[1] defeats [2] in a fight, but lets [2:them] go so [2:they] can get stronger.
 				|To prove [1:their] strength, [1] defeats [2] in a fight.
 				|[1] challenges [2] to a fight, beating [2:them].
@@ -1763,7 +1767,7 @@ G={
 			new G.act(0.4,['fighter','- any'],`[1] challenges [2] to a fight, but [2] was too strong, defeating [1].`,p=>{p[1].gain('bruised');});
 			// Bringing back unknown sponsors
 			new G.act(0.3*0.05,['!volleyball'],`[BLUE][1] receives a volleyball from an unknown sponsor.`,p=>{p[1].gain('volleyball');});
-			new G.act(0.3*0.05,['scratched|bruised|cut_up|burnt|bleeding_out'],`[BLUE][1] receives a first-aid kit from an unknown sponsor.`,p=>
+			new G.act(0.3*0.05,['scratched|bruised|cut_up|burnt|bleeding_out'],`[GREEN][1] receives a first-aid kit from an unknown sponsor.`,p=>
 			{
 				p[2].lose('scratched');
 				p[2].lose('bruised');
@@ -1774,8 +1778,8 @@ G={
 			new G.act(0.3*0.05,['!grenade'],`[BLUE][1] receives a grenade from an unknown sponsor.`,p=>{p[1].gain('grenade');});
 			new G.act(0.3*0.05,['!landmine'],`[BLUE][1] receives a landmine from an unknown sponsor.`,p=>{p[1].gain('landmine');});
 
-			new G.act(0.5,['landmine'],`[1] arms their landmine and hides it somewhere.`,p=>{p[1].gain('set landmine'); p[1].lose('landmine');});
-				new G.act(0.2,['!survivalist landmine'],`[RED][1] accidentally detonates their landmine while trying to arm it.`,p=>{p[1].die('self landmine');});
+			new G.act(0.5,['landmine'],`[1] arms [1:their] landmine and hides it somewhere.`,p=>{p[1].gain('set landmine'); p[1].lose('landmine');});
+				new G.act(0.2,['!survivalist landmine'],`[RED][1] accidentally detonates [1:their] landmine while trying to arm it.`,p=>{p[1].die('self landmine');});
 				new G.act(0.5,['any','set_landmine'],`[RED][1] steps on [2]'s landmine.`,p=>{p[2].kill(p[1],'landmine');});
 
 
@@ -2619,6 +2623,8 @@ G={
 					{
 						if (tag=='RED'){out+='[RED]'}
 						else if (tag=='BLUE'){out+='[BLUE]'}
+						else if (tag=='YELLOW'){out+='[YELLOW]'}
+						else if (tag=='GREEN'){out+='[GREEN]'}
 						else if (tag.length>0)
 						{
 							var bits=tag.split('|');
@@ -2832,6 +2838,10 @@ G={
 								text=text.replaceAll('[RED]','');
 							if (text.indexOf('[BLUE]')!=-1) classes.push('blue');
 								text=text.replaceAll('[BLUE]','');
+							if (text.indexOf('[YELLOW]')!=-1) classes.push('yellow');
+								text=text.replaceAll('[YELLOW]','');
+							if (text.indexOf('[GREEN]')!=-1) classes.push('green');
+								text=text.replaceAll('[GREEN]','');
 							var action={chars:actors,text:text,classes:classes.join(' ')};
 							actions.push(action);
 							
