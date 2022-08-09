@@ -804,6 +804,21 @@ G={
 								G.closePopup();
 								G.importedGame = true;
 								G.start();
+								for(var i in G.roundLog)
+								{
+									G.nextRound();
+								}
+
+								// TODO: make this better
+								G.roundLog = [];
+								var oldRound = str.split("\n<nextRound>\n");
+								for(var i = oldRound.length-1; i >= 0; i--)
+								{
+									console.log("CURRENT ROUND: " + oldRound[i]);
+									G.roundLog.push(oldRound[i]);
+								}
+								G.logBack(true);
+								
 							}
 							else {l('importDesc').innerHTML=`<span style="color:#e2461f;">Looks like that's not a valid game HTML, sorry!</span>`;triggerAnim(l('importDesc'),'pucker');}
 						});
@@ -814,7 +829,7 @@ G={
 					var oldRound = str.split("\n<nextRound>\n");
 					for(var i in oldRound)
 					{
-						console.log("CURRENT ROUND: " + oldRound[i]);
+						//console.log("CURRENT ROUND: " + oldRound[i]);
 						G.roundLog.push(oldRound[i]);
 					}
 				}
