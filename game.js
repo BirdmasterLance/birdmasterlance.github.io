@@ -1,408 +1,4 @@
 
-<!DOCTYPE html>
-<html>
-	<head>
-		<!--<title>Murder Games by Orteil</title>-->
-		<title>Hunger Games</title>
-		<meta charset="utf-8">
-		<!--
-		
-		Code and graphics copyright Orteil, 2018
-		Feel free to alter this code to your liking, but please do not re-host it, do not profit from it and do not present it as your own.
-		
-		Please note : this was made in like 3 days, code structure is a big old mess
-		
-		//TODO :
-			-more trait events
-			-allow action func to override the text; this way, we can have special conditional events (ie. scrappy finding different kinds of items in one action)
-			-localstorage save
-			-load from pastebin
-			-better parsing : [1:They] (uppercase), [1:they|does|do] (>he does, she does, they do), [1:they] find[-s|] (>he finds, she finds, they find)
-			-"it", for inanimate objects
-		-->
-		
-		<link rel="icon" href="https://cdn.discordapp.com/attachments/472233427815366656/964021165217706014/unknown.png">
-
-		<script type="text/javascript" src="sortable.js"></script>
-	
-		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700" rel="stylesheet">
-		<style>
-		* {box-sizing:border-box;}
-		div,input,select,cap
-		{
-			vertical-align:middle;
-		}
-		html
-		{
-			background:url(shadedBorders.png),url(bg.jpg);
-			background-size:100% 100%,auto;
-			background-attachment:fixed,scroll;
-			background-color:#4b413b;
-			width:100%;
-			height:100%;
-		}
-		html,body
-		{
-			margin:0px;
-			padding:0px;
-		}
-		body
-		{
-			font-family:Verdana;
-			font-family:'Roboto Slab',serif;
-			font-size:14px;
-			line-height:125%;
-			color:rgba(255,255,255,0.9);
-			text-shadow:0px 1px 0px rgba(0,0,0,0.75);
-			overflow:auto;
-			min-height:100%;
-			position:relative;
-			padding-bottom:178px;
-		}
-		#main
-		{
-			max-width:720px;
-			margin:0px auto;
-			padding:16px;
-			text-align:center;
-		}
-		#backToDashnet
-		{
-			max-width:720px;
-			font-size:10px;
-			text-align:center;
-			margin:0px auto;
-			color:rgba(255,255,255,0.6);
-			margin-bottom:-20px;
-		}
-		#credits
-		{
-			max-width:720px;
-			font-size:10px;
-			text-align:center;
-			margin:0px auto;
-			color:rgba(255,255,255,0.6);
-		}
-		#ad
-		{
-			text-align:center;
-			margin:0px auto;
-			/*margin-top:88px;*/
-			/*width:720px;
-			height:128px;*/
-			max-width:970px;
-			height:90px;
-			/*background:rgba(0,0,0,0.1);*/
-			position:absolute;
-			left:0px;right:0px;bottom:4px;
-		}
-		
-		a{color:#fff;}
-		a:hover{text-shadow:0px 0px 2px #fff;color:#fff;}
-		a:active{opacity:0.8;}
-		
-		.button,input,select
-		{
-			color:inherit;
-			display:inline-block;
-			font-size:10px;
-			background:rgba(0,0,0,0.5);
-			border-radius:2px;
-			box-shadow:0px 1px 0px rgba(255,255,255,0.25) inset,0px 0px 0px 1px #000,0px 1px 0px 1px rgba(255,255,255,0.1);
-			padding:1px 4px;
-			margin:2px;
-			height:2em;
-			border:none;
-		}
-		input
-		{
-			box-shadow:0px 0px 0px 1px rgba(255,255,255,0.25) inset,0px 0px 0px 1px #000,0px 1px 0px 1px rgba(255,255,255,0.1);
-		}
-		.button
-		{
-			cursor:pointer;
-			height:auto;
-			padding:1px 8px;
-		}
-		.bigButton
-		{
-			background:rgba(16,54,94,0.5);
-			color:#33e0ff;
-			font-size:12px;
-			padding:4px 8px;
-			letter-spacing:3px;
-			font-variant:small-caps;
-			font-weight:bold;
-		}
-		.button:hover,input:hover,select:hover
-		{
-			background:rgba(0,0,0,0.25);
-		}
-		.button:active,input:active,select:active,.button:focus,input:focus,select:focus
-		{
-			background:rgba(0,0,0,0.75);
-		}
-		/*.button:active
-		{
-			padding-bottom:0px;
-			margin-top:3px;
-		}*/
-		
-		.bigButton:hover
-		{background:rgba(16,54,94,0.25);color:#fff;}
-		.bigButton:active,.bigButton:focus
-		{background:rgba(16,54,94,0.75);}
-		
-		.box,.team
-		{
-			border-radius:8px;
-			padding:4px 8px;
-			margin:8px 0px;
-			box-shadow:0px 0px 0px 1px rgba(0,0,0,0.5),0px 1px 0px rgba(255,255,255,0.25) inset;
-			text-align:left;
-			background:rgba(0,0,0,0.1);
-		}
-		.box.red,.box.blue,.box.teamless
-		{font-size:12px;padding:8px 12px;}
-		.box.red
-		{background:url(bgRed.jpg) fixed,rgba(151,47,26,0.5);color:#ff9333;}
-		.box.blue
-		{background:url(bgBlue.jpg) fixed,rgba(16,54,94,0.5);color:#33e0ff;}
-		.box.yellow
-		{background:url(bgBlue.jpg) fixed,rgba(122, 113, 21, 0.5);color:rgb(255, 185, 46);}
-		.box.green
-		{background:url(bgBlue.jpg) fixed,rgba(21, 120, 69, 0.5);color:#29ffa6;}
-		.box.blue e{color:#fff;}
-		.team
-		{
-			position:relative;
-		}
-		.team.teamless{background:rgba(128,128,128,0.2);}
-		.membersList{min-height:24px;}
-		.char
-		{
-			border-radius:10px;
-			font-size:10px;
-			background:rgba(255,255,255,0.05);
-			box-shadow:0px 1px 0px rgba(255,255,255,0.1) inset;
-			padding:2px;
-			transition:background 0.1s;
-			padding-left:58px;
-			min-height:52px;
-			position:relative;
-		}
-		.char:nth-child(odd)
-		{
-			background:rgba(0,0,0,0.05);
-			box-shadow:0px 1px 0px rgba(0,0,0,0.1) inset;
-		}
-		
-		.action
-		{
-			text-align:center;
-			font-size:12px;
-		}
-		
-		e
-		{
-			color:#33e0ff;
-			font-weight:bold;
-		}
-		
-		header
-		{
-			display:block;
-			background:linear-gradient(to right,rgba(0,0,0,0),rgba(0,0,0,0.25),rgba(0,0,0,0));
-			font-variant:small-caps;
-			font-weight:bold;
-			font-size:16px;
-			letter-spacing:3px;
-			padding:0px 8px;
-			margin:4px;
-			color:#33e0ff;
-		}
-		header:after
-		{
-			content:'';
-			display:block;
-			background:linear-gradient(to right,rgba(16,54,94,0),rgba(16,54,94,0.75),rgba(16,54,94,0));
-			background:linear-gradient(to right,rgba(51,224,255,0),rgba(51,224,255,0.75),rgba(51,224,255,0));
-			height:1px;
-			width:100%;
-			margin:4px 0px;
-		}
-		header:before
-		{
-			content:'';
-			display:block;
-			background:linear-gradient(to right,rgba(16,54,94,0),rgba(16,54,94,0.75),rgba(16,54,94,0));
-			background:linear-gradient(to right,rgba(51,224,255,0),rgba(51,224,255,0.75),rgba(51,224,255,0));
-			height:1px;
-			width:100%;
-			margin:4px 0px;
-		}
-		cap
-		{
-			font-variant:small-caps;
-			font-weight:bold;
-			display:inline-block;
-		}
-		
-		.pic
-		{
-			width:48px;
-			height:48px;
-			overflow:hidden;
-			border-radius:8px;
-			padding:1px;
-			margin:1px;
-			box-shadow:0px 0px 0px 1px rgba(0,0,0,0.5),2px 2px 2px rgba(0,0,0,0.5);
-			background:rgba(255,255,255,0.5);
-		}
-		/*.char>.pic{margin:0px 8px 0px 0px;float:left;}*/
-		.picBox
-		{
-			line-height:0px;
-			position:absolute;
-			left:0px;top:0px;
-			margin:1px;
-		}
-		.action .pic{margin:4px;}
-		.pic.intext
-		{
-			width:1.5em;height:1.5em;
-			box-shadow:none;
-			border-radius:0px;
-			vertical-align:middle;
-			margin-top:-2px;
-		}
-		
-		.picSkull
-		{
-			display:inline-block;
-			position:relative;
-			width:0px;
-			height:0px;
-			z-index:10;
-			filter:drop-shadow(2px 2px 2px rgba(0,0,0,0.5));
-			pointer-events:none;
-		}
-		.picSkull:before
-		{
-			content:'';
-			display:block;
-			width:18px;
-			height:20px;
-			background:url(skull.png);
-			position:absolute;
-			left:-18px;top:-18px;
-		}
-		
-		.bit
-		{
-			border-radius:4px;
-			padding:1px 6px;
-			background:rgba(0,0,0,0.2);
-			cursor:pointer;
-			display:inline-block;
-			vertical-align:initial;
-			box-shadow:0px 1px 0px rgba(255,255,255,0.2) inset,0px 0px 0px 1px rgba(0,0,0,0.5);
-		}
-		.bit:hover
-		{
-			background:rgba(0,0,0,0.4);
-		}
-		
-		#popups
-		{
-			display:flex;
-			justify-content:center;
-			align-items:center;
-			z-index:1000000;
-			position:fixed;
-			left:0px;top:0px;right:0px;bottom:0px;
-			pointer-events:none;
-		}
-		.darken
-		{
-			position:absolute;
-			left:0px;top:0px;right:0px;bottom:0px;
-			pointer-events:auto;
-			background:rgba(0,0,0,0.25);
-			z-index:100;
-		}
-		.popup
-		{
-			width:40%;
-			max-height:90%;
-			overflow-y:auto;
-			pointer-events:auto;
-			z-index:1000;
-			background:rgba(0,0,0,0.75);
-			padding:12px 16px;
-			text-align:center;
-			filter:drop-shadow(4px 4px 8px rgba(0,0,0,0.5));
-		}
-		
-		#calibrator
-		{
-			position:absolute;left:0px;top:0px;visibility:hidden;pointer-events:none;
-		}
-		.beingAdded
-		{
-			height:0px;min-height:initial;transition:height 0.1s;overflow-y:hidden;
-		}
-		.beingRemoved
-		{
-			transition:height 0.25s;min-height:initial;overflow-y:hidden;
-			pointer-events:none;
-		}
-		
-		.team.hasHandle{margin-left:15px;border-top-left-radius:0px;border-bottom-left-radius:0px;}
-		.char.hasHandle{margin-left:15px;border-top-left-radius:0px;border-bottom-left-radius:0px;}
-		.handle
-		{
-			cursor:move;
-			background:url(friction.png) rgba(255,255,255,0.1);
-			box-shadow:0px 0px 0px 1px rgba(0,0,0,0.5),0px 1px 0px rgba(255,255,255,0.25) inset,0px 0px 0px 1px rgba(255,255,255,0.15) inset;
-			border-radius:4px 0px 0px 4px;
-			position:absolute;left:-15px;top:0px;bottom:0px;
-			width:14px;
-		}
-		.handle:hover{background-color:rgba(255,255,255,0.2);}
-		
-		.dragGhost
-		{
-			background:rgba(255,255,255,0.2) !important;
-			filter:brightness(150%);
-			position:relative;
-			left:-4px;
-		}
-		
-		
-		.pucker{animation:pucker 0.2s ease-out;animation-fill-mode:forwards;}
-		@keyframes pucker
-		{
-			0% {transform:scale(1,1);}
-			10% {transform:scale(1.15,0.85);}
-			20% {transform:scale(1.2,0.8);}
-			50% {transform:scale(0.75,1.25);}
-			70% {transform:scale(1.05,0.95);}
-			90% {transform:scale(0.95,1.05);}
-			100% {transform:scale(1,1);}
-		}
-		</style>
-	</head>
-	<body id="body">
-		<div id="popups"></div>
-		<div id="main"></div>
-		<div id="credits">original base by <a href="http://orteil.dashnet.org/" target="_blank">Orteil</a></div>
-	</body>
-</html>
-
-
-<script>
-
 //lib
 l=function(d){return document.getElementById(d);};
 c=function(a){return a[Math.floor(Math.random()*a.length)];};
@@ -2342,53 +1938,53 @@ G={
 
 			// #region Arena Events
 
-			// G.eventActNames.push("Dark Meta Knight's Revenge");
-			// new G.eventAct("Dark Meta Knight's Revenge",
-			// 	['any !dead'],
-			// 	`[BLUE]Dark Meta Knight has spared [1].`
-			// )
-			// new G.eventAct("Dark Meta Knight's Revenge",
-			// 	['any !dead alive:>1'],
-			// 	`[RED][1]'s soul was shattered by Dark Meta Knight!`,
-			// 	p=>{p[1].die(`Dark Meta Knight`);}
-			// )
-			// new G.eventAct("Dark Meta Knight's Revenge",
-			// 	['any !dead alive:>2','any !dead alive:>2'],
-			// 	`[RED]Dark Meta Knight simultaneously killed [1] and [2]!`,
-			// 	p=>{p[1].die(`Dark Meta Knight`); p[2].die(`Dark Meta Knight`);}
-			// )
+			G.eventActNames.push("Dark Meta Knight's Revenge");
+			new G.eventAct("Dark Meta Knight's Revenge",
+				['any !dead'],
+				`[BLUE]Dark Meta Knight has spared [1].`
+			)
+			new G.eventAct("Dark Meta Knight's Revenge",
+				['any !dead alive:>1'],
+				`[RED][1]'s soul was shattered by Dark Meta Knight!`,
+				p=>{p[1].die(`Dark Meta Knight`);}
+			)
+			new G.eventAct("Dark Meta Knight's Revenge",
+				['any !dead alive:>2','any !dead alive:>2'],
+				`[RED]Dark Meta Knight simultaneously killed [1] and [2]!`,
+				p=>{p[1].die(`Dark Meta Knight`); p[2].die(`Dark Meta Knight`);}
+			)
 
-			// G.eventActNames.push("CUREY STORM");
-			// new G.eventAct("CUREY STORM",
-			// 	['any !dead'],
-			// 	`[BLUE]Curey has spared [1].`
-			// )
-			// new G.eventAct("CUREY STORM",
-			// 	['any !dead alive:>1'],
-			// 	`[RED][1] was killed by a flying basketball!`,
-			// 	p=>{p[1].die(`Curey`);}
-			// )
-			// new G.eventAct("CUREY STORM",
-			// 	['any !dead alive:>2','- any !dead alive:>2'],
-			// 	`[RED][1] tried to offer [2] to appease Curey. This fails and both are killed.`,
-			// 	p=>{p[1].die(`Curey`); p[2].die(`Curey`);}
-			// )
+			G.eventActNames.push("CUREY STORM");
+			new G.eventAct("CUREY STORM",
+				['any !dead'],
+				`[BLUE]Curey has spared [1].`
+			)
+			new G.eventAct("CUREY STORM",
+				['any !dead alive:>1'],
+				`[RED][1] was killed by a flying basketball!`,
+				p=>{p[1].die(`Curey`);}
+			)
+			new G.eventAct("CUREY STORM",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] tried to offer [2] to appease Curey. This fails and both are killed.`,
+				p=>{p[1].die(`Curey`); p[2].die(`Curey`);}
+			)
 
-			// G.eventActNames.push("CHAD BOMB");
-			// new G.eventAct("CHAD BOMB",
-			// 	['any !dead'],
-			// 	`[BLUE][1] managed to avoid the gas.`
-			// )
-			// new G.eventAct("CHAD BOMB",
-			// 	['any !dead alive:>1'],
-			// 	`[RED][1] suffocated as they laughed from the gas.`,
-			// 	p=>{p[1].die(`Chad`);}
-			// )
-			// new G.eventAct("CHAD BOMB",
-			// 	['any !dead alive:>2','- any !dead alive:>2'],
-			// 	`[RED][1] and [2] were both caught in the gas.`,
-			// 	p=>{p[1].die(`Chad`); p[2].die(`Chad`);}
-			// )
+			G.eventActNames.push("CHAD BOMB");
+			new G.eventAct("CHAD BOMB",
+				['any !dead'],
+				`[BLUE][1] managed to avoid the gas.`
+			)
+			new G.eventAct("CHAD BOMB",
+				['any !dead alive:>1'],
+				`[RED][1] suffocated as they laughed from the gas.`,
+				p=>{p[1].die(`Chad`);}
+			)
+			new G.eventAct("CHAD BOMB",
+				['any !dead alive:>2','- any !dead alive:>2'],
+				`[RED][1] and [2] were both caught in the gas.`,
+				p=>{p[1].die(`Chad`); p[2].die(`Chad`);}
+			)
 
 			G.eventActNames.push("Acid Rain");
 			new G.eventAct("Acid Rain",
@@ -2707,7 +2303,7 @@ G={
 				// Right here seems like the best place to determine whether an arena event is happening or not
 				// Maybe have cornucopia refill when there is only half of everyone left?
 
-				var arenaEvent = Math.floor((Math.random() * 30) + 1); // generates 1 to 10
+				var arenaEvent = Math.floor((Math.random() * 40) + 1); // generates 1 to 10
 
 				let chosenEvent = "";
 				if(arenaEvent == 1)
@@ -3114,4 +2710,3 @@ G={
 };
 
 if (!G.launched) G.init();
-</script>
