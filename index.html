@@ -572,6 +572,7 @@ G={
 		new G.perk({name:`lunatic`,desc:`Susceptible to gain and lose random perks regularly.`});
 		new G.perk({name:`volleyball freak`,desc:`Loves volleyball.`});
 		new G.perk({name:`fighter`,desc:`Loves to fight.`});
+		new G.perk({name:`flight`,desc:`Can fly.`});
 		
 		G.glob={type:'status'};
 			G.glob.disable=true;//mark the character as disabled; disabled characters cannot do any actions that don't specifically call for this perk
@@ -1709,7 +1710,7 @@ G={
 			new G.act(0.1,['','-','-','-'],`[1] fends [2], [3], and [4] away from [1:their] fire.`,p=>{},tag='night')
 
 			// Idle with 5
-			new G.act(0.025,['','','','',''],`[RED][1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
+			new G.act(0.025,['','','','',''],`[YELLOW][1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
 			,p=>
 			{
 				var itemsToLose = [];
@@ -1727,7 +1728,7 @@ G={
 				}
 			});
 			// Team ver
-			new G.act(0.05,['','+','+','+',''],`[RED][1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
+			new G.act(0.05,['','+','+','+',''],`[YELLOW][1], [2], [3], and [4] destroy [5]'s supplies while [5:g|he is|she is|they are] away.`
 			,p=>
 			{
 				var itemsToLose = [];
@@ -1779,7 +1780,7 @@ G={
 				|To prove [1:their] strength, [1] defeats [2] in a fight.
 				|[1] challenges [2] to a fight, beating [2:them].
 			]`,p=>{p[2].gain('bruised');});
-			new G.act(0.4,['fighter','- any'],`[1] challenges [2] to a fight, but [2] was too strong, defeating [1].`,p=>{p[1].gain('bruised');});
+			new G.act(0.4,['fighter','- any'],`[YELLOW][1] challenges [2] to a fight, but [2] was too strong, defeating [1].`,p=>{p[1].gain('bruised');});
 			// Bringing back unknown sponsors
 			new G.act(0.3*0.05,['!volleyball'],`[BLUE][1] receives a volleyball from an unknown sponsor.`,p=>{p[1].gain('volleyball');});
 			new G.act(0.3*0.05,['scratched|bruised|cut_up|burnt|bleeding_out'],`[GREEN][1] receives a first-aid kit from an unknown sponsor.`,p=>
@@ -2099,10 +2100,17 @@ G={
 				|eats something [1:they] shouldn't have and dies of horrible stomach pains.
 				|gets mauled by wild animals.
 				|trips and falls in a really bad way, breaking [1:their] neck.
+				|unknowingly eats toxic berries.
+			]`,p=>{p[1].die(`accident`);});
+
+			new G.act(0.1,['!survivalist !flight any'],`[RED][1] [
 				|falls into a frozen lake and drowns.
 				|falls into a pit and dies.
 				|attempts to climb a tree, but falls to [1:their] death.
-				|unknowingly eats toxic berries.
+			]`,p=>{p[1].die(`accident`);});
+
+			new G.act(0.1,['!survivalist flight any'],`[RED][1] [
+				|flew too high and was snatched by Rayquaza.
 			]`,p=>{p[1].die(`accident`);});
 
 			// Custom kills (non items)
