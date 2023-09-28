@@ -1643,7 +1643,7 @@ G={
 				|loses sight of where [1:g|he is|she is|they are|it is].
 				|attempts to start a fire, but is unsuccessful.
 				|looks at the night sky.
-				|is unable to start a fire and sleep without warmth.
+				|is unable to start a fire and sleeps without warmth.
 				|is awoken by nightmares.
 				|cries [1:themself] to sleep.
 				|stays awake all night.
@@ -1768,6 +1768,14 @@ G={
 				p[2].lose('burnt');
 				p[2].lose('bleeding out');
 			});	
+			new G.act(0.05,['','scratched|bruised|cut_up|burnt|bleeding_out'],`[GREEN][1] treats [2]'s injuries.`,p=>
+			{
+				p[2].lose('scratched');
+				p[2].lose('bruised');
+				p[2].lose('cut up');
+				p[2].lose('burnt');
+				p[2].lose('bleeding out');
+			});	
 
 			new G.act(1,['volleyball'],`[1] practices [1:their] [set|jump serve|float serve|overhand serve|underhand serve|spikes|line shot|cut shot|setter dump].`);
 			new G.act(1,['volleyball_freak'],`[1] thinks about [volleyball|going to Nationals|playing volleyball with someone].`);
@@ -1785,11 +1793,11 @@ G={
 			new G.act(0.3*0.05,['!volleyball'],`[BLUE][1] receives a volleyball from an unknown sponsor.`,p=>{p[1].gain('volleyball');});
 			new G.act(0.3*0.05,['scratched|bruised|cut_up|burnt|bleeding_out'],`[GREEN][1] receives a first-aid kit from an unknown sponsor.`,p=>
 			{
-				p[2].lose('scratched');
-				p[2].lose('bruised');
-				p[2].lose('cut up');
-				p[2].lose('burnt');
-				p[2].lose('bleeding out');
+				p[1].lose('scratched');
+				p[1].lose('bruised');
+				p[1].lose('cut up');
+				p[1].lose('burnt');
+				p[1].lose('bleeding out');
 			});
 			new G.act(0.3*0.05,['!grenade'],`[BLUE][1] receives a grenade from an unknown sponsor.`,p=>{p[1].gain('grenade');});
 			new G.act(0.3*0.05,['!landmine'],`[BLUE][1] receives a landmine from an unknown sponsor.`,p=>{p[1].gain('landmine');});
@@ -2780,7 +2788,7 @@ G={
 								{
 									break;
 								}
-
+								// TODO: make the chance of surviving an event higher
 								var randEvent = Math.floor(Math.random() * G.eventActs.length);
 
 								for(var i in pastChoices)
