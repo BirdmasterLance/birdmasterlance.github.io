@@ -1,0 +1,167 @@
+{
+    "characterData": [
+        {
+            "name": "Sawamura Daichi",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 1,
+            "position": "Wing Spiker",
+            "height": 176.8,
+            "year": 3
+        },
+        {
+            "name": "Sugawara Koshi",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 2,
+            "position": "Setter",
+            "height": 174.6,
+            "year": 3
+        },
+        {
+            "name": "Azumane Asahi",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 3,
+            "position": "Wing Spiker",
+            "height": 186.4,
+            "year": 3
+        },
+        {
+            "name": "Nishinoya Yuu",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 4,
+            "position": "Libero",
+            "height": 160.5,
+            "year": 2
+        },
+        {
+            "name": "Tanaka Ryunosuke",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 5,
+            "position": "Wing Spiker",
+            "height": 178.2,
+            "year": 2
+        },
+        {
+            "name": "Ennoshita Chikara",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 6,
+            "position": "Wing Spiker",
+            "height": 176.1,
+            "year": 2
+        },
+        {
+            "name": "Kinoshita Hisashi",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 7,
+            "position": "Wing Spiker",
+            "height": 175.8,
+            "year": 2
+        },
+        {
+            "name": "Narita Kazuhito",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 8,
+            "position": "Middle Blocker",
+            "height": 180.9,
+            "year": 2
+        },
+        {
+            "name": "Kageyama Tobio",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 9,
+            "position": "Setter",
+            "height": 181.9,
+            "year": 1
+        },
+        {
+            "name": "Hinata Shoyo",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 10,
+            "position": "Middle Blocker",
+            "height": 164.2,
+            "year": 1
+        },
+        {
+            "name": "Tsukishima Kei",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 11,
+            "position": "Middle Blocker",
+            "height": 190.1,
+            "year": 1
+        },
+        {
+            "name": "Yamaguchi Tadashi",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 12,
+            "position": "Setter",
+            "height": 180.0,
+            "year": 1
+        },
+        {
+            "name": "Ukai Keishin",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": -1,
+            "position": "Coach",
+            "height": 178.2,
+            "year": -1
+        },
+        {
+            "name": "Takeda Ittetsu",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": -1,
+            "position": "Coach",
+            "height": 166.5,
+            "year": -1
+        },
+        {
+            "name": "Shimizu Kiyoko",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": -1,
+            "position": "Manager",
+            "height": 166.2,
+            "year": 3
+        },
+        {
+            "name": "Yachi Hitoka",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": -1,
+            "position": "Manager",
+            "height": 149.7,
+            "year": 1
+        }
+    ],
+
+    "characterNames": [
+        "Sawamura Daichi",
+        "Sugawara Koshi",
+        "Azumane Asahi",
+        "Nishinoya Yuu",
+        "Tanaka Ryunosuke",
+        "Ennoshita Chikara",
+        "Kinoshita Hisashi",
+        "Narita Kazuhito",
+        "Kageyama Tobio",
+        "Hinata Shoyo",
+        "Tsukishima Kei",
+        "Yamaguchi Tadashi",
+        "Ukai Keishin",
+        "Takeda Ittetsu",
+        "Shimizu Kiyoko",
+        "Yachi Hitoka"
+    ]
+}

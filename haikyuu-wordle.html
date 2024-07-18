@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Haikyuu!! Wordle</title>
+		<meta charset="utf-8">
+
+        <link rel="stylesheet" href="haikyuu-wordle.css" />
+        <!-- Set up jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <!-- jQuery autocomplete library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.min.js"></script>
+    </head>
+
+    <body>
+        <img class="justify-center" src="resources/Haikyuu_Logo.png" alt="The Japanese logo for Haikyuu!!"> 
+        <h1>WORDLE</h1>
+    
+        <div id="search-box" class="justify-center">
+            <input placeholder="Enter a player's name" class=" autocomplete-searchbox" id="autocomplete" value="" />
+        </div>
+
+        <div id="answer-row">
+            <div class="category-row justify-center">
+                <div class="square">Name</div>
+                <div class="square">Gender</div>
+                <div class="square">School</div>
+                <div class="square">Number</div>
+                <div class="square">Position</div>
+                <div class="square">Height</div>
+                <div class="square">Year</div>
+            </div>
+        </div>
+
+        <script src="haikyuu-wordle.js"></script>
+    </body>
+</html>
