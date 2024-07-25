@@ -143,6 +143,87 @@
             "position": "Manager",
             "height": 149.7,
             "year": 1
+        },
+        {
+            "name": "Oikawa Tooru",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 1,
+            "position": "Setter",
+            "height": 184.3,
+            "year": 3
+        },
+        {
+            "name": "Matsukawa Issei",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 2,
+            "position": "Middle Blocker",
+            "height": 187.9,
+            "year": 3
+        },
+        {
+            "name": "Hanamaki Takahiro",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 3,
+            "position": "Wing Spiker",
+            "height": 184.7,
+            "year": 3
+        },
+        {
+            "name": "Iwaizumi Hajime",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 4,
+            "position": "Wing Spiker",
+            "height": 179.3,
+            "year": 3
+        },
+        {
+            "name": "Yahaba Shigeru",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 6,
+            "position": "Setter",
+            "height": 181.9,
+            "year": 2
+        },
+        {
+            "name": "Watari Shinji",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 7,
+            "position": "Libero",
+            "height": 171.2,
+            "year": 2
+        },
+        {
+            "name": "Kindaichi Yuutaro",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 12,
+            "position": "Middle Blocker",
+            "height": 190,
+            "year": 1
+        },
+        {
+            "name": "Kunimi Akira",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 13,
+            "position": "Wing Spiker",
+            "height": 183,
+            "year": 1
+        },
+        {
+            "name": "Kyotani Kentaro",
+            "gender": "Male",
+            "school": "Aoba Josai High",
+            "number": 16,
+            "position": "Wing Spiker",
+            "height": 178.8,
+            "year": 2
         }
     ],
 
@@ -162,6 +243,15 @@
         "Ukai Keishin",
         "Takeda Ittetsu",
         "Shimizu Kiyoko",
-        "Yachi Hitoka"
+        "Yachi Hitoka",
+        "Oikawa Tooru",
+        "Matsukawa Issei",
+        "Hanamaki Takahiro",
+        "Iwaizumi Hajime",
+        "Yahaba Shigeru",
+        "Watari Shinji",
+        "Kindaichi Yuutaro",
+        "Kunimi Akira",
+        "Kyotani Kentaro"
     ]
 }

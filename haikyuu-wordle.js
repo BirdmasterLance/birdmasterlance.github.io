@@ -1,6 +1,9 @@
 
-var todayCharacterName = 'Sawamura Daichi';
+var todayCharacterName = 'Iwaizumi Hajime';
 var todayCharacter;
+
+var testVar = 'test';
+var numGuesses = 0;
 
 // Get the character that matches the quert
 // from a list of character names
@@ -59,6 +62,11 @@ async function getResults(suggestion) {
 // When a character is selected, compare them to today's character
 // And give the player information so they can guess again
 function checkCharacter(character) {
+    
+    // Increment the number of guesses for stat keeping
+    numGuesses += 1;
+    console.log(numGuesses);
+    
     var trueMatch = true;
 
     // Clear out the textbox
@@ -66,97 +74,80 @@ function checkCharacter(character) {
     searchBox.value = "";
 
     let answerRow = jQuery('#answer-row');
-    let rowHTML = '<div class="guess-row justify-center">';
+    let rowHTML = '<div id="row' + numGuesses + '" class="flex flex-row justify-center">';
 
     // Check name
     if(character.name === todayCharacter.name) {
-        rowHTML += '<div class="correct-square">' + character.name + '</div>';
-        console.log('same name');
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 300ms;">' + character.name + '</div>';
     }
     else {
-        rowHTML += '<div class="incorrect-square">' + character.name + '</div>';
-        console.log('different name');
+        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 300ms;">' + character.name + '</div>';
         trueMatch = false;
     }
 
     // Check school
     if(character.gender === todayCharacter.gender) {
-        rowHTML += '<div class="correct-square">' + character.gender + '</div>';
-        console.log('same gender');
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 600ms;">' + character.gender + '</div>';
     }
     else {
-        console.log('different gender');
-        rowHTML += '<div class="incorrect-square">' + character.gender + '</div>';
+        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 600ms;">' + character.gender + '</div>';
         trueMatch = false;
     }
 
     // Check school
     if(character.school === todayCharacter.school) {
-        rowHTML += '<div class="correct-square">' + character.school + '</div>';
-        console.log('same school');
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 900ms;">' + character.school + '</div>';
     }
     else {
-        rowHTML += '<div class="incorrect-square">' + character.school + '</div>';
-        console.log('different school');
+        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 900ms;">' + character.school + '</div>';
         trueMatch = false;
     }
 
     // Check jersey number
     if(character.number === todayCharacter.number) {
-        rowHTML += '<div class="correct-square">' + character.number + '</div>';
-        console.log('same jersey');
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1200ms;">' + character.number + '</div>';
     }
     else if(character.number > todayCharacter.number) {
-        rowHTML += '<div class="incorrect-square">' + character.number + '</div>';
-        console.log('jersey too high');
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms;">' + character.number + ' ▼</div>';
         trueMatch = false;
     }
     else if(character.number < todayCharacter.number) {
-        rowHTML += '<div class="incorrect-square">' + character.number + '</div>';
-        console.log('jersey too low');
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms;">' + character.number + ' ▲</div>';
         trueMatch = false;
     }
 
     // Check position
     if(character.position === todayCharacter.position) {
-        rowHTML += '<div class="correct-square">' + character.position + '</div>';
-        console.log('same position');
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1500ms;">' + character.position + '</div>';
     }
     else {
-        rowHTML += '<div class="incorrect-square">' + character.position + '</div>';
-        console.log('different position');
+        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 1500ms;">' + character.position + '</div>';
         trueMatch = false;
     }
 
     // Check height
     if(character.height === todayCharacter.height) {
-        rowHTML += '<div class="correct-square">' + character.height + '</div>';
-        console.log('same height');
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1800ms;">' + character.height + '</div>';
     }
     else if(character.height > todayCharacter.height) {
-        rowHTML += '<div class="incorrect-square">' + character.height + '</div>';
-        console.log('height too high');
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1800ms;">' + character.height + ' ▼</div>';
         trueMatch = false;
     }
     else if(character.height < todayCharacter.height) {
-        rowHTML += '<div class="incorrect-square">' + character.height + '</div>';
-        console.log('height too low');
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1800ms;">' + character.height + ' ▲</div>';
         trueMatch = false;
     }
 
     // Check year
     if(character.year === todayCharacter.year) {
-        rowHTML += '<div class="correct-square">' + character.year + '</div>';
-        console.log('same year');
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 2100ms;">' + character.year + '</div>';
     }
     else if(character.year > todayCharacter.year) {
-        rowHTML += '<div class="incorrect-square">' + character.year + '</div>';
-        console.log('year too high');
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 2100ms;">' + character.year + ' ▼</div>';
         trueMatch = false;
     }
     else if(character.year < todayCharacter.year) {
-        rowHTML += '<div class="incorrect-square">' + character.year + '</div>';
-        console.log('year too low');
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 2100ms;">' + character.year + ' ▲</div>';
         trueMatch = false;
     }
 
@@ -164,10 +155,129 @@ function checkCharacter(character) {
     rowHTML += "</div>";
     answerRow.append(rowHTML);
 
-    if(trueMatch) { 
-        searchBox.remove();
-        console.log("Correct!!");
+    // Hide the search box until the animation finishes
+    searchBox.style.display = "none";
+    window.setTimeout(function() {
+        searchBox.style.display = "";
+
+        if(trueMatch) { 
+            searchBox.style.display = "none";
+            handleWin();
+        }
+    }, 2800);
+}
+
+function handleWin() {
+    // Add the winning animation to the final row
+    $('#row' + numGuesses).children('div').each(function() {
+        $(this).addClass('animation-square-jump');
+    });
+
+    // Don't do this if we've already won
+    if(localStorage.getItem('hasWon') === 'false') {
+        // Do stuff after that winning animations is done
+        window.setTimeout(function() {
+            showShareButton();
+            localStorage.setItem('hasWon', 'true');
+
+            // TODO: save stats
+
+        }, 2600);
     }
+}
+
+function showShareButton() {
+    const topRow = jQuery('#top-row');
+    let shareBtn = '<div class="share-btn">Share</div>'
+    topRow.append(shareBtn);
+
+    // Generate the text upon clicking the share button
+    $('div.share-btn').click(function() {
+        generateShare();
+    });
+}
+
+// Unfortunately reuses the comparision code from above
+function generateShare() {
+
+    alert('copied!');
+
+    let shareText = "Haikyuu Wordle #\n";
+    //🟥 🟩
+
+    const guesses = JSON.parse(localStorage.getItem('guesses'));
+    guesses.forEach(character => {
+        
+        // Check name
+        if(character.name === todayCharacter.name) {
+            shareText += "🟩";
+        }
+        else {
+            shareText += "🟥";
+        }
+
+        // Check school
+        if(character.gender === todayCharacter.gender) {
+            shareText += "🟩";
+        }
+        else {
+            shareText += "🟥";
+        }
+
+        // Check school
+        if(character.school === todayCharacter.school) {
+            shareText += "🟩";
+        }
+        else {
+            shareText += "🟥";
+        }
+
+        // Check jersey number
+        if(character.number === todayCharacter.number) {
+            shareText += "🟩";
+        }
+        else if(character.number > todayCharacter.number) {
+            shareText += "⬇️";
+        }
+        else if(character.number < todayCharacter.number) {
+            shareText += "⬆️";
+        }
+
+        // Check position
+        if(character.position === todayCharacter.position) {
+            shareText += "🟩";
+        }
+        else {
+            shareText += "🟥";
+        }
+
+        // Check height
+        if(character.height === todayCharacter.height) {
+            shareText += "🟩";
+        }
+        else if(character.height > todayCharacter.height) {
+            shareText += "⬇️";
+        }
+        else if(character.height < todayCharacter.height) {
+            shareText += "⬆️";
+        }
+
+        // Check year
+        if(character.year === todayCharacter.year) {
+            shareText += "🟩";
+        }
+        else if(character.year > todayCharacter.year) {
+            shareText += "⬇️";
+        }
+        else if(character.year < todayCharacter.year) {
+            shareText += "⬆️";
+        }        
+
+        shareText += "\n";
+
+    });
+
+    navigator.clipboard.writeText(shareText);
 }
 
 // Get the data on today's character
@@ -205,4 +315,14 @@ $('#autocomplete').autocomplete({
 if(localStorage.getItem('guesses') === null) {
     var emptyArray = [];
     localStorage.setItem('guesses', JSON.stringify(emptyArray));
+}
+
+if(localStorage.getItem('hasWon') === null) {
+    localStorage.setItem('hasWon', 'false');
+}
+
+// Show the necessary elements if someone has already won and is reloading the page
+if(localStorage.getItem('hasWon') === 'true') {
+    console.log('already won');
+    showShareButton();
 }
