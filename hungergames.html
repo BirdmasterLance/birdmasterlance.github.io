@@ -23,7 +23,7 @@
 		
 		<link rel="icon" href="https://cdn.discordapp.com/attachments/472233427815366656/964021165217706014/unknown.png">
 
-		<script type="text/javascript" src="sortable.js"></script>
+		<script type="text/javascript" src="resources/js/sortable.js"></script>
 	
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700" rel="stylesheet">
 		<style>
@@ -293,7 +293,7 @@
 			display:block;
 			width:18px;
 			height:20px;
-			background:url(resources/skull.png);
+			background:url(resources/images/skull.png);
 			position:absolute;
 			left:-18px;top:-18px;
 		}
@@ -1001,7 +1001,7 @@ G={
 					name=c(freeNames);
 				}
 				
-				let char={team:team,name:name,pic:o.pic||'resources/pikasit.png',gender:gender,tier:tier,perks:[],l:0,id:domN};
+				let char={team:team,name:name,pic:o.pic||'resources/images/pikasit.png',gender:gender,tier:tier,perks:[],l:0,id:domN};
 				l(team.l.id+'-members').insertAdjacentHTML('beforeend','<div class="char hasHandle" id="dom'+domN+'"></div>');
 				char.l=l('dom'+domN);
 				
@@ -1072,7 +1072,7 @@ G={
 				char.l.innerHTML=`
 					<div class="button" style="float:right;" id="${char.l.id+'-delete'}" title="Delete this person">X</div>
 					<div class="handle"></div>
-					<div class="picBox"><img src="${char.pic||'resources/pikasit.png'}" id="${char.l.id+'-pic'}" class="pic"/></div>
+					<div class="picBox"><img src="${char.pic||'resources/images/pikasit.png'}" id="${char.l.id+'-pic'}" class="pic"/></div>
 					Name : <input type="text" size="14" id="${char.l.id+'-name'}" value="${char.name}"/> 
 					<select id="${char.l.id+'-gender'}"><option value="0"${char.gender==0?' selected="selected"':''}>he</option><option value="1"${char.gender==1?' selected="selected"':''}>she</option><option value="2"${char.gender==2?' selected="selected"':''}>they</option><option value="3"${char.gender==3?' selected="selected"':''}>it</option></select> 
 					<select id="${char.l.id+'-tier'}"><option title="Character acts every round." value="0"${char.tier==0?' selected="selected"':''}>main</option><option title="Character only acts every now and then." value="1"${char.tier==1?' selected="selected"':''}>minor</option></select> 
@@ -1087,7 +1087,7 @@ G={
 				});
 				addEvent(l(char.l.id+'-picUrl'),'input',function(){
 					var val=l(char.l.id+'-picUrl').value;
-					if (val.length<3) val='resources/pikasit.png';
+					if (val.length<3) val='resources/images/pikasit.png';
 					l(char.l.id+'-pic').src=val;
 					char.pic=val;
 				});
@@ -1329,7 +1329,7 @@ G={
 					member.gender=INTCLN(parseInt(l(member.l.id+'-gender').options[l(member.l.id+'-gender').selectedIndex].value));
 					member.tier=INTCLN(parseInt(l(member.l.id+'-tier').options[l(member.l.id+'-tier').selectedIndex].value));
 					var val=STRCLN(member.pic);
-					if (val.length<3) member.pic='resources/pikasit.png';
+					if (val.length<3) member.pic='resources/images/pikasit.png';
 					else member.pic=val;
 					var perks=[];
 					var perkN=0;

@@ -4,34 +4,90 @@
         <title>Haikyuu!! Wordle</title>
 		<meta charset="utf-8">
 
-        <link rel="stylesheet" href="haikyuu-wordle.css" />
+        <link rel="stylesheet" href="resources/css/haikyuu-wordle.css" />
+        <!-- CSS Icons -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <!-- Nunito -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito">
+
         <!-- Set up jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <!-- jQuery autocomplete library -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.4.11/jquery.autocomplete.min.js"></script>
+        <!--Chart.js for graphs-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> 
     </head>
 
     <body>
-        <img src="resources/Haikyuu_Logo.png" alt="The Japanese logo for Haikyuu!!"> 
+        <img src="resources/images/Haikyuu_Logo.png" alt="The Japanese logo for Haikyuu!!"> 
         <h1>WORDLE</h1>
+
+        <div class="justify-center flex flex-row">
+            <p id="current-day">Haikyuudle No. </p>
+        </div>
+
+        <div class="justify-center flex flex-row" style="margin-top: 10px; margin-bottom: 20px; width: 100%;">
+            
+            <button id='help-btn' class="option-btn tooltip tooltip-above" data-tip="Help">
+                <span class="material-symbols-outlined">question_mark</span>
+            </button>
+            <dialog id="help-modal" class="modal">
+                <div class="help-modal">
+                    <h1>Help and Info</h1>
+                    <br>
+                    <p>To play, search a Haikyuu character to start guessing!</p>
+                    <br>
+                    <p><b><font color="#bf3838">Red</font></b> is incorrect.</p>
+                    <p><b><font color="#2f7bc7">Blue</font></b> means the correct value is either higher (▲) or lower (▼)</p>
+                    <p><b><font color="#3fa843">Green</font></b> is correct</p>
+                    <p>If a number shows up as <b>-1</b> then that character is either a manager or a coach.</p>
+                    <p>If a number shows up as <b>4</b> then that character is an adult.</p>
+                    <p>After <b>5 guesses</b> the character list will be sorted by position.</p>
+                    <p>After <b>8 guesses</b> the character list will be sorted by school.</p>
+                    <br>
+                    <p>Character information was taken from the Haikyuu Wiki.</p>
+                    <p>Only characters who had information for all categories are included.</p>
+                    <p>Resets at 12:00 AM PST</p>
+                    <br>
+                    <p>Inspired by <a href="https://ak-wordle.three6ty1.dev/" target="_blank">Arknights Wordle!</a></p>
+                    <p>Shoutout to my friend for the name 'Haikyuudle!'</p>
+                </div>
+            </dialog>
+
+            <button id='characters-btn' class="option-btn tooltip tooltip-above" data-tip="Characters">
+                <span class="material-symbols-outlined">sports_volleyball</span>
+            </button>
+            <dialog id="characters-modal" class="modal">
+                <div class="characters-modal">
+                    <h1>List of Characters</h1>
+                    <br>
+                    <div id="character-list"></div>
+                </div>
+            </dialog>
+
+            <button id='stats-btn' class="option-btn tooltip tooltip-above" data-tip="Stats">
+                <span class="material-symbols-outlined">monitoring</span>
+            </button>
+            <dialog id="stats-modal" class="modal">
+                <div class="stats-modal">
+                    <h1>Statistics</h1>
+                    <br>
+                    <p id="total-games">Total Games:</p>
+                    <canvas id="stats-chart" style="width:40px !important; height:18px !important;"></canvas>
+                    <p>Stats are saved locally in browser storage</p>
+                </div>
+            </dialog>
+
+        </div>
     
         <div class="grid justify-center">
-            <div id="top-row" class="justify-center">
+            <div id="top-row" class="justify-center" style="height: fit-content; grid-column-start: 1; grid-row-start: 1;">
                 <input placeholder="Enter a player's name" class=" autocomplete-searchbox" id="autocomplete" value="" />
             </div>
-            <div id="answer-row">
-                <div class="flex flex-row justify-center">
-                    <div class="square">Name</div>
-                    <div class="square">Gender</div>
-                    <div class="square">School</div>
-                    <div class="square">Number</div>
-                    <div class="square">Position</div>
-                    <div class="square">Height</div>
-                    <div class="square">Year</div>
-                </div>
+            <div id="answer-row" class="flex-column" style="top: 60px; position: relative; grid-column-start: 1; grid-row-start: 1;">
             </div>
         </div>
 
-        <script src="haikyuu-wordle.js"></script>
+        <script src="resources/js/haikyuu-wordle.js"></script>
     </body>
 </html>
