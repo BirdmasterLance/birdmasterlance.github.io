@@ -343,7 +343,7 @@ async function getTodayCharacter() {
     let date = new Date();
     let currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
 
-    await fetch('http://localhost:3000/test', {method:'GET'})
+    await fetch('https://birdmasterlance-github-io.onrender.com/test', {method:'GET'})
     .then(async function(response){
         if (response.ok) {
             const json = await response.json();
