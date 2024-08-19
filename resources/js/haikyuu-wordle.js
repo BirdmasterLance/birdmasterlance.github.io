@@ -339,14 +339,13 @@ function generateShare(discord) {
         else if(character.year < todayCharacter.year) {
             shareText += "⬆️";
         }        
-
-        if(!discord) {
-            shareText += '\nhttps://birdmasterlance.github.io/haikyuudle';
-        }
-
         shareText += "\n";
 
     });
+    
+    if(!discord) {
+        shareText += '\nhttps://birdmasterlance.github.io/haikyuudle';
+    }
 
     navigator.clipboard.writeText(shareText);
 }
