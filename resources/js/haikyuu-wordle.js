@@ -253,7 +253,7 @@ function generateShare() {
     alert('Copied to clipboard!');
 
     // TODO: add hyperlink to site
-    let shareText = `[Haikyuudle]<https://birdmasterlance.github.io/haikyuudle> #${currentGame}\n`;
+    let shareText = `[Haikyuudle](<https://birdmasterlance.github.io/haikyuudle>) #${currentGame}\n`;
     if(numGuesses > 1) {
         shareText += `Correctly guessed in ${numGuesses} tries.\n`;
     }
