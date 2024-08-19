@@ -238,22 +238,32 @@ function handleWin() {
 
 function showShareButton() {
     const topRow = jQuery('#top-row');
-    let shareBtn = '<div class="share-btn">Share</div>'
+    let shareBtn = '<div><div class="share-btn" id="discord-btn">Share (Discord)</div><div class="share-btn" id="no-discord-btn">Share (Other)</div></div>'
     topRow.append(shareBtn);
 
     // Generate the text upon clicking the share button
-    $('div.share-btn').click(function() {
-        generateShare();
+    $('#discord-btn').click(function() {
+        generateShare(true);
+    });
+
+    $('#no-discord-btn').click(function() {
+        generateShare(false);
     });
 }
 
 // Unfortunately reuses the comparision code from above
-function generateShare() {
+function generateShare(discord) {
 
     alert('Copied to clipboard!');
 
     // TODO: add hyperlink to site
-    let shareText = `[Haikyuudle](<https://birdmasterlance.github.io/haikyuudle>) #${currentGame}\n`;
+    let shareText = '';
+    if(discord) {
+        shareText = `[Haikyuudle!!](<https://birdmasterlance.github.io/haikyuudle>) #${currentGame}\n`;
+    } else {
+        shareText = `Haikyuudle!! #${currentGame}\n`;
+    }
+
     if(numGuesses > 1) {
         shareText += `Correctly guessed in ${numGuesses} tries.\n`;
     }
@@ -329,6 +339,10 @@ function generateShare() {
         else if(character.year < todayCharacter.year) {
             shareText += "⬆️";
         }        
+
+        if(!discord) {
+            shareText += '\nhttps://birdmasterlance.github.io/haikyuudle';
+        }
 
         shareText += "\n";
 
