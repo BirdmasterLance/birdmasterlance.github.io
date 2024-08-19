@@ -344,7 +344,7 @@ function generateShare(discord) {
     });
     
     if(!discord) {
-        shareText += '\nhttps://birdmasterlance.github.io/haikyuudle';
+        shareText += 'https://birdmasterlance.github.io/haikyuudle';
     }
 
     navigator.clipboard.writeText(shareText);
