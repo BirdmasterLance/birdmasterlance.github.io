@@ -219,14 +219,6 @@ async function checkCharacter(character) {
 
         if(trueMatch) { 
             searchBox.style.display = "none";
-
-            if(document.getElementById('characters-btn').classList.contains('option-update')) {
-                document.getElementById('characters-btn').classList.remove('option-update');
-            }
-            if(document.getElementById('characters-btn').classList.contains('option-update-light')) {
-                document.getElementById('characters-btn').classList.remove('option-update-light');
-            }
-
             handleWin();
         }
     }, 2000);
@@ -261,13 +253,12 @@ function handleWin() {
         }, 2600);
     }
 
-    // const post = fetch("/test", {
-    //     method: "POST",
-    //     headers: {
-    //         "Content-type": "application/json; charset=UTF-8"
-    //     },
-    //     body: JSON.stringify({'response': 'win'})
-    //   });
+    if(document.getElementById('characters-btn').classList.contains('option-update')) {
+        document.getElementById('characters-btn').classList.remove('option-update');
+    }
+    if(document.getElementById('characters-btn').classList.contains('option-update-light')) {
+        document.getElementById('characters-btn').classList.remove('option-update-light');
+    }
 }
 
 function showShareButton() {
