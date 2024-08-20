@@ -219,6 +219,14 @@ async function checkCharacter(character) {
 
         if(trueMatch) { 
             searchBox.style.display = "none";
+
+            if(document.getElementById('characters-btn').classList.contains('option-update')) {
+                document.getElementById('characters-btn').classList.remove('option-update');
+            }
+            if(document.getElementById('characters-btn').classList.contains('option-update-light')) {
+                document.getElementById('characters-btn').classList.remove('option-update-light');
+            }
+
             handleWin();
         }
     }, 2000);
