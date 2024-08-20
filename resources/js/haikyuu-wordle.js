@@ -2,6 +2,7 @@
 var todayCharacter;
 var numGuesses = 0;
 var currentGame = 0;
+var lightMode = false;
 
 // Get the character that matches the quert
 // from a list of character names
@@ -72,22 +73,39 @@ async function checkCharacter(character) {
     let answerRow = jQuery('#answer-row');
 
     if(numGuesses === 1) {
-        answerRow.append(`<div class="flex flex-row justify-center">
-                    <div class="square">Name</div>
-                    <div class="square">Gender</div>
-                    <div class="square">School</div>
-                    <div class="square">Position</div>
-                    <div class="square">Number</div>
-                    <div class="square">Height</div>
-                    <div class="square">Year</div>
-                </div>`);
+        if(lightMode) {
+            answerRow.append(`<div id="category-row" class="flex flex-row justify-center width-auto">
+                <div class="square square-light">Name</div>
+                <div class="square square-light">Gender</div>
+                <div class="square square-light">School</div>
+                <div class="square square-light">Position</div>
+                <div class="square square-light">Number</div>
+                <div class="square square-light">Height</div>
+                <div class="square square-light">Year</div>
+            </div>`);
+        } else {
+            answerRow.append(`<div id="category-row" class="flex flex-row justify-center width-auto">
+                <div class="square">Name</div>
+                <div class="square">Gender</div>
+                <div class="square">School</div>
+                <div class="square">Position</div>
+                <div class="square">Number</div>
+                <div class="square">Height</div>
+                <div class="square">Year</div>
+            </div>`);
+        }
     }
 
     else if(numGuesses === 5) {
+        if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
+        else document.getElementById('characters-btn').classList.add('option-update');
         setupCharacterList(2);
     }
 
     else if(numGuesses === 8) {
+        if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
+        else document.getElementById('characters-btn').classList.add('option-update');
+
         const response = await fetch('./resources/json/haikyuu-characters.json');
         const json = await response.json();
         teams = json['teamNames'];
@@ -104,8 +122,12 @@ async function checkCharacter(character) {
             setupCharacterList(3, this.value);
         }, false)
     }
+    else {
+        if(document.getElementById('characters-btn').classList.contains('option-update')) document.getElementById('characters-btn').classList.remove('option-update');
+        if(document.getElementById('characters-btn').classList.contains('option-update-light')) document.getElementById('characters-btn').classList.remove('option-update-light');
+    }
 
-    let rowHTML = '<div id="row' + numGuesses + '" class="flex flex-row justify-center">';
+    let rowHTML = '<div id="row' + numGuesses + '" class="flex flex-row justify-center width-auto">';
 
     // Check name
     if(character.name === todayCharacter.name) {
@@ -184,7 +206,11 @@ async function checkCharacter(character) {
 
     // Add guess row onto the page
     rowHTML += "</div>";
-    answerRow.append(rowHTML);
+
+
+    $('#category-row').after(rowHTML);
+
+    // answerRow.append(rowHTML);
 
     // Hide the search box until the animation finishes
     searchBox.style.display = "none";
@@ -273,8 +299,8 @@ function generateShare(discord) {
     //🟥 🟩
 
     const guesses = JSON.parse(localStorage.getItem('guesses'));
-    guesses.forEach(character => {
-        
+    for(let i = guesses.length-1; i >= 0; i--) {
+        let character = guesses[i];
         // Check name
         if(character.name === todayCharacter.name) {
             shareText += "🟩";
@@ -340,8 +366,7 @@ function generateShare(discord) {
             shareText += "⬆️";
         }        
         shareText += "\n";
-
-    });
+    }
     
     if(!discord) {
         shareText += 'https://birdmasterlance.github.io/haikyuudle';
@@ -377,7 +402,7 @@ async function getTodayCharacter() {
             }
 
             // Set date after all the checks for the server's current date
-            localStorage.setItem('lastPlayed', currentDate);
+            localStorage.setItem('lastPlayed', json.currentDate);
         }
     });
 }
@@ -395,74 +420,145 @@ function setUpChart() {
 
     $('#total-games').text('Total Games: ' + totalGames);
 
-    const statsChart = new Chart("stats-chart", {
-        type: "horizontalBar",
-        data: {
-            labels: xValues,
-            datasets: [{
-                backgroundColor: ['white','white','white','white','white','white','white'],
-                data: yValues
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            scales: {
-                x: [{
-                    border: {
-                      color: 'red'
-                    }
-                }],
-                y: [{
-                    border: {
-                      color: 'red'
-                    }
-                }],
-                xAxes: [{
-                    display: false,
-                    gridLines: { 
-                        color: "#453827" 
-                    },
-                    ticks: {
-                        stepSize: 1,
-                        fontColor: "#FFFFFF"
-                    }
-                }],
-                yAxes: [{
-                    barPercentage: 1,
-                    gridLines: { 
-                        color: "#453827" 
-                    },
-                    ticks: {
-                        fontColor: "#FFFFFF"
-                    }
+    if(lightMode) {
+        const statsChart = new Chart("stats-chart", {
+            type: "horizontalBar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    backgroundColor: ['black','black','black','black','black','black','black'],
+                    data: yValues
                 }]
             },
-            legend: {
-                display: false
-            },
-            tooltips: {
-                callbacks: {
-                    llabelColor: function(context) {
-                        return {
-                            borderColor: 'rgb(0, 0, 255)',
-                            backgroundColor: 'rgb(255, 0, 0)',
-                            borderWidth: 2,
-                            borderDash: [2, 2],
-                            borderRadius: 2,
-                            padding: 20,
-                        };
-                    },
-                    labelTextColor: function(context) {
-                        return '#ffffff';
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: [{
+                        border: {
+                          color: 'red'
+                        }
+                    }],
+                    y: [{
+                        border: {
+                          color: 'red'
+                        }
+                    }],
+                    xAxes: [{
+                        display: false,
+                        gridLines: { 
+                            color: "#453827" 
+                        },
+                        ticks: {
+                            stepSize: 1,
+                            fontColor: "#000000"
+                        }
+                    }],
+                    yAxes: [{
+                        barPercentage: 1,
+                        gridLines: { 
+                            color: "#453827" 
+                        },
+                        ticks: {
+                            fontColor: "#000000"
+                        }
+                    }]
+                },
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    callbacks: {
+                        llabelColor: function(context) {
+                            return {
+                                borderColor: 'rgb(0, 0, 255)',
+                                backgroundColor: 'rgb(255, 0, 0)',
+                                borderWidth: 2,
+                                borderDash: [2, 2],
+                                borderRadius: 2,
+                                padding: 20,
+                            };
+                        },
+                        labelTextColor: function(context) {
+                            return '#ffffff';
+                        }
                     }
+                },
+                hover: {
+                    mode: null
                 }
-            },
-            hover: {
-                mode: null
             }
-        }
-    });
+        });   
+    } else {
+        const statsChart = new Chart("stats-chart", {
+            type: "horizontalBar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    backgroundColor: ['white','white','white','white','white','white','white'],
+                    data: yValues
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: [{
+                        border: {
+                          color: 'red'
+                        }
+                    }],
+                    y: [{
+                        border: {
+                          color: 'red'
+                        }
+                    }],
+                    xAxes: [{
+                        display: false,
+                        gridLines: { 
+                            color: "#453827" 
+                        },
+                        ticks: {
+                            stepSize: 1,
+                            fontColor: "#FFFFFF"
+                        }
+                    }],
+                    yAxes: [{
+                        barPercentage: 1,
+                        gridLines: { 
+                            color: "#453827" 
+                        },
+                        ticks: {
+                            fontColor: "#FFFFFF"
+                        }
+                    }]
+                },
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    callbacks: {
+                        llabelColor: function(context) {
+                            return {
+                                borderColor: 'rgb(0, 0, 255)',
+                                backgroundColor: 'rgb(255, 0, 0)',
+                                borderWidth: 2,
+                                borderDash: [2, 2],
+                                borderRadius: 2,
+                                padding: 20,
+                            };
+                        },
+                        labelTextColor: function(context) {
+                            return '#ffffff';
+                        }
+                    }
+                },
+                hover: {
+                    mode: null
+                }
+            }
+        });
+    }
 
 }
 
@@ -473,17 +569,30 @@ function setupModal() {
     });
     
     $('#characters-btn').click(function() {
+        if(document.getElementById('characters-btn').classList.contains('option-update')) document.getElementById('characters-btn').classList.remove('option-update');
+        if(document.getElementById('characters-btn').classList.contains('option-update-light')) document.getElementById('characters-btn').classList.remove('option-update-light');
         $('#characters-modal').css('display', 'block');
+        $('.characters-modal').scrollTop(0);
     });
     
     $('#stats-btn').click(function() {
         $('#stats-modal').css('display', 'block');
     });
 
+    $('#news-btn').click(function() {
+        localStorage.setItem('checkedNews', true);
+        if(document.getElementById('news-btn').classList.contains('option-update')) document.getElementById('news-btn').classList.remove('option-update');
+        $('#news-modal').css('display', 'block');
+        $('.news-modal').scrollTop(0);
+    });
+
+    $('.light-dark-mode-btn').click(toggleLightMode);
+
     // Get the modal
     var helpModal = document.getElementById("help-modal");
     var charactersModal = document.getElementById("characters-modal");
     var statsModal = document.getElementById("stats-modal");
+    var newsModal = document.getElementById("news-modal");
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
         if(event.target == helpModal) {
@@ -494,6 +603,9 @@ function setupModal() {
         }
         else if (event.target == statsModal) {
             statsModal.style.display = 'none';
+        }
+        else if(event.target == newsModal) {
+            newsModal.style.display = 'none';
         }
     } 
 }
@@ -568,37 +680,43 @@ async function setupCharacterList(mode, school) {
             coaches.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
 
         } else if(mode === 3) {
-            $('#character-list').append('<h2>Wing Spikers</h2>');
+            if(lightMode)  $('#character-list').append('<h2 class="h2-light">Wing Spikers</h2>');
+            else $('#character-list').append('<h2>Wing Spikers</h2>');
             wingSpikers.forEach((characterName) => {
                 if(characterName.school === school) {
                     $('#character-list').append(`<p>${characterName.name}</p>`)
                 }
             });
-            $('#character-list').append('<br><h2>Setters</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Setters</h2>');
+            else $('#character-list').append('<br><h2>Setters</h2>');
             setters.forEach((characterName) => {
                 if(characterName.school === school) {
                     $('#character-list').append(`<p>${characterName.name}</p>`)
                 }
             });
-            $('#character-list').append('<br><h2>Middle Blockers</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Middle Blockers</h2>');
+            else $('#character-list').append('<br><h2>Middle Blockers</h2>');
             middleBlockers.forEach((characterName) => {
                 if(characterName.school === school) {
                     $('#character-list').append(`<p>${characterName.name}</p>`)
                 }
             });
-            $('#character-list').append('<br><h2>Liberos</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Liberos</h2>');
+            else $('#character-list').append('<br><h2>Liberos</h2>');
             liberos.forEach((characterName) => {
                 if(characterName.school === school) {
                     $('#character-list').append(`<p>${characterName.name}</p>`)
                 }
             });
-            $('#character-list').append('<br><h2>Managers</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Managers</h2>');
+            else $('#character-list').append('<br><h2>Managers</h2>');
             managers.forEach((characterName) => {
                 if(characterName.school === school) {
                     $('#character-list').append(`<p>${characterName.name}</p>`)
                 }
             });
-            $('#character-list').append('<br><h2>Coaches</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Coaches</h2>');
+            else $('#character-list').append('<br><h2>Coaches</h2>');
             coaches.forEach((characterName) => {
                 if(characterName.school === school) {
                     $('#character-list').append(`<p>${characterName.name}</p>`)
@@ -606,6 +724,93 @@ async function setupCharacterList(mode, school) {
             });
         }
     }
+}
+
+function toggleLightMode(alreadyLightMode) {
+
+    lightMode = !lightMode;
+    localStorage.setItem('lightMode', lightMode);
+
+    var icon = document.getElementById('light-dark-mode-icon')
+    if(lightMode) {
+        icon.innerHTML = 'dark_mode';
+        if(document.getElementById('news-btn').classList.contains('option-update')) {
+            document.getElementById('news-btn').classList.remove('option-update');
+            document.getElementById('news-btn').classList.add('option-update-light');
+        }
+        if(document.getElementById('characters-btn').classList.contains('option-update')) {
+            document.getElementById('characters-btn').classList.remove('option-update');
+            document.getElementById('characters-btn').classList.add('option-update-light');
+        }
+    } else {
+        icon.innerHTML = 'light_mode';
+        if(document.getElementById('news-btn').classList.contains('option-update-light')) {
+            document.getElementById('news-btn').classList.remove('option-update-light');
+            document.getElementById('news-btn').classList.add('option-update');
+        }
+        if(document.getElementById('characters-btn').classList.contains('option-update-light')) {
+            document.getElementById('characters-btn').classList.remove('option-update-light');
+            document.getElementById('characters-btn').classList.add('option-update');
+        }
+    }
+
+    
+
+    document.body.classList.toggle('body-light');
+    document.getElementById('autocomplete').classList.toggle('input-light');
+
+    const h1Elements = document.getElementsByTagName('h1');
+    for(let i = 0; i < h1Elements.length; i++) {
+        h1Elements.item(i).classList.toggle('h1-light');
+    }
+    const h2Elements = document.getElementsByTagName('h2');
+    for(let i = 0; i < h2Elements.length; i++) {
+        h2Elements.item(i).classList.toggle('h2-light');
+    }
+    const pElements = document.getElementsByTagName('p');
+    for(let i = 0; i < pElements.length; i++) {
+        pElements.item(i).classList.toggle('p-light');
+    }
+    const squareElements = document.getElementsByClassName('square');
+    for(let i = 0; i < squareElements.length; i++) {
+        squareElements.item(i).classList.toggle('square-light');
+    }
+    const optElements = document.getElementsByClassName('option-btn');
+    for(let i = 0; i < optElements.length; i++) {
+        optElements.item(i).classList.toggle('option-btn-light');
+    }
+    
+    const suggElements = document.getElementsByClassName('autocomplete-suggestions');
+    for(let i = 0; i < suggElements.length; i++) {
+        suggElements.item(i).classList.toggle('autocomplete-suggestions-light');
+    }
+    const selElements = document.getElementsByClassName('autocomplete-selected');
+    for(let i = 0; i < selElements.length; i++) {
+        selElements.item(i).classList.toggle('autocomplete-selected-light');
+    }
+
+    const helpElements = document.getElementsByClassName('help-modal');
+    for(let i = 0; i < helpElements.length; i++) {
+        helpElements.item(i).classList.toggle('help-modal-light');
+    }
+    const charsElements = document.getElementsByClassName('characters-modal');
+    for(let i = 0; i < charsElements.length; i++) {
+        charsElements.item(i).classList.toggle('characters-modal-light');
+    }
+    const statsElements = document.getElementsByClassName('stats-modal');
+    for(let i = 0; i < statsElements.length; i++) {
+        statsElements.item(i).classList.toggle('stats-modal-light');
+    }
+    const newsElements = document.getElementsByClassName('news-modal');
+    for(let i = 0; i < newsElements.length; i++) {
+        newsElements.item(i).classList.toggle('news-modal-light');
+    }
+    const ldmElements = document.getElementsByClassName('light-dark-mode-btn');
+    for(let i = 0; i < ldmElements.length; i++) {
+        ldmElements.item(i).classList.toggle('light-dark-mode-btn-light');
+    }
+
+    setUpChart();
 }
 
 // jQuery autocomplete library
@@ -637,6 +842,27 @@ if(localStorage.getItem('hasWon') === 'true') {
     showShareButton();
 } else {
     $('.share-btn').remove();
+}
+
+if(localStorage.getItem('lightMode') === null) {
+    localStorage.setItem('lightMode', false);
+}
+if(localStorage.getItem('lightMode') === 'true') {
+    toggleLightMode();
+    lightMode = true;
+    localStorage.setItem('lightMode', true);
+}
+
+if(localStorage.getItem('checkedNews') === null) {
+    localStorage.setItem('checkedNews', false);
+}
+if(localStorage.getItem('checkedNews') === 'true') {
+    if(document.getElementById('news-btn').classList.contains('option-update')) document.getElementById('news-btn').classList.remove('option-update');
+    if(document.getElementById('news-btn').classList.contains('option-update-light')) document.getElementById('news-btn').classList.remove('option-update-light');
+}
+else {
+    if(lightMode) document.getElementById('news-btn').classList.add('option-update-light');
+    else document.getElementById('news-btn').classList.add('option-update');
 }
 
 getTodayCharacter();

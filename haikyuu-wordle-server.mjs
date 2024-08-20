@@ -5,7 +5,7 @@ import fs from "fs";
 import readline from "readline";
 
 let currentDate;
-let currentGame = 0;
+let currentGame = 1;
 let numWinners = 0;
 let todayCharacter;
 let characterData;
@@ -38,7 +38,7 @@ app.listen(port, () => {
 });
 
 // Reset the stats for the day
-const resetDay = schedule.scheduleJob('* * 0 * * *', () => {
+const resetDay = schedule.scheduleJob('0 0 * * *', () => {
     let date = new Date();
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     currentGame++;
