@@ -5,7 +5,7 @@ import fs from "fs";
 import readline from "readline";
 
 let currentDate;
-let currentGame = 2;
+let currentGame = 1;
 let numWinners = 0;
 let todayCharacter;
 let characterData;
