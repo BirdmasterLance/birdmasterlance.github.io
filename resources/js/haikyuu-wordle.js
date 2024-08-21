@@ -387,12 +387,19 @@ async function getTodayCharacter() {
             todayCharacter = json.character;
             currentGame = json.currentGame;
 
+            if(json.version !== localStorage.getItem('version')) {
+                if(lightMode) document.getElementById('news-btn').classList.add('option-update-light');
+                else document.getElementById('news-btn').classList.add('option-update');
+                localStorage.getItem('version', json.version);
+            }
+
             $('#current-day').append(` ${json.currentGame}`);
             // $('#current-winners').append(`${json.numWinners} have guessed correctly today`);
 
             if(localStorage.getItem('lastPlayed') !== json.currentDate) {
                 localStorage.setItem('guesses', JSON.stringify([]));
                 localStorage.setItem('hasWon', false);
+                $('.share-btn').remove();
             } else {
                 const guesses = JSON.parse(localStorage.getItem('guesses'));
                 guesses.forEach(character => {
@@ -420,7 +427,7 @@ function setUpChart() {
     $('#total-games').text('Total Games: ' + totalGames);
 
     if(lightMode) {
-        const statsChart = new Chart("stats-chart", {
+        const statChart = new Chart("stats-chart", {
             type: "horizontalBar",
             data: {
                 labels: xValues,
@@ -446,7 +453,7 @@ function setUpChart() {
                     xAxes: [{
                         display: false,
                         gridLines: { 
-                            color: "#453827" 
+                            color: "#e3c9be" 
                         },
                         ticks: {
                             stepSize: 1,
@@ -456,7 +463,7 @@ function setUpChart() {
                     yAxes: [{
                         barPercentage: 1,
                         gridLines: { 
-                            color: "#453827" 
+                            color: "#e3c9be" 
                         },
                         ticks: {
                             fontColor: "#000000"
@@ -467,11 +474,16 @@ function setUpChart() {
                     display: false
                 },
                 tooltips: {
+                    titleColor: '#000',
+                    bodyColor: '#000',
+                    footerColor: '#000',
+                    yAlign: 'center',
+                    backgroundColor: '#000000',
                     callbacks: {
-                        llabelColor: function(context) {
+                        labelColor: function(context) {
                             return {
-                                borderColor: 'rgb(0, 0, 255)',
-                                backgroundColor: 'rgb(255, 0, 0)',
+                                // borderColor: 'rgb(255, 255, 255)',
+                                backgroundColor: 'rgb(0, 0, 0)',
                                 borderWidth: 2,
                                 borderDash: [2, 2],
                                 borderRadius: 2,
@@ -486,8 +498,13 @@ function setUpChart() {
                 hover: {
                     mode: null
                 }
+                // layout: {
+                //     padding: {
+                //        bottom: 25  //set that fits the best
+                //     }
+                // }
             }
-        });   
+        });
     } else {
         const statsChart = new Chart("stats-chart", {
             type: "horizontalBar",
@@ -515,7 +532,7 @@ function setUpChart() {
                     xAxes: [{
                         display: false,
                         gridLines: { 
-                            color: "#453827" 
+                            color: "#3b261e" 
                         },
                         ticks: {
                             stepSize: 1,
@@ -525,7 +542,7 @@ function setUpChart() {
                     yAxes: [{
                         barPercentage: 1,
                         gridLines: { 
-                            color: "#453827" 
+                            color: "#3b261e" 
                         },
                         ticks: {
                             fontColor: "#FFFFFF"
@@ -536,11 +553,12 @@ function setUpChart() {
                     display: false
                 },
                 tooltips: {
+                    yAlign: 'center',
                     callbacks: {
-                        llabelColor: function(context) {
+                        labelColor: function(context) {
                             return {
-                                borderColor: 'rgb(0, 0, 255)',
-                                backgroundColor: 'rgb(255, 0, 0)',
+                                // borderColor: 'rgb(0, 0, 255)',
+                                backgroundColor: 'rgb(255, 255, 255)',
                                 borderWidth: 2,
                                 borderDash: [2, 2],
                                 borderRadius: 2,
@@ -579,7 +597,6 @@ function setupModal() {
     });
 
     $('#news-btn').click(function() {
-        localStorage.setItem('checkedNews', true);
         if(document.getElementById('news-btn').classList.contains('option-update')) document.getElementById('news-btn').classList.remove('option-update');
         $('#news-modal').css('display', 'block');
         $('.news-modal').scrollTop(0);
@@ -607,6 +624,13 @@ function setupModal() {
             newsModal.style.display = 'none';
         }
     } 
+
+    $('.close-btn').click(function() {
+        helpModal.style.display = 'none';
+        charactersModal.style.display = 'none';
+        statsModal.style.display = 'none';
+        newsModal.style.display = 'none';
+    });
 }
 
 async function setupCharacterList(mode, school) {
@@ -665,17 +689,23 @@ async function setupCharacterList(mode, school) {
 
         if(mode === 2 || school === '') {
                     
-            $('#character-list').append('<h2>Wing Spikers</h2>');
+            if(lightMode)  $('#character-list').append('<h2 class="h2-light">Wing Spikers</h2>');
+            else $('#character-list').append('<h2>Wing Spikers</h2>');
             wingSpikers.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            $('#character-list').append('<br><h2>Setters</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Setters</h2>');
+            else $('#character-list').append('<br><h2>Setters</h2>');
             setters.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            $('#character-list').append('<br><h2>Middle Blockers</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Middle Blockers</h2>');
+            else $('#character-list').append('<br><h2>Middle Blockers</h2>');
             middleBlockers.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            $('#character-list').append('<br><h2>Liberos</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Liberos</h2>');
+            else $('#character-list').append('<br><h2>Liberos</h2>');
             liberos.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            $('#character-list').append('<br><h2>Managers</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Managers</h2>');
+            else $('#character-list').append('<br><h2>Managers</h2>');
             managers.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            $('#character-list').append('<br><h2>Coaches</h2>');
+            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Coaches</h2>');
+            else $('#character-list').append('<br><h2>Coaches</h2>');
             coaches.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
 
         } else if(mode === 3) {
@@ -753,7 +783,8 @@ function toggleLightMode(alreadyLightMode) {
         }
     }
 
-    
+    $('#stats-chart').remove();
+    $('#total-games').after('<canvas id="stats-chart"></canvas>')
 
     document.body.classList.toggle('body-light');
     document.getElementById('autocomplete').classList.toggle('input-light');
@@ -808,6 +839,10 @@ function toggleLightMode(alreadyLightMode) {
     for(let i = 0; i < ldmElements.length; i++) {
         ldmElements.item(i).classList.toggle('light-dark-mode-btn-light');
     }
+    const closeElements = document.getElementsByClassName('close-btn');
+    for(let i = 0; i < closeElements.length; i++) {
+        closeElements.item(i).classList.toggle('close-btn-light');
+    }
 
     setUpChart();
 }
@@ -850,21 +885,16 @@ if(localStorage.getItem('lightMode') === 'true') {
     toggleLightMode();
     lightMode = true;
     localStorage.setItem('lightMode', true);
+} else {
+    setUpChart();
 }
 
-if(localStorage.getItem('checkedNews') === null) {
-    localStorage.setItem('checkedNews', false);
+if(localStorage.getItem('version') === null) {
+    localStorage.setItem('version', '1.0.0');
 }
-if(localStorage.getItem('checkedNews') === 'true') {
-    if(document.getElementById('news-btn').classList.contains('option-update')) document.getElementById('news-btn').classList.remove('option-update');
-    if(document.getElementById('news-btn').classList.contains('option-update-light')) document.getElementById('news-btn').classList.remove('option-update-light');
-}
-else {
-    if(lightMode) document.getElementById('news-btn').classList.add('option-update-light');
-    else document.getElementById('news-btn').classList.add('option-update');
-}
+
+
 
 getTodayCharacter();
-setUpChart();
 setupModal();
 setupCharacterList(1);

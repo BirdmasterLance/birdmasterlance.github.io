@@ -15,12 +15,16 @@ const app = express();
 const port = 3000;
 
 app.get('/test', cors(), (req, res) => {
-    res.json({currentDate: currentDate, currentGame: currentGame+1, numWinners: numWinners, character: todayCharacter});
+    res.json({currentDate: currentDate, currentGame: currentGame+1, numWinners: numWinners, character: todayCharacter, version: '1.1.1'});
 });
 
 app.post('/test', async (request, response) => {
     const data = await request.body;
     console.log(data);
+});
+
+app.get('/update', cors(), (req, res) => {
+    res.json({newUpdate:'true'});
 });
 
 // Starts the server
@@ -38,7 +42,7 @@ app.listen(port, () => {
 });
 
 // Reset the stats for the day
-const resetDay = schedule.scheduleJob('0 0 * * *', () => {
+const resetDay = schedule.scheduleJob('0 7 * * *', () => {
     let date = new Date();
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     currentGame++;

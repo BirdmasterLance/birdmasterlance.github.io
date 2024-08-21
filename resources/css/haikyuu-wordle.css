@@ -439,12 +439,33 @@ a:visited{
     font-size: 48px;
 }
 
-.light-dark-mode-btn-light {
+.light-dark-mode-light {
     background-color: rgba(0,0,0,0);
     color: #000;
     border: 0;
 }
 
 .light-dark-mode-btn:hover {
+    cursor: pointer;
+}
+
+.close-btn {
+    background-color: rgba(0,0,0,0);
+    color: #fff;
+    border: 0;
+    float: left;
+}
+
+#close-icon {
+    font-size: 24px;
+}
+
+.close-btn-light {
+    background-color: rgba(0,0,0,0);
+    color: #000;
+    border: 0;
+}
+
+.close-btn:hover {
     cursor: pointer;
 }
