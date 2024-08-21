@@ -314,11 +314,23 @@ a:visited{
     .help-modal, .characters-modal, .stats-modal, .news-modal {
         max-width: 35vh;
     }
+
+    .light-dark-mode-btn {
+        position: fixed;
+        bottom: 10px !important;
+        left: 10px !important;
+    }
 }
 
 @media only screen and (min-width: 768px) {
     .help-modal, .characters-modal, .stats-modal, .news-modal {
         max-width: 60vh;
+    }
+
+    .light-dark-mode-btn {
+        position: fixed;
+        top: 10px !important;
+        left: 10px !important;
     }
 }
 
@@ -331,6 +343,7 @@ a:visited{
     margin: 8% auto;
     overflow: scroll;
     overflow-x: hidden;
+    position: relative;
 }
 
 .characters-modal {
@@ -341,6 +354,7 @@ a:visited{
     margin: 8% auto;
     overflow: scroll;
     overflow-x: hidden;
+    position: relative;
 }
 
 .stats-modal {
@@ -351,6 +365,7 @@ a:visited{
     margin: 8% auto;
     color: #fff;
     overflow-x: hidden;
+    position: relative;
 }
 
 .news-modal {
@@ -362,6 +377,7 @@ a:visited{
     color: #fff;
     overflow: scroll;
     overflow-x: hidden;
+    position: relative;
 }
 
 .help-modal-light, .characters-modal-light, .stats-modal-light, .news-modal-light {
@@ -453,11 +469,13 @@ a:visited{
     background-color: rgba(0,0,0,0);
     color: #fff;
     border: 0;
-    float: left;
+    position: absolute;
+    left: 5px;
+    top: 5px;
 }
 
 #close-icon {
-    font-size: 24px;
+    font-size: 60px;
 }
 
 .close-btn-light {
