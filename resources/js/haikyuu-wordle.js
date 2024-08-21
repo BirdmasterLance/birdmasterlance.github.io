@@ -390,7 +390,7 @@ async function getTodayCharacter() {
             if(json.version !== localStorage.getItem('version')) {
                 if(lightMode) document.getElementById('news-btn').classList.add('option-update-light');
                 else document.getElementById('news-btn').classList.add('option-update');
-                localStorage.getItem('version', json.version);
+                localStorage.setItem('version', json.version);
             }
 
             $('#current-day').append(` ${json.currentGame}`);
