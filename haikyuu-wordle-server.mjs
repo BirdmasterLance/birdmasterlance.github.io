@@ -5,7 +5,7 @@ import fs from "fs";
 import readline from "readline";
 
 let currentDate;
-let currentGame = 1;
+let currentGame = 2;
 let numWinners = 0;
 let todayCharacter;
 let characterData;
@@ -23,10 +23,6 @@ app.post('/test', async (request, response) => {
     console.log(data);
 });
 
-app.get('/update', cors(), (req, res) => {
-    res.json({newUpdate:'true'});
-});
-
 // Starts the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
@@ -42,7 +38,12 @@ app.listen(port, () => {
 });
 
 // Reset the stats for the day
-const resetDay = schedule.scheduleJob('0 7 * * *', () => {
+const rule = new schedule.RecurrenceRule();
+rule.hour = 0;
+rule.minute = 0;
+rule.tz = 'US/Pacific';
+
+const resetDay = schedule.scheduleJob(rule, () => {
     let date = new Date();
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     currentGame++;
