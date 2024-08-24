@@ -1,10 +1,11 @@
 import fs from "fs";
 import readline from "readline";
 
-async function shuffleCharacters() {
+async function shuffleCharacters(skipCharacters) {
     
-    console.log("Shuffling character list...")
-    
+    console.log("Shuffling character list...");
+    console.log("Skipping " + skipCharacters);
+
     const fileStream = fs.createReadStream('resources/txt/characters.txt');
     const rl = readline.createInterface({
         input: fileStream,
@@ -13,7 +14,9 @@ async function shuffleCharacters() {
 
     let characters = [];
     for await (const line of rl) {
-        characters.push(line);
+        if(!skipCharacters.includes(line)) {
+            characters.push(line);
+        }
     }
     shuffle(characters);
     
@@ -47,4 +50,4 @@ function shuffle(array) {
   }
 }
 
-shuffleCharacters();
+shuffleCharacters(['Numai Kazuma', 'Izaka Nobuyoshi', 'Bobata Kazuma', 'Shibuya Rikuto', 'Tamagawa Hiroki']);
