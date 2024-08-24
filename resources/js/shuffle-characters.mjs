@@ -50,4 +50,4 @@ function shuffle(array) {
   }
 }
 
-shuffleCharacters(['Numai Kazuma', 'Izaka Nobuyoshi', 'Bobata Kazuma', 'Shibuya Rikuto', 'Tamagawa Hiroki']);
+shuffleCharacters(['Numai Kazuma', 'Izaka Nobuyoshi', 'Bobata Kazuma', 'Shibuya Rikuto']);
