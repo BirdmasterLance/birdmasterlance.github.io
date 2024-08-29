@@ -15,7 +15,7 @@ const app = express();
 const port = 3000;
 
 app.get('/test', cors(), (req, res) => {
-    res.json({currentDate: currentDate, currentGame: currentGame+1, numWinners: numWinners, character: todayCharacter, version: '1.2.0'});
+    res.json({currentDate: currentDate, currentGame: currentGame+1, numWinners: numWinners, character: todayCharacter, version: '1.2.1'});
 });
 
 app.post('/test', async (request, response) => {

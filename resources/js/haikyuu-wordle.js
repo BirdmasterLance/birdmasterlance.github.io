@@ -3,6 +3,7 @@ var todayCharacter;
 var numGuesses = 0;
 var currentGame = 0;
 var lightMode = false;
+var teamSearch;
 
 // Get the character that matches the quert
 // from a list of character names
@@ -108,12 +109,7 @@ async function checkCharacter(character) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
 
-        // Add a listener for the select in character list
-        var selectEvent = document.getElementById("team-search");
-        selectEvent.style.display = 'block';
-        selectEvent.addEventListener('change', function() {
-            setupCharacterList(this.value);
-        }, false)
+        teamSearch.style.display = 'block';
     }
     else if(numGuesses === 9) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
@@ -649,7 +645,14 @@ async function setupModal() {
     });
     select += '</select>'
     $('.characters-modal').find('h1').after(select);
-    $('.team-select').css.display = 'none';
+
+    // Add a listener for the select in character list
+    teamSearch = document.getElementById("team-search");
+    teamSearch.addEventListener('change', function() {
+        setupCharacterList(this.value);
+    }, false)
+
+    teamSearch.style.display = 'none';
 }
 
 async function setupCharacterList(school) {
