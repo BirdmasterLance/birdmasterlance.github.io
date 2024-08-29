@@ -234,6 +234,14 @@ function handleWin() {
         $(this).addClass('animation-square-jump');
     });
 
+    // Ensure that the number of guesses and the guess history match
+    let guesses = JSON.parse(localStorage.getItem('guesses'));
+    var newGuesses = [];
+    for(var i = 0; i < numGuesses; i++) {
+        newGuesses.push(guesses[i]);
+    }
+    localStorage.setItem('guesses', JSON.stringify(newGuesses));
+
     // Don't do this if we've already won
     if(localStorage.getItem('hasWon') === 'false') {
         // Do stuff after that winning animations is done
