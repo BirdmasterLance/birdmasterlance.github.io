@@ -61,7 +61,7 @@ async function getResults(suggestion) {
 // And give the player information so they can guess again
 async function checkCharacter(character) {
 
-    if(numGuesses > JSON.parse(localStorage.getItem('guesses')).length) return;
+    if(numGuesses >= JSON.parse(localStorage.getItem('guesses')).length) return;
     
     // Increment the number of guesses for stat keeping
     numGuesses += 1;
