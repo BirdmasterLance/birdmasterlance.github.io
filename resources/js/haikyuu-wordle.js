@@ -61,7 +61,7 @@ async function getResults(suggestion) {
 // And give the player information so they can guess again
 async function checkCharacter(character) {
 
-    if(numGuesses >= JSON.parse(localStorage.getItem('guesses')).length) return;
+    // if(numGuesses >= JSON.parse(localStorage.getItem('guesses')).length) return;
     
     // Increment the number of guesses for stat keeping
     numGuesses += 1;
@@ -108,18 +108,9 @@ async function checkCharacter(character) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
 
-        const response = await fetch('./resources/json/haikyuu-characters.json');
-        const json = await response.json();
-        teams = json['teamNames'];
-        let select = '<select id="team-search"><option value="">---</option>';
-        teams.forEach((teamName) => {
-            select +=  `<option value="${teamName}">${teamName}</option>`;
-        });
-        select += '</select>'
-        $('.characters-modal').find('h1').after(select);
-
         // Add a listener for the select in character list
         var selectEvent = document.getElementById("team-search");
+        selectEvent.style.display = 'block';
         selectEvent.addEventListener('change', function() {
             setupCharacterList(this.value);
         }, false)
@@ -237,12 +228,12 @@ function handleWin() {
     });
 
     // Ensure that the number of guesses and the guess history match
-    let guesses = JSON.parse(localStorage.getItem('guesses'));
-    var newGuesses = [];
-    for(var i = 0; i < numGuesses; i++) {
-        newGuesses.push(guesses[i]);
-    }
-    localStorage.setItem('guesses', JSON.stringify(newGuesses));
+    // let guesses = JSON.parse(localStorage.getItem('guesses'));
+    // var newGuesses = [];
+    // for(var i = 0; i < numGuesses; i++) {
+    //     newGuesses.push(guesses[i]);
+    // }
+    // localStorage.setItem('guesses', JSON.stringify(newGuesses));
 
     // Don't do this if we've already won
     if(localStorage.getItem('hasWon') === 'false') {
@@ -596,7 +587,7 @@ function setUpChart() {
 
 }
 
-function setupModal() {
+async function setupModal() {
 
     $('#help-btn').click(function() {
         $('#help-modal').css('display', 'block');
@@ -648,6 +639,17 @@ function setupModal() {
         statsModal.style.display = 'none';
         newsModal.style.display = 'none';
     });
+
+    const response = await fetch('./resources/json/haikyuu-characters.json');
+    const json = await response.json();
+    teams = json['teamNames'];
+    let select = '<select id="team-search"><option value="">---</option>';
+    teams.forEach((teamName) => {
+        select +=  `<option value="${teamName}">${teamName}</option>`;
+    });
+    select += '</select>'
+    $('.characters-modal').find('h1').after(select);
+    $('.team-select').css.display = 'none';
 }
 
 async function setupCharacterList(school) {
