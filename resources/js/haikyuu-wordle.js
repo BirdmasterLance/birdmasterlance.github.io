@@ -63,7 +63,7 @@ async function checkCharacter(character) {
     
     // Increment the number of guesses for stat keeping
     numGuesses += 1;
-    
+
     var trueMatch = true;
 
     // Clear out the textbox
@@ -99,10 +99,10 @@ async function checkCharacter(character) {
     else if(numGuesses === 5) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
-        setupCharacterList(2);
+        setupCharacterList('');
     }
 
-    else if(numGuesses === 8) {
+    else if(numGuesses === 7) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
 
@@ -119,10 +119,14 @@ async function checkCharacter(character) {
         // Add a listener for the select in character list
         var selectEvent = document.getElementById("team-search");
         selectEvent.addEventListener('change', function() {
-            setupCharacterList(3, this.value);
+            setupCharacterList(this.value);
         }, false)
     }
-    else {
+    else if(numGuesses === 9) {
+        if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
+        else document.getElementById('characters-btn').classList.add('option-update');
+        setupCharacterList('');
+    } else {
         if(document.getElementById('characters-btn').classList.contains('option-update')) document.getElementById('characters-btn').classList.remove('option-update');
         if(document.getElementById('characters-btn').classList.contains('option-update-light')) document.getElementById('characters-btn').classList.remove('option-update-light');
     }
@@ -633,13 +637,13 @@ function setupModal() {
     });
 }
 
-async function setupCharacterList(mode, school) {
+async function setupCharacterList(school) {
 
     const response = await fetch('./resources/json/haikyuu-characters.json');
     const json = await response.json();
     $('#character-list').text(''); // Reset the text before adding to it
 
-    if(mode === 1) {
+    if(numGuesses < 5) {
         characters = json['characterNames'];
         let sortedCharacters = characters.sort();
         sortedCharacters.forEach((characterName) => {
@@ -656,6 +660,18 @@ async function setupCharacterList(mode, school) {
             }
             return 0;
         });
+        if(numGuesses >= 9) {
+            // Sort again by year
+            characters.sort(function (a, b) {
+                if (a.year < b.year) {
+                  return -1;
+                }
+                if (a.year > b.year) {
+                  return 1;
+                }
+                return 0;
+            });
+        }
 
         // Since we know what position each character is in beforehand, let's just preemptively put it down
         let wingSpikers = [];
@@ -687,70 +703,108 @@ async function setupCharacterList(mode, school) {
             }
         });
 
-        if(mode === 2 || school === '') {
-                    
-            if(lightMode)  $('#character-list').append('<h2 class="h2-light">Wing Spikers</h2>');
-            else $('#character-list').append('<h2>Wing Spikers</h2>');
-            wingSpikers.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Setters</h2>');
-            else $('#character-list').append('<br><h2>Setters</h2>');
-            setters.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Middle Blockers</h2>');
-            else $('#character-list').append('<br><h2>Middle Blockers</h2>');
-            middleBlockers.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Liberos</h2>');
-            else $('#character-list').append('<br><h2>Liberos</h2>');
-            liberos.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Managers</h2>');
-            else $('#character-list').append('<br><h2>Managers</h2>');
-            managers.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Coaches</h2>');
-            else $('#character-list').append('<br><h2>Coaches</h2>');
-            coaches.forEach((characterName) => $('#character-list').append(`<p>${characterName.name}</p>`));
+        var characterListStr = '';
+        var addedCharacter = false;
 
-        } else if(mode === 3) {
-            if(lightMode)  $('#character-list').append('<h2 class="h2-light">Wing Spikers</h2>');
-            else $('#character-list').append('<h2>Wing Spikers</h2>');
+        if(school === '') {
+                    
+            // List of every character without any school sorting
+            characterListStr += lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
+            wingSpikers.forEach((characterName) => {
+                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+            });
+
+            characterListStr += lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
+            setters.forEach((characterName) => {
+                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+            }); 
+
+            characterListStr += lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
+            middleBlockers.forEach((characterName) => {
+                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+            });
+
+            characterListStr += lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
+            liberos.forEach((characterName) => {
+                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+            });
+            
+            characterListStr += lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
+            managers.forEach((characterName) => {
+                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+            });
+
+            characterListStr += lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
+            coaches.forEach((characterName) => {
+                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+            });
+            $('#character-list').append(characterListStr);
+
+        } else {
+            
+            // List of characters per school
+
+            characterListStr = lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
             wingSpikers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    $('#character-list').append(`<p>${characterName.name}</p>`)
+                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    addedCharacter = true;
                 }
             });
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Setters</h2>');
-            else $('#character-list').append('<br><h2>Setters</h2>');
+            if(addedCharacter) $('#character-list').append(characterListStr);
+            addedCharacter = false;
+
+
+            characterListStr = lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
             setters.forEach((characterName) => {
                 if(characterName.school === school) {
-                    $('#character-list').append(`<p>${characterName.name}</p>`)
+                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    addedCharacter = true;
                 }
             });
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Middle Blockers</h2>');
-            else $('#character-list').append('<br><h2>Middle Blockers</h2>');
+            if(addedCharacter) $('#character-list').append(characterListStr);
+            addedCharacter = false;
+
+            characterListStr = lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
             middleBlockers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    $('#character-list').append(`<p>${characterName.name}</p>`)
+                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    addedCharacter = true;
                 }
             });
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Liberos</h2>');
-            else $('#character-list').append('<br><h2>Liberos</h2>');
+            if(addedCharacter) $('#character-list').append(characterListStr);
+            addedCharacter = false;
+
+            characterListStr = lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
             liberos.forEach((characterName) => {
                 if(characterName.school === school) {
-                    $('#character-list').append(`<p>${characterName.name}</p>`)
+                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    addedCharacter = true;
                 }
             });
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Managers</h2>');
-            else $('#character-list').append('<br><h2>Managers</h2>');
+            if(addedCharacter) $('#character-list').append(characterListStr);
+            addedCharacter = false;
+            
+            characterListStr = lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
             managers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    $('#character-list').append(`<p>${characterName.name}</p>`)
+                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    addedCharacter = true;
                 }
             });
-            if(lightMode)  $('#character-list').append('<br><h2 class="h2-light">Coaches</h2>');
-            else $('#character-list').append('<br><h2>Coaches</h2>');
+            if(addedCharacter) $('#character-list').append(characterListStr);
+            addedCharacter = false;
+
+            characterListStr = lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
             coaches.forEach((characterName) => {
                 if(characterName.school === school) {
-                    $('#character-list').append(`<p>${characterName.name}</p>`)
+                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    addedCharacter = true;
                 }
             });
+            if(addedCharacter) $('#character-list').append(characterListStr);
+            addedCharacter = false;
+
         }
     }
 }
