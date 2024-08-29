@@ -240,6 +240,9 @@ function handleWin() {
         window.setTimeout(function() {
             showShareButton();
             localStorage.setItem('hasWon', 'true');
+            const searchBox = document.getElementById('autocomplete');
+            searchBox.value = "";
+            searchBox.remove();
 
             // Save the stats in local storage
             let stats = JSON.parse(localStorage.getItem('statistics'));
@@ -927,6 +930,7 @@ if(localStorage.getItem('statistics') === null) {
 
 // Show the necessary elements if someone has already won and is reloading the page
 if(localStorage.getItem('hasWon') === 'true') {
+    $('.autocomplete').remove();
     showShareButton();
 } else {
     $('.share-btn').remove();
@@ -951,4 +955,8 @@ if(localStorage.getItem('version') === null) {
 
 getTodayCharacter();
 setupModal();
-setupCharacterList(1);
+setupCharacterList();
+
+// Always reset the search box upon reload
+const searchBox = document.getElementById('autocomplete');
+searchBox.value = "";
