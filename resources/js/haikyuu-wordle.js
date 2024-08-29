@@ -60,6 +60,8 @@ async function getResults(suggestion) {
 // When a character is selected, compare them to today's character
 // And give the player information so they can guess again
 async function checkCharacter(character) {
+
+    if(numGuesses > JSON.parse(localStorage.getItem('guesses')).length) return;
     
     // Increment the number of guesses for stat keeping
     numGuesses += 1;
