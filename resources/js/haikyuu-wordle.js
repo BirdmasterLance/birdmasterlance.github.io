@@ -944,6 +944,13 @@ if(localStorage.getItem('hasWon') === null) {
 
 if(localStorage.getItem('statistics') === null) {
     localStorage.setItem('statistics', JSON.stringify({"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,  "8": 0,  "9+": 0}));
+} else {
+    // Anyone with the old stats will need to be updated
+    const stats = JSON.parse(localStorage.getItem('statistics'));
+    if(stats['7+'] !== undefined) {
+        stats['7'] = stats['7+'];
+        delete stats['7+'];
+    }
 }
 
 // Show the necessary elements if someone has already won and is reloading the page
