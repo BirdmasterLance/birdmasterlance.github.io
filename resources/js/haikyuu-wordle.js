@@ -951,7 +951,18 @@ if(localStorage.getItem('statistics') === null) {
         stats['7'] = stats['7+'];
         delete stats['7+'];
         stats['8'] = 0;
-        stats['9'] = 0;
+        stats['9+'] = 0;
+        localStorage.setItem('statistics', JSON.stringify(stats));
+    }
+    if(stats['9'] !== undefined) {
+        stats['9+'] = stats['9'];
+        delete stats['9'];
+        localStorage.setItem('statistics', JSON.stringify(stats));
+    }
+    if(stats['8'] === undefined) {
+        localStorage.setItem('statistics', JSON.stringify(stats));
+    }
+    if(stats['9+' === undefined]) {
         localStorage.setItem('statistics', JSON.stringify(stats));
     }
 }
