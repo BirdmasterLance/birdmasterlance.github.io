@@ -963,7 +963,7 @@ if(localStorage.getItem('statistics') === null) {
         stats['8'] = 0;
         localStorage.setItem('statistics', JSON.stringify(stats));
     }
-    if(stats['9+' === undefined]) {
+    if(stats['9+'] === undefined) {
         stats['9+'] = 0;
         localStorage.setItem('statistics', JSON.stringify(stats));
     }
