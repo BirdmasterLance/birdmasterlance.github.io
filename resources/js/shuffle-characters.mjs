@@ -21,6 +21,9 @@ async function shuffleCharacters(skipCharacters) {
     shuffle(characters);
     
     let randomizedCharacters = '';
+    skipCharacters.forEach((charName) => {
+        randomizedCharacters += charName + '\n';
+    })
     characters.forEach((character) => {
         randomizedCharacters += character + '\n';
     })
@@ -50,4 +53,16 @@ function shuffle(array) {
   }
 }
 
-shuffleCharacters(['Numai Kazuma', 'Izaka Nobuyoshi', 'Bobata Kazuma', 'Shibuya Rikuto']);
+shuffleCharacters(['Numai Kazuma',
+    'Izaka Nobuyoshi',
+    'Bobata Kazuma',
+    'Shibuya Rikuto',
+    'Kai Ryosei',
+    'Kawatabi Shunki',
+    'Tsuchiyu Arata',
+    'Sakishima Isumi',
+    'Hondo Subaru',
+    'Sasaya Takehito',
+    'Komi Haruki',
+    'Atema Yoshitomo',
+    'Tsukishima Kei']);

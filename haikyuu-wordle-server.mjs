@@ -5,11 +5,11 @@ import fs from "fs";
 import readline from "readline";
 
 let currentDate;
-let currentGame = 10;
+let currentGame = 12;
 let numWinners = 0;
 let todayCharacter;
 let characterData;
-let maxCharacters = 179;
+let maxCharacters = 197;
 
 const app = express();
 const port = 3000;

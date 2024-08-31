@@ -22,7 +22,17 @@
         "Wakutani Minami High",
         "MSBY Black Jackal",
         "Schweiden Adlers",
-        "Argentina National Team"
+        "CA San Juan",
+        "Tachibana Red Falcons",
+        "EJP Raijin",
+        "Azuma Pharmacy Green Rockets",
+        "Japan Railway Warriors",
+        "VC Kanagawa",
+        "DESEO Hornets",
+        "Sendai Frogs",
+        "Hiashi Automotive Lions",
+        "Yotsuya Motor Spirits",
+        "Tigr Ekaterinburg"
     ],
 
     "characterNames": [
@@ -222,13 +232,43 @@
         
         "Heiwajima Toshiro",
         "Hirugami Fukuro",
-        "Nicollas Romero",
+        "Nicolas Romero",
         "Sokolov Tatsuto",
         "Ushijima Wakatoshi (Timeskip)",
         "Hoshiumi Korai (Timeskip)",
         "Kageyama Tobio (Timeskip)",
 
-        "Oikawa Tooru (Timeskip)"
+        "Oikawa Tooru (Timeskip)",
+
+        "Ojiro Aran (Timeskip)",
+        "Hakuba Gao (Timeskip)",
+
+        "Suna Rintaro (Timeskip)",
+        "Washio Tatsuki (Timeskip)",
+        "Komori Motoya (Timeskip)",
+
+        "Kiryu Wakatsu (Timeskip)",
+        "Goshiki Tsutomu (Timeskip)",
+
+        "Hyakuzawa Yudai (Timeskip)",
+
+        "Yamamoto Taketora (Timeskip)",
+
+        "Iizuna Tsukasa (Timeskip)",
+        "Kai Ryosei (Timeskip)",
+
+        "Kyotani Kentaro (Timeskip)",
+        "Tsukishima Kei (Timeskip)",
+        "Koganegawa Kanji (Timeskip)",
+
+        "Yamagata Hayato (Timeskip)",
+
+        "Daisho Suguru (Timeskip)",
+
+        "Ohira Reon (Timeskip)",
+
+        "Yaku Morisuke (Timeskip)"
+
 
     ],
 
@@ -1823,7 +1863,7 @@
             "year": 4
         },
         {
-            "name": "Nicollas Romero",
+            "name": "Nicolas Romero",
             "gender": "Male",
             "school": "Schweiden Adlers",
             "number": 5,
@@ -1871,10 +1911,193 @@
         {
             "name": "Oikawa Tooru (Timeskip)",
             "gender": "Male",
-            "school": "Argentina National Team",
+            "school": "CA San Juan",
             "number": 13,
             "position": "Setter",
             "height": 185.5,
+            "year": 4
+        },
+
+        {
+            "name": "Ojiro Aran (Timeskip)",
+            "gender": "Male",
+            "school": "Tachibana Red Falcons",
+            "number": 7,
+            "position": "Wing Spiker",
+            "height": 186.6,
+            "year": 4
+        },
+        {
+            "name": "Hakuba Gao (Timeskip)",
+            "gender": "Male",
+            "school": "Tachibana Red Falcons",
+            "number": 18,
+            "position": "Middle Blocker",
+            "height": 205.4,
+            "year": 4
+        },
+
+        {
+            "name": "Suna Rintaro (Timeskip)",
+            "gender": "Male",
+            "school": "EJP Raijin",
+            "number": 7,
+            "position": "Middle Blocker",
+            "height": 191,
+            "year": 4
+        },
+        {
+            "name": "Washio Tatsuki (Timeskip)",
+            "gender": "Male",
+            "school": "EJP Raijin",
+            "number": 9,
+            "position": "Middle Blocker",
+            "height": 191.3,
+            "year": 4
+        },
+        {
+            "name": "Komori Motoya (Timeskip)",
+            "gender": "Male",
+            "school": "EJP Raijin",
+            "number": 10,
+            "position": "Libero",
+            "height": 181.1,
+            "year": 4
+        },
+
+        {
+            "name": "Kiryu Wakatsu (Timeskip)",
+            "gender": "Male",
+            "school": "Azuma Pharmacy Green Rockets",
+            "number": 8,
+            "position": "Wing Spiker",
+            "height": 189.4,
+            "year": 4
+        },
+        {
+            "name": "Goshiki Tsutomu (Timeskip)",
+            "gender": "Male",
+            "school": "Azuma Pharmacy Green Rockets",
+            "number": 22,
+            "position": "Wing Spiker",
+            "height": 186.7,
+            "year": 4
+        },
+
+        {
+            "name": "Hyakuzawa Yudai (Timeskip)",
+            "gender": "Male",
+            "school": "Japan Railway Warriors",
+            "number": 22,
+            "position": "Middle Blocker",
+            "height": 204.4,
+            "year": 4
+        },
+
+        {
+            "name": "Hyakuzawa Yudai (Timeskip)",
+            "gender": "Male",
+            "school": "Japan Railway Warriors",
+            "number": 22,
+            "position": "Middle Blocker",
+            "height": 204.4,
+            "year": 4
+        },
+
+        {
+            "name": "Yamamoto Taketora (Timeskip)",
+            "gender": "Male",
+            "school": "VC Kanagawa",
+            "number": 19,
+            "position": "Wing Spiker",
+            "height": 182.4,
+            "year": 4
+        },
+
+        {
+            "name": "Iizuna Tsukasa (Timeskip)",
+            "gender": "Male",
+            "school": "DESEO Hornets",
+            "number": 12,
+            "position": "Setter",
+            "height": 182.4,
+            "year": 4
+        },
+        {
+            "name": "Kai Ryosei (Timeskip)",
+            "gender": "Male",
+            "school": "DESEO Hornets",
+            "number": 14,
+            "position": "Middle Blocker",
+            "height": 193.7,
+            "year": 4
+        },
+
+        {
+            "name": "Kyotani Kentaro (Timeskip)",
+            "gender": "Male",
+            "school": "Sendai Frogs",
+            "number": 16,
+            "position": "Wing Spiker",
+            "height": 180.5,
+            "year": 4
+        },
+        {
+            "name": "Tsukishima Kei (Timeskip)",
+            "gender": "Male",
+            "school": "Sendai Frogs",
+            "number": 17,
+            "position": "Middle Blocker",
+            "height": 195.3,
+            "year": 4
+        },
+        {
+            "name": "Koganegawa Kanji (Timeskip)",
+            "gender": "Male",
+            "school": "Sendai Frogs",
+            "number": 23,
+            "position": "Setter",
+            "height": 195.4,
+            "year": 4
+        },
+
+        {
+            "name": "Yamagata Hayato (Timeskip)",
+            "gender": "Male",
+            "school": "Hiashi Automotive Lions",
+            "number": 17,
+            "position": "Libero",
+            "height": 174.2,
+            "year": 4
+        },
+
+        {
+            "name": "Daisho Suguru (Timeskip)",
+            "gender": "Male",
+            "school": "Yotsuya Motor Spirits",
+            "number": 7,
+            "position": "Wing Spiker",
+            "height": 179.5,
+            "year": 4
+        },
+
+        {
+            "name": "Ohira Reon (Timeskip)",
+            "gender": "Male",
+            "school": "Kiniro Sports Jumpers",
+            "number": 7,
+            "position": "Wing Spiker",
+            "height": 183.2,
+            "year": 4
+        },
+
+        {
+            "name": "Yaku Morisuke (Timeskip)",
+            "gender": "Male",
+            "school": "Tigr Ekaterinburg",
+            "number": 18,
+            "position": "Libero",
+            "height": 167.3,
             "year": 4
         }
     ]

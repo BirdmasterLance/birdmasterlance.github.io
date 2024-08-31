@@ -123,10 +123,13 @@ async function checkCharacter(character) {
     let rowHTML = '<div id="row' + numGuesses + '" class="flex flex-row justify-center width-auto">';
 
     // Check name
-    if(character.name === todayCharacter.name) {
-        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 200ms;">' + character.name + '</div>';
+    var charNameSlice = character.name;
+    if(character.name.includes("(Timeskip)")) {
+        charNameSlice = charNameSlice.slice(0, -11);
     }
-    else {
+    if(character.name === todayCharacter.name || todayCharacter.name.includes(character.name) || charNameSlice === todayCharacter.name) {
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 200ms;">' + character.name + '</div>';
+    } else {
         rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 200ms;">' + character.name + '</div>';
         trueMatch = false;
     }
@@ -243,11 +246,11 @@ function handleWin() {
 
             // Save the stats in local storage
             let stats = JSON.parse(localStorage.getItem('statistics'));
-            if(numGuesses < 7) {
+            if(numGuesses < 9) {
                 stats[numGuesses]++;
                 localStorage.setItem('statistics', JSON.stringify(stats));
             } else {
-                stats['7+']++;
+                stats['9+']++;
                 localStorage.setItem('statistics', JSON.stringify(stats));
             }
 
@@ -436,7 +439,7 @@ function setUpChart() {
             data: {
                 labels: xValues,
                 datasets: [{
-                    backgroundColor: ['black','black','black','black','black','black','black'],
+                    backgroundColor: ['black','black','black','black','black','black','black','black','black'],
                     data: yValues
                 }]
             },
@@ -515,7 +518,7 @@ function setUpChart() {
             data: {
                 labels: xValues,
                 datasets: [{
-                    backgroundColor: ['white','white','white','white','white','white','white'],
+                    backgroundColor: ['white','white','white','white','white','white','white','white','white'],
                     data: yValues
                 }]
             },
@@ -940,7 +943,7 @@ if(localStorage.getItem('hasWon') === null) {
 }
 
 if(localStorage.getItem('statistics') === null) {
-    localStorage.setItem('statistics', JSON.stringify({"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7+": 0}));
+    localStorage.setItem('statistics', JSON.stringify({"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0,  "8": 0,  "9+": 0}));
 }
 
 // Show the necessary elements if someone has already won and is reloading the page
