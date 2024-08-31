@@ -10,12 +10,13 @@ let numWinners = 0;
 let todayCharacter;
 let characterData;
 let maxCharacters = 197;
+let serverVersion = '1.3.0';
 
 const app = express();
 const port = 3000;
 
 app.get('/test', cors(), (req, res) => {
-    res.json({currentDate: currentDate, currentGame: currentGame+1, numWinners: numWinners, character: todayCharacter, version: '1.2.1'});
+    res.json({currentDate: currentDate, currentGame: currentGame+1, numWinners: numWinners, character: todayCharacter, version: serverVersion});
 });
 
 app.post('/test', async (request, response) => {
