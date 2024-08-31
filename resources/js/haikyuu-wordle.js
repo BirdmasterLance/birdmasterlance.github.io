@@ -950,6 +950,8 @@ if(localStorage.getItem('statistics') === null) {
     if(stats['7+'] !== undefined) {
         stats['7'] = stats['7+'];
         delete stats['7+'];
+        stats['8'] = 0;
+        stats['9'] = 0;
         localStorage.setItem('statistics', JSON.stringify(stats));
     }
 }
