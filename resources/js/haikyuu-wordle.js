@@ -960,9 +960,11 @@ if(localStorage.getItem('statistics') === null) {
         localStorage.setItem('statistics', JSON.stringify(stats));
     }
     if(stats['8'] === undefined) {
+        stats['8'] = 0;
         localStorage.setItem('statistics', JSON.stringify(stats));
     }
     if(stats['9+' === undefined]) {
+        stats['9+'] = 0;
         localStorage.setItem('statistics', JSON.stringify(stats));
     }
 }
