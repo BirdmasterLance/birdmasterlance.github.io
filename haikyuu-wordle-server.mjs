@@ -5,12 +5,12 @@ import fs from "fs";
 import readline from "readline";
 
 let currentDate;
-let currentGame = 12;
+let currentGame = 13;
 let numWinners = 0;
 let todayCharacter;
 let characterData;
 let maxCharacters = 197;
-let serverVersion = '1.3.0';
+let serverVersion = '1.3.1';
 
 const app = express();
 const port = 3000;
