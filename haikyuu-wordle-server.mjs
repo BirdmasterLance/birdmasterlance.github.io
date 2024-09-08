@@ -152,7 +152,6 @@ const resetDay = schedule.scheduleJob(rule, () => {
     ];
     winnerJson[strDate + '-normal'] = initValues;
     winnerJson[strDate + '-hard'] = initValues;
-    console.log(winnerJson[strDate]);
 
     fs.writeFile('resources/json/haikyuudle-winners.json', JSON.stringify(winnerJson), (error) => {
         if (error) throw error;
