@@ -6,7 +6,7 @@ import readline from "readline";
 import bodyParser from "body-parser";
 
 let currentDate;
-let currentGame = 19;
+let currentGame = 20;
 let numWinners = 0;
 
 let todayCharacter;
