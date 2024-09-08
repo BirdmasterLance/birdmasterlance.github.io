@@ -788,7 +788,7 @@ async function setupModal() {
     });
 }
 
-async function setupCharacterList(mode, school) {
+async function setupCharacterList(guesses, school) {
 
     const response = await fetch('./resources/json/haikyuu-characters.json');
     const json = await response.json();
@@ -796,7 +796,7 @@ async function setupCharacterList(mode, school) {
 
     let characterNames = mode === 0 ? json['characterNamesNormal'] : json['characterNames'];
 
-    if(mode < 5) {
+    if(guesses < 5) {
         let sortedCharacters = characterNames.sort();
         sortedCharacters.forEach((characterName) => {
             $('#character-list').append(`<p>${characterName}</p>`);
@@ -819,7 +819,7 @@ async function setupCharacterList(mode, school) {
             }
             return 0;
         });
-        if(mode >= 9) {
+        if(guesses >= 9) {
             // Sort again by year
             characters.sort(function (a, b) {
                 if (a.year < b.year) {
@@ -871,7 +871,7 @@ async function setupCharacterList(mode, school) {
             characterListStr += lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
             wingSpikers.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(mode >= 9) {
+                if(guesses >= 9) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -885,7 +885,7 @@ async function setupCharacterList(mode, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
             setters.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(mode >= 9) {
+                if(guesses >= 9) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -899,7 +899,7 @@ async function setupCharacterList(mode, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
             middleBlockers.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(mode >= 9) {
+                if(guesses >= 9) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -913,7 +913,7 @@ async function setupCharacterList(mode, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
             liberos.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(mode >= 9) {
+                if(guesses >= 9) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -927,7 +927,7 @@ async function setupCharacterList(mode, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
             managers.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(mode >= 9) {
+                if(guesses >= 9) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -941,7 +941,7 @@ async function setupCharacterList(mode, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
             coaches.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(mode >= 9) {
+                if(guesses >= 9) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -961,7 +961,7 @@ async function setupCharacterList(mode, school) {
             wingSpikers.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(mode >= 9) {
+                    if(guesses >= 9) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -981,7 +981,7 @@ async function setupCharacterList(mode, school) {
             setters.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(mode >= 9) {
+                    if(guesses >= 9) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -1000,7 +1000,7 @@ async function setupCharacterList(mode, school) {
             middleBlockers.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(mode >= 9) {
+                    if(guesses >= 9) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -1019,7 +1019,7 @@ async function setupCharacterList(mode, school) {
             liberos.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(mode >= 9) {
+                    if(guesses >= 9) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -1038,7 +1038,7 @@ async function setupCharacterList(mode, school) {
             managers.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(mode >= 9) {
+                    if(guesses >= 9) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -1057,7 +1057,7 @@ async function setupCharacterList(mode, school) {
             coaches.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(mode >= 9) {
+                    if(guesses >= 9) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
