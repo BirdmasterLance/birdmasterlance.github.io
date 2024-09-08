@@ -1,12 +1,12 @@
 import fs from "fs";
 import readline from "readline";
 
-async function shuffleCharacters(skipCharacters) {
+async function shuffleCharacters(input, output, skipCharacters) {
     
     console.log("Shuffling character list...");
     console.log("Skipping " + skipCharacters);
 
-    const fileStream = fs.createReadStream('resources/txt/characters.txt');
+    const fileStream = fs.createReadStream(input);
     const rl = readline.createInterface({
         input: fileStream,
         crlfDelay: Infinity
@@ -28,7 +28,7 @@ async function shuffleCharacters(skipCharacters) {
         randomizedCharacters += character + '\n';
     })
     randomizedCharacters = randomizedCharacters.substring(0, randomizedCharacters.length - 1);
-    fs.writeFile('resources/txt/randomized.txt', randomizedCharacters, (error) => {
+    fs.writeFile(output, randomizedCharacters, (error) => {
         if (error) throw error;
     });
 
@@ -53,16 +53,25 @@ function shuffle(array) {
   }
 }
 
-shuffleCharacters(['Numai Kazuma',
-    'Izaka Nobuyoshi',
-    'Bobata Kazuma',
-    'Shibuya Rikuto',
-    'Kai Ryosei',
-    'Kawatabi Shunki',
-    'Tsuchiyu Arata',
-    'Sakishima Isumi',
-    'Hondo Subaru',
-    'Sasaya Takehito',
-    'Komi Haruki',
-    'Atema Yoshitomo',
-    'Tsukishima Kei']);
+const inputHard = 'resources/txt/characters.txt';
+const outputHard = 'resources/txt/randomized.txt';
+
+const inputNormal = 'resources/txt/charactersNormal.txt';
+const outputNormal = 'resources/txt/randomizedNormal.txt'
+
+// shuffleCharacters(inputNormal, outputNormal, 
+//     ['Numai Kazuma',
+//     'Izaka Nobuyoshi',
+//     'Bobata Kazuma',
+//     'Shibuya Rikuto',
+//     'Kai Ryosei',
+//     'Kawatabi Shunki',
+//     'Tsuchiyu Arata',
+//     'Sakishima Isumi',
+//     'Hondo Subaru',
+//     'Sasaya Takehito',
+//     'Komi Haruki',
+//     'Atema Yoshitomo',
+//     'Tsukishima Kei']);
+
+shuffleCharacters(inputNormal, outputNormal, ['','','','','','','','','','','','','','','','','','','']);

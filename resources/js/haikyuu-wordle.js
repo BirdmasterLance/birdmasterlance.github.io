@@ -1,16 +1,19 @@
 
 var todayCharacter;
+var todayNormalCharacter;
 var numGuesses = 0;
 var currentGame = 0;
 var lightMode = false;
-var teamSearch;
+var mode = 0; // 0 = normal mode, 1 = hard mode
+var chart;
+var timeouts = [];
 
 // Get the character that matches the quert
 // from a list of character names
 async function getCharacters(query, doneCallback) {
     const response = await fetch('./resources/json/haikyuu-characters.json');
     const json = await response.json();
-    characters = json['characterNames'];
+    let characters = mode === 0 ? json['characterNamesNormal'] : json['characterNames'];
 
     var results = [];
     // For each name in the list, we are going to compare it to the query
@@ -49,9 +52,18 @@ async function getResults(suggestion) {
         if(character.name === suggestion.data) {
 
             // Save guess into localStorage
-            let guesses = JSON.parse(localStorage.getItem('guesses'));
-            guesses.push(character);
-            localStorage.setItem('guesses', JSON.stringify(guesses));
+            switch (mode) {
+                case 0:
+                    let guessesNormal = JSON.parse(localStorage.getItem('guessesNormal'));
+                    guessesNormal.push(character);
+                    localStorage.setItem('guessesNormal', JSON.stringify(guessesNormal));
+                    break;
+                case 1:
+                    let guesses = JSON.parse(localStorage.getItem('guesses'));
+                    guesses.push(character);
+                    localStorage.setItem('guesses', JSON.stringify(guesses));
+                    break;
+            }
 
             checkCharacter(character) 
         }
@@ -62,8 +74,8 @@ async function getResults(suggestion) {
 // And give the player information so they can guess again
 async function checkCharacter(character) {
 
-    // if(numGuesses >= JSON.parse(localStorage.getItem('guesses')).length) return;
-    
+    checkToCharacter = mode === 0 ? todayNormalCharacter : todayCharacter;
+
     // Increment the number of guesses for stat keeping
     numGuesses += 1;
 
@@ -102,19 +114,18 @@ async function checkCharacter(character) {
     else if(numGuesses === 5) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
-        setupCharacterList('');
+        setupCharacterList(numGuesses, '');
     }
 
     else if(numGuesses === 7) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
-
-        teamSearch.style.display = 'block';
+        setupTeamSearchList(numGuesses, '');
     }
     else if(numGuesses === 9) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
-        setupCharacterList('');
+        setupCharacterList(numGuesses, '');
     } else {
         if(document.getElementById('characters-btn').classList.contains('option-update')) document.getElementById('characters-btn').classList.remove('option-update');
         if(document.getElementById('characters-btn').classList.contains('option-update-light')) document.getElementById('characters-btn').classList.remove('option-update-light');
@@ -127,7 +138,7 @@ async function checkCharacter(character) {
     if(character.name.includes("(Timeskip)")) {
         charNameSlice = charNameSlice.slice(0, -11);
     }
-    if(character.name === todayCharacter.name || todayCharacter.name.includes(character.name) || charNameSlice === todayCharacter.name) {
+    if(character.name === checkToCharacter.name || checkToCharacter.name.includes(character.name) || charNameSlice === checkToCharacter.name) {
         rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 200ms;">' + character.name + '</div>';
     } else {
         rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 200ms;">' + character.name + '</div>';
@@ -135,7 +146,7 @@ async function checkCharacter(character) {
     }
 
     // Check school
-    if(character.gender === todayCharacter.gender) {
+    if(character.gender === checkToCharacter.gender) {
         rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 400ms;">' + character.gender + '</div>';
     }
     else {
@@ -144,7 +155,7 @@ async function checkCharacter(character) {
     }
 
     // Check school
-    if(character.school === todayCharacter.school) {
+    if(character.school === checkToCharacter.school) {
         rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 600ms;">' + character.school + '</div>';
     }
     else {
@@ -153,7 +164,7 @@ async function checkCharacter(character) {
     }
 
     // Check position
-    if(character.position === todayCharacter.position) {
+    if(character.position === checkToCharacter.position) {
         rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 800ms;">' + character.position + '</div>';
     }
     else {
@@ -162,40 +173,56 @@ async function checkCharacter(character) {
     }
 
     // Check jersey number
-    if(character.number === todayCharacter.number) {
-        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + character.number + ' ✓</div>';
+    if(character.number === checkToCharacter.number) {
+        if(character.number === -1) {
+            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + 'N/A' + ' ✓</div>';
+        } else {
+            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + character.number + ' ✓</div>';
+        }
     }
-    else if(character.number > todayCharacter.number) {
+    else if(character.number > checkToCharacter.number) {
         rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + character.number + ' ▼</div>';
         trueMatch = false;
     }
-    else if(character.number < todayCharacter.number) {
-        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + character.number + ' ▲</div>';
+    else if(character.number < checkToCharacter.number) {
+        if(character.number === -1) {
+            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + 'N/A' + ' ▲</div>';
+        } else {
+            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + character.number + ' ▲</div>';
+        }
         trueMatch = false;
     }
 
     // Check height
-    if(character.height === todayCharacter.height) {
+    if(character.height === checkToCharacter.height) {
         rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.height + ' ✓</div>';
     }
-    else if(character.height > todayCharacter.height) {
+    else if(character.height > checkToCharacter.height) {
         rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.height + ' ▼</div>';
         trueMatch = false;
     }
-    else if(character.height < todayCharacter.height) {
+    else if(character.height < checkToCharacter.height) {
         rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.height + ' ▲</div>';
         trueMatch = false;
     }
 
     // Check year
-    if(character.year === todayCharacter.year) {
-        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + character.year + ' ✓</div>';
+    if(character.year === checkToCharacter.year) {
+        if(character.year === 4) {
+            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + 'Adult' + ' ✓</div>';
+        } else {
+            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + character.year + ' ✓</div>';
+        }
     }
-    else if(character.year > todayCharacter.year) {
-        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + character.year + ' ▼</div>';
+    else if(character.year > checkToCharacter.year) {
+        if(character.year === 4) {
+            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + 'Adult' + ' ▼</div>';
+        } else {
+            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + character.year + ' ▼</div>';
+        }
         trueMatch = false;
     }
-    else if(character.year < todayCharacter.year) {
+    else if(character.year < checkToCharacter.year) {
         rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + character.year + ' ▲</div>';
         trueMatch = false;
     }
@@ -209,15 +236,36 @@ async function checkCharacter(character) {
     // answerRow.append(rowHTML);
 
     // Hide the search box until the animation finishes
-    searchBox.style.display = "none";
-    window.setTimeout(function() {
-        searchBox.style.display = "";
+    // searchBox.style.display = "none";
+
+    if(trueMatch) { 
+        setupCharacterList(0);
+        searchBox.style.display = "none";
+
+        // Update character list if player has won both modes
+        if(localStorage.getItem('hasWon') === 'true' && localStorage.getItem('hasWonNormal') === 'true') {
+            setupCharacterList(10, '');
+            setupTeamSearchList(10, '');
+        } 
+    }
+
+    searchBox.disabled = true;
+    searchBox.classList.add('disabled');
+    searchBox.placeholder = '';
+    let timeout = window.setTimeout(function() {
+        // searchBox.style.display = "";
 
         if(trueMatch) { 
             searchBox.style.display = "none";
             handleWin();
         }
+
+        searchBox.disabled = false;
+        searchBox.classList.remove('disabled');
+        searchBox.placeholder = 'Search a character here';
+
     }, 2000);
+    timeouts.push(timeout);
 }
 
 function handleWin() {
@@ -234,17 +282,18 @@ function handleWin() {
     // }
     // localStorage.setItem('guesses', JSON.stringify(newGuesses));
 
-    // Don't do this if we've already won
-    if(localStorage.getItem('hasWon') === 'false') {
-        // Do stuff after that winning animations is done
-        window.setTimeout(function() {
-            showShareButton();
-            localStorage.setItem('hasWon', 'true');
-            const searchBox = document.getElementById('autocomplete');
-            searchBox.value = "";
-            searchBox.remove();
+    // Do stuff after that winning animations is done
+    let timeout = window.setTimeout(function() {
+        showShareButton();
+        // const searchBox = document.getElementById('autocomplete');
+        // searchBox.value = "";
+        // searchBox.style.display = 'none';
 
+        $('#autocomplete').hide();
+
+        if(mode === 1 && localStorage.getItem('hasWon') === 'false') {
             // Save the stats in local storage
+            localStorage.setItem('hasWon', 'true');
             let stats = JSON.parse(localStorage.getItem('statistics'));
             if(numGuesses < 9) {
                 stats[numGuesses]++;
@@ -254,11 +303,53 @@ function handleWin() {
                 localStorage.setItem('statistics', JSON.stringify(stats));
             }
 
-            // Update the stats chart
-            setUpChart();
-            
-        }, 2600);
-    }
+            // Send winner data back to server
+            fetch("http://localhost:3000/receive", {
+                method: "POST",
+                body: JSON.stringify({
+                  mode: 'hard',
+                  numGuesses: numGuesses
+                }),
+                headers: {
+                  "Content-type": "application/json; charset=UTF-8"
+                }
+              });
+                // .then((response) => response.json())
+                // .then((json) => console.log(json));
+        }
+
+        if(mode === 0 && localStorage.getItem('hasWonNormal') === 'false') {
+            // Save the stats in local storage
+            localStorage.setItem('hasWonNormal', 'true');
+            let stats = JSON.parse(localStorage.getItem('statisticsNormal'));
+            if(numGuesses < 9) {
+                stats[numGuesses]++;
+                localStorage.setItem('statisticsNormal', JSON.stringify(stats));
+            } else {
+                stats['9+']++;
+                localStorage.setItem('statisticsNormal', JSON.stringify(stats));
+            }
+
+            // Send winner data back to server
+            fetch("http://localhost:3000/receive", {
+                method: "POST",
+                body: JSON.stringify({
+                  mode: 'normal',
+                  numGuesses: numGuesses
+                }),
+                headers: {
+                  "Content-type": "application/json; charset=UTF-8"
+                }
+              });
+            //     // .then((response) => response.json())
+            //     // .then((json) => console.log(json));
+        }
+
+        updateChart();
+        
+    }, 2600);
+    timeouts.push(timeout);
+
 
     if(document.getElementById('characters-btn').classList.contains('option-update')) {
         document.getElementById('characters-btn').classList.remove('option-update');
@@ -266,12 +357,16 @@ function handleWin() {
     if(document.getElementById('characters-btn').classList.contains('option-update-light')) {
         document.getElementById('characters-btn').classList.remove('option-update-light');
     }
+    
 }
 
 function showShareButton() {
-    const topRow = jQuery('#top-row');
-    let shareBtn = '<div><div class="share-btn" id="discord-btn">Share (Discord)</div><div class="share-btn" id="no-discord-btn">Share (Other)</div></div>'
-    topRow.append(shareBtn);
+
+    if($('.share-btn').length === 0) {
+        const topRow = jQuery('#top-row');
+        let shareBtn = '<div><div class="share-btn" id="discord-btn">Share (Discord)</div><div class="share-btn" id="no-discord-btn">Share (Other)</div></div>'
+        topRow.append(shareBtn);
+    }
 
     // Generate the text upon clicking the share button
     $('#discord-btn').click(function() {
@@ -288,12 +383,27 @@ function generateShare(discord) {
 
     alert('Copied to clipboard!');
 
-    // TODO: add hyperlink to site
     let shareText = '';
+
+    //🟥 🟩
+
+    let checkToCharacter;
+    let guesses;
+    let haikyuudleMode = '';
+    if(mode === 0) {
+        checkToCharacter = todayNormalCharacter;
+        guesses = JSON.parse(localStorage.getItem('guessesNormal'));
+        haikyuudleMode = 'Haikyuudle!!';
+    } else if (mode === 1) {
+        checkToCharacter = todayCharacter;
+        guesses = JSON.parse(localStorage.getItem('guesses'));
+        haikyuudleMode = 'Haikyuudle!! (Hard Mode)';
+    }
+
     if(discord) {
-        shareText = `[Haikyuudle!!](<https://birdmasterlance.github.io/haikyuudle>) #${currentGame}\n`;
+        shareText = `[${haikyuudleMode}](<https://birdmasterlance.github.io/haikyuudle>) #${currentGame}\n`;
     } else {
-        shareText = `Haikyuudle!! #${currentGame}\n`;
+        shareText = `${haikyuudleMode} #${currentGame}\n`;
     }
 
     if(numGuesses > 1) {
@@ -302,13 +412,11 @@ function generateShare(discord) {
     else {
         shareText += `Correctly guessed in 1 try!\n`;
     }
-    //🟥 🟩
 
-    const guesses = JSON.parse(localStorage.getItem('guesses'));
     for(let i = guesses.length-1; i >= 0; i--) {
         let character = guesses[i];
         // Check name
-        if(character.name === todayCharacter.name) {
+        if(character.name === checkToCharacter.name) {
             shareText += "🟩";
         }
         else {
@@ -316,7 +424,7 @@ function generateShare(discord) {
         }
 
         // Check school
-        if(character.gender === todayCharacter.gender) {
+        if(character.gender === checkToCharacter.gender) {
             shareText += "🟩";
         }
         else {
@@ -324,7 +432,7 @@ function generateShare(discord) {
         }
 
         // Check school
-        if(character.school === todayCharacter.school) {
+        if(character.school === checkToCharacter.school) {
             shareText += "🟩";
         }
         else {
@@ -332,7 +440,7 @@ function generateShare(discord) {
         }
 
         // Check position
-        if(character.position === todayCharacter.position) {
+        if(character.position === checkToCharacter.position) {
             shareText += "🟩";
         }
         else {
@@ -340,35 +448,35 @@ function generateShare(discord) {
         }
 
         // Check jersey number
-        if(character.number === todayCharacter.number) {
+        if(character.number === checkToCharacter.number) {
             shareText += "🟩";
         }
-        else if(character.number > todayCharacter.number) {
+        else if(character.number > checkToCharacter.number) {
             shareText += "⬇️";
         }
-        else if(character.number < todayCharacter.number) {
+        else if(character.number < checkToCharacter.number) {
             shareText += "⬆️";
         }
 
         // Check height
-        if(character.height === todayCharacter.height) {
+        if(character.height === checkToCharacter.height) {
             shareText += "🟩";
         }
-        else if(character.height > todayCharacter.height) {
+        else if(character.height > checkToCharacter.height) {
             shareText += "⬇️";
         }
-        else if(character.height < todayCharacter.height) {
+        else if(character.height < checkToCharacter.height) {
             shareText += "⬆️";
         }
 
         // Check year
-        if(character.year === todayCharacter.year) {
+        if(character.year === checkToCharacter.year) {
             shareText += "🟩";
         }
-        else if(character.year > todayCharacter.year) {
+        else if(character.year > checkToCharacter.year) {
             shareText += "⬇️";
         }
-        else if(character.year < todayCharacter.year) {
+        else if(character.year < checkToCharacter.year) {
             shareText += "⬆️";
         }        
         shareText += "\n";
@@ -384,14 +492,13 @@ function generateShare(discord) {
 // Get the data on today's character
 async function getTodayCharacter() {
 
-    let date = new Date();
-    let currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
-
-    await fetch('https://birdmasterlance-github-io.onrender.com/test', {method:'GET'})
+    // https://birdmasterlance-github-io.onrender.com/test
+    await fetch('http://localhost:3000/test', {method:'GET'})
     .then(async function(response){
         if (response.ok) {
             const json = await response.json();
             todayCharacter = json.character;
+            todayNormalCharacter = json. normalModeCharacter;
             currentGame = json.currentGame;
 
             if(json.version !== localStorage.getItem('version')) {
@@ -408,10 +515,20 @@ async function getTodayCharacter() {
                 localStorage.setItem('hasWon', false);
                 $('.share-btn').remove();
             } else {
-                const guesses = JSON.parse(localStorage.getItem('guesses'));
-                guesses.forEach(character => {
-                    checkCharacter(character);
-                });
+                switch (mode) {
+                    case 0:
+                        const guessesNormal = JSON.parse(localStorage.getItem('guessesNormal'));
+                        guessesNormal.forEach(character => {
+                            checkCharacter(character);
+                        });
+                        break;
+                    case 1:
+                        const guesses = JSON.parse(localStorage.getItem('guesses'));
+                        guesses.forEach(character => {
+                            checkCharacter(character);
+                        });
+                        break;
+                }
             }
 
             // Set date after all the checks for the server's current date
@@ -424,7 +541,7 @@ function setUpChart() {
     let xValues = [];
     let yValues = [];
     let totalGames = 0;
-    const stats = JSON.parse(localStorage.getItem('statistics'));
+    const stats = JSON.parse(localStorage.getItem('statisticsNormal'));
     for(var i in stats) {
         xValues.push(i);
         yValues.push(stats[i]);
@@ -433,156 +550,187 @@ function setUpChart() {
 
     $('#total-games').text('Total Games: ' + totalGames);
 
-    if(lightMode) {
-        const statChart = new Chart("stats-chart", {
-            type: "horizontalBar",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    backgroundColor: ['black','black','black','black','black','black','black','black','black'],
-                    data: yValues
+    chart = new Chart("stats-chart", {
+        type: "horizontalBar",
+        data: {
+            labels: xValues,
+            datasets: [{
+                backgroundColor: ['#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff','#fff'],
+                data: yValues
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                x: [{
+                    border: {
+                      color: 'red'
+                    }
+                }],
+                y: [{
+                    border: {
+                      color: 'red'
+                    }
+                }],
+                xAxes: [{
+                    display: false,
+                    gridLines: { 
+                        color: '#3b261e'
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        fontColor: "#fff"
+                    }
+                }],
+                yAxes: [{
+                    barPercentage: 1,
+                    gridLines: { 
+                        color: '#3b261e'
+                    },
+                    ticks: {
+                        fontColor: "#fff"
+                    }
                 }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    x: [{
-                        border: {
-                          color: 'red'
-                        }
-                    }],
-                    y: [{
-                        border: {
-                          color: 'red'
-                        }
-                    }],
-                    xAxes: [{
-                        display: false,
-                        gridLines: { 
-                            color: "#e3c9be" 
-                        },
-                        ticks: {
-                            stepSize: 1,
-                            fontColor: "#000000"
-                        }
-                    }],
-                    yAxes: [{
-                        barPercentage: 1,
-                        gridLines: { 
-                            color: "#e3c9be" 
-                        },
-                        ticks: {
-                            fontColor: "#000000"
-                        }
-                    }]
-                },
-                legend: {
-                    display: false
-                },
-                tooltips: {
-                    titleColor: '#000',
-                    bodyColor: '#000',
-                    footerColor: '#000',
-                    yAlign: 'center',
-                    backgroundColor: '#000000',
-                    callbacks: {
-                        labelColor: function(context) {
-                            return {
-                                // borderColor: 'rgb(255, 255, 255)',
-                                backgroundColor: 'rgb(0, 0, 0)',
-                                borderWidth: 2,
-                                borderDash: [2, 2],
-                                borderRadius: 2,
-                                padding: 20,
-                            };
-                        },
-                        labelTextColor: function(context) {
-                            return '#ffffff';
-                        }
-                    }
-                },
-                hover: {
-                    mode: null
-                }
-                // layout: {
-                //     padding: {
-                //        bottom: 25  //set that fits the best
-                //     }
-                // }
-            }
-        });
-    } else {
-        const statsChart = new Chart("stats-chart", {
-            type: "horizontalBar",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    backgroundColor: ['white','white','white','white','white','white','white','white','white'],
-                    data: yValues
-                }]
+            legend: {
+                display: false
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    x: [{
-                        border: {
-                          color: 'red'
-                        }
-                    }],
-                    y: [{
-                        border: {
-                          color: 'red'
-                        }
-                    }],
-                    xAxes: [{
-                        display: false,
-                        gridLines: { 
-                            color: "#3b261e" 
-                        },
-                        ticks: {
-                            stepSize: 1,
-                            fontColor: "#FFFFFF"
-                        }
-                    }],
-                    yAxes: [{
-                        barPercentage: 1,
-                        gridLines: { 
-                            color: "#3b261e" 
-                        },
-                        ticks: {
-                            fontColor: "#FFFFFF"
-                        }
-                    }]
-                },
-                legend: {
-                    display: false
-                },
-                tooltips: {
-                    yAlign: 'center',
-                    callbacks: {
-                        labelColor: function(context) {
-                            return {
-                                // borderColor: 'rgb(0, 0, 255)',
-                                backgroundColor: 'rgb(255, 255, 255)',
-                                borderWidth: 2,
-                                borderDash: [2, 2],
-                                borderRadius: 2,
-                                padding: 20,
-                            };
-                        },
-                        labelTextColor: function(context) {
-                            return '#ffffff';
-                        }
+            tooltips: {
+                titleColor: '#fff',
+                bodyColor: '#fff',
+                footerColor: '#fff',
+                yAlign: 'center',
+                backgroundColor: '#000',
+                callbacks: {
+                    labelColor: function(context) {
+                        return {
+                            // borderColor: 'rgb(255, 255, 255)',
+                            backgroundColor: '#fff',
+                            borderWidth: 2,
+                            borderDash: [2, 2],
+                            borderRadius: 2,
+                            padding: 20,
+                        };
+                    },
+                    labelTextColor: function(context) {
+                        return '#ffffff';
                     }
-                },
-                hover: {
-                    mode: null
                 }
+            },
+            hover: {
+                mode: null
             }
-        });
+            // layout: {
+            //     padding: {
+            //        bottom: 25  //set that fits the best
+            //     }
+            // }
+        }
+    });
+}
+
+function updateChart() {
+
+    let xValues = [];
+    let yValues = [];
+    let totalGames = 0;
+    let stats;
+    if (mode === 0) {
+        stats = JSON.parse(localStorage.getItem('statisticsNormal'));
+    } else if(mode === 1) {
+        stats = JSON.parse(localStorage.getItem('statistics'));
     }
+
+    for(var i in stats) {
+        xValues.push(i);
+        yValues.push(stats[i]);
+        totalGames += stats[i];
+    }
+
+    $('#total-games').text('Total Games: ' + totalGames);
+
+    let chartColor = '#fff';
+    let lineColor = '#3b261e';
+    let tooltipColor = '#000';
+    if(lightMode) {
+        chartColor = '#000';
+        lineColor = '#e3c9be';
+        tooltipCOlor = '#fff';
+    }
+
+    chart.data.datasets[0].data = yValues;
+
+    chart.options = {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+            x: [{
+                border: {
+                  color: 'red'
+                }
+            }],
+            y: [{
+                border: {
+                  color: 'red'
+                }
+            }],
+            xAxes: [{
+                display: false,
+                gridLines: { 
+                    color: lineColor
+                },
+                ticks: {
+                    stepSize: 1,
+                    fontColor: chartColor
+                }
+            }],
+            yAxes: [{
+                barPercentage: 1,
+                gridLines: { 
+                    color: lineColor
+                },
+                ticks: {
+                    fontColor: chartColor
+                }
+            }]
+        },
+        legend: {
+            display: false
+        },
+        tooltips: {
+            titleColor: chartColor,
+            bodyColor: chartColor,
+            footerColor: chartColor,
+            yAlign: 'center',
+            backgroundColor: tooltipColor,
+            callbacks: {
+                labelColor: function(context) {
+                    return {
+                        // borderColor: 'rgb(255, 255, 255)',
+                        backgroundColor: chartColor,
+                        borderWidth: 2,
+                        borderDash: [2, 2],
+                        borderRadius: 2,
+                        padding: 20,
+                    };
+                },
+                labelTextColor: function(context) {
+                    return '#ffffff';
+                }
+            }
+        },
+        hover: {
+            mode: null
+        }
+        // layout: {
+        //     padding: {
+        //        bottom: 25  //set that fits the best
+        //     }
+        // }
+    }
+
+    chart.update();
 
 }
 
@@ -600,6 +748,7 @@ async function setupModal() {
     });
     
     $('#stats-btn').click(function() {
+        updateChart();
         $('#stats-modal').css('display', 'block');
     });
 
@@ -638,40 +787,30 @@ async function setupModal() {
         statsModal.style.display = 'none';
         newsModal.style.display = 'none';
     });
-
-    const response = await fetch('./resources/json/haikyuu-characters.json');
-    const json = await response.json();
-    teams = json['teamNames'];
-    let select = '<select id="team-search"><option value="">---</option>';
-    teams.forEach((teamName) => {
-        select +=  `<option value="${teamName}">${teamName}</option>`;
-    });
-    select += '</select>'
-    $('.characters-modal').find('h1').after(select);
-
-    // Add a listener for the select in character list
-    teamSearch = document.getElementById("team-search");
-    teamSearch.addEventListener('change', function() {
-        setupCharacterList(this.value);
-    }, false)
-
-    teamSearch.style.display = 'none';
 }
 
-async function setupCharacterList(school) {
+async function setupCharacterList(mode, school) {
 
     const response = await fetch('./resources/json/haikyuu-characters.json');
     const json = await response.json();
     $('#character-list').text(''); // Reset the text before adding to it
 
-    if(numGuesses < 5) {
-        characters = json['characterNames'];
-        let sortedCharacters = characters.sort();
+    let characterNames = mode === 0 ? json['characterNamesNormal'] : json['characterNames'];
+
+    if(mode < 5) {
+        let sortedCharacters = characterNames.sort();
         sortedCharacters.forEach((characterName) => {
             $('#character-list').append(`<p>${characterName}</p>`);
         });
+        $('#team-search').remove();
     } else {
-        characters = json['characterData'];
+        let characterData = json['characterData'];
+        let characters = [];
+        characterData.forEach((character) => { 
+            if(characterNames.includes(character.name)) {
+                characters.push(character);
+            }
+        });
         characters.sort(function (a, b) {
             if (a.name < b.name) {
               return -1;
@@ -681,7 +820,7 @@ async function setupCharacterList(school) {
             }
             return 0;
         });
-        if(numGuesses >= 9) {
+        if(mode >= 9) {
             // Sort again by year
             characters.sort(function (a, b) {
                 if (a.year < b.year) {
@@ -732,32 +871,86 @@ async function setupCharacterList(school) {
             // List of every character without any school sorting
             characterListStr += lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
             wingSpikers.forEach((characterName) => {
-                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                characterListStr +=  `<p>${characterName.name}`;
+                if(mode >= 9) {
+                    if(characterName.year === 4) {
+                        characterListStr += `, Adult</p>`;
+                    } else {
+                        characterListStr += `, Year ${characterName.year}</p>`;
+                    }
+                } else {
+                    characterListStr += '</p>'
+                }
             });
 
             characterListStr += lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
             setters.forEach((characterName) => {
-                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                characterListStr +=  `<p>${characterName.name}`;
+                if(mode >= 9) {
+                    if(characterName.year === 4) {
+                        characterListStr += `, Adult</p>`;
+                    } else {
+                        characterListStr += `, Year ${characterName.year}</p>`;
+                    }
+                } else {
+                    characterListStr += '</p>'
+                }
             }); 
 
             characterListStr += lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
             middleBlockers.forEach((characterName) => {
-                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                characterListStr +=  `<p>${characterName.name}`;
+                if(mode >= 9) {
+                    if(characterName.year === 4) {
+                        characterListStr += `, Adult</p>`;
+                    } else {
+                        characterListStr += `, Year ${characterName.year}</p>`;
+                    }
+                } else {
+                    characterListStr += '</p>'
+                }
             });
 
             characterListStr += lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
             liberos.forEach((characterName) => {
-                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                characterListStr +=  `<p>${characterName.name}`;
+                if(mode >= 9) {
+                    if(characterName.year === 4) {
+                        characterListStr += `, Adult</p>`;
+                    } else {
+                        characterListStr += `, Year ${characterName.year}</p>`;
+                    }
+                } else {
+                    characterListStr += '</p>'
+                }
             });
             
             characterListStr += lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
             managers.forEach((characterName) => {
-                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                characterListStr +=  `<p>${characterName.name}`;
+                if(mode >= 9) {
+                    if(characterName.year === 4) {
+                        characterListStr += `, Adult</p>`;
+                    } else {
+                        characterListStr += `, Year ${characterName.year}</p>`;
+                    }
+                } else {
+                    characterListStr += '</p>'
+                }
             });
 
             characterListStr += lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
             coaches.forEach((characterName) => {
-                characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                characterListStr +=  `<p>${characterName.name}`;
+                if(mode >= 9) {
+                    if(characterName.year === 4) {
+                        characterListStr += `, Adult</p>`;
+                    } else {
+                        characterListStr += `, Year ${characterName.year}</p>`;
+                    }
+                } else {
+                    characterListStr += '</p>'
+                }
             });
             $('#character-list').append(characterListStr);
 
@@ -768,7 +961,16 @@ async function setupCharacterList(school) {
             characterListStr = lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
             wingSpikers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    characterListStr +=  `<p>${characterName.name}`;
+                    if(mode >= 9) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p>`;
+                        }
+                    } else {
+                        characterListStr += '</p>'
+                    }
                     addedCharacter = true;
                 }
             });
@@ -779,7 +981,16 @@ async function setupCharacterList(school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
             setters.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    characterListStr +=  `<p>${characterName.name}`;
+                    if(mode >= 9) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p>`;
+                        }
+                    } else {
+                        characterListStr += '</p>'
+                    }
                     addedCharacter = true;
                 }
             });
@@ -789,7 +1000,16 @@ async function setupCharacterList(school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
             middleBlockers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    characterListStr +=  `<p>${characterName.name}`;
+                    if(mode >= 9) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p>`;
+                        }
+                    } else {
+                        characterListStr += '</p>'
+                    }
                     addedCharacter = true;
                 }
             });
@@ -799,7 +1019,16 @@ async function setupCharacterList(school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
             liberos.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    characterListStr +=  `<p>${characterName.name}`;
+                    if(mode >= 9) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p>`;
+                        }
+                    } else {
+                        characterListStr += '</p>'
+                    }
                     addedCharacter = true;
                 }
             });
@@ -809,7 +1038,16 @@ async function setupCharacterList(school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
             managers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    characterListStr +=  `<p>${characterName.name}`;
+                    if(mode >= 9) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p>`;
+                        }
+                    } else {
+                        characterListStr += '</p>'
+                    }
                     addedCharacter = true;
                 }
             });
@@ -819,7 +1057,16 @@ async function setupCharacterList(school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
             coaches.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr += numGuesses < 9 ? `<p>${characterName.name}</p>` : `<p>${characterName.name}, Year ${characterName.year}</p>`;
+                    characterListStr +=  `<p>${characterName.name}`;
+                    if(mode >= 9) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p>`;
+                        }
+                    } else {
+                        characterListStr += '</p>'
+                    }
                     addedCharacter = true;
                 }
             });
@@ -828,6 +1075,35 @@ async function setupCharacterList(school) {
 
         }
     }
+}
+
+async function setupTeamSearchList() {
+    
+    // Get teams based on mode
+    const response = await fetch('./resources/json/haikyuu-characters.json');
+    const json = await response.json();
+    let teams = mode === 0 ? json['teamNamesNormal'] : json['teamNames'];
+
+    // Create select list HTML
+    let select = '<select id="team-search"><option value="">All</option>';
+    teams.forEach((teamName) => {
+        select +=  `<option value="${teamName}">${teamName}</option>`;
+    });
+    select += '</select>'
+    
+    // If team filter already exists, remove it
+    if($('#team-search').length === 0) {
+        $('#team-search').remove();
+    }
+
+    // Add team filter to the modal
+    $('.characters-modal').find('h1').after(select);
+    
+    // Add a listener for the select in character list
+    teamSearch = document.getElementById("team-search");
+    teamSearch.addEventListener('change', function() {
+        setupCharacterList(numGuesses, this.value);
+    }, false);
 }
 
 function toggleLightMode(alreadyLightMode) {
@@ -858,8 +1134,8 @@ function toggleLightMode(alreadyLightMode) {
         }
     }
 
-    $('#stats-chart').remove();
-    $('#total-games').after('<canvas id="stats-chart"></canvas>')
+    // $('#stats-chart').remove();
+    // $('#total-games').after('<canvas id="stats-chart"></canvas>')
 
     document.body.classList.toggle('body-light');
     document.getElementById('autocomplete').classList.toggle('input-light');
@@ -918,8 +1194,10 @@ function toggleLightMode(alreadyLightMode) {
     for(let i = 0; i < closeElements.length; i++) {
         closeElements.item(i).classList.toggle('close-btn-light');
     }
-
-    setUpChart();
+    const tooltipElements = document.getElementsByClassName('tooltip');
+    for(let i = 0; i < tooltipElements.length; i++) {
+        tooltipElements.item(i).classList.toggle('tooltip-light');
+    }
 }
 
 // jQuery autocomplete library
@@ -937,9 +1215,16 @@ if(localStorage.getItem('guesses') === null) {
     var emptyArray = [];
     localStorage.setItem('guesses', JSON.stringify(emptyArray));
 }
+if(localStorage.getItem('guessesNormal') === null) {
+    var emptyArray = [];
+    localStorage.setItem('guessesNormal', JSON.stringify(emptyArray));
+}
 
 if(localStorage.getItem('hasWon') === null) {
     localStorage.setItem('hasWon', 'false');
+}
+if(localStorage.getItem('hasWonNormal') === null) {
+    localStorage.setItem('hasWonNormal', 'false');
 }
 
 if(localStorage.getItem('statistics') === null) {
@@ -969,9 +1254,13 @@ if(localStorage.getItem('statistics') === null) {
     }
 }
 
+if(localStorage.getItem('statisticsNormal') === null) {
+    localStorage.setItem('statisticsNormal', JSON.stringify({"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9+": 0}));
+}
+
 // Show the necessary elements if someone has already won and is reloading the page
-if(localStorage.getItem('hasWon') === 'true') {
-    $('.autocomplete').remove();
+if(localStorage.getItem('hasWon') === 'true' || localStorage.getItem('hasWonNormal') === 'true') {
+    $('.autocomplete').hide();
     showShareButton();
 } else {
     $('.share-btn').remove();
@@ -980,23 +1269,65 @@ if(localStorage.getItem('hasWon') === 'true') {
 if(localStorage.getItem('lightMode') === null) {
     localStorage.setItem('lightMode', false);
 }
+
+setUpChart();
 if(localStorage.getItem('lightMode') === 'true') {
     toggleLightMode();
     lightMode = true;
     localStorage.setItem('lightMode', true);
-} else {
-    setUpChart();
 }
-
 if(localStorage.getItem('version') === null) {
     localStorage.setItem('version', '1.0.0');
+    $('#help-modal').css('display', 'block');
+    // If the playe is a first time player, you can do something here
 }
 
+$('#mode-btn').click(function() {
+    mode = mode === 0 ? 1 : 0;
+
+    // Hide and display share and search if necessary
+    let answerRow = document.getElementById('answer-row');
+    answerRow.textContent = '';
+    $('.share-btn').remove();
+    $('#autocomplete').show();
+    $('#autocomplete').prop('disabled', false);
+    $('#autocomplete').prop('placeholder', 'Search a character here');
+    $('#autocomplete').removeClass('disabled');
+
+    for(let i = 0; i < timeouts.length; i++) {
+        clearTimeout(timeouts[i]);
+    }
+
+    // Remove team search when switching modes
+    ($('#team-search')).remove();
+    setupCharacterList(0);
+
+    numGuesses = 0;
+    switch (mode) {
+        case 0:
+            $('#title').text("WORDLE (Normal Mode)");
+            $('#stats-title').text("Statistics (Normal Mode)");
+            const guessesNormal = JSON.parse(localStorage.getItem('guessesNormal'));
+            guessesNormal.forEach(character => {
+                checkCharacter(character);
+            });
+            break;
+        case 1:
+            $('#title').text("WORDLE (Hard Mode)");
+            $('#stats-title').text("Statistics (Hard Mode)");
+            const guesses = JSON.parse(localStorage.getItem('guesses'));
+            guesses.forEach(character => {
+                checkCharacter(character);
+            });
+            break;
+    }
+      
+});
 
 
 getTodayCharacter();
 setupModal();
-setupCharacterList();
+setupCharacterList(0);
 
 // Always reset the search box upon reload
 const searchBox = document.getElementById('autocomplete');

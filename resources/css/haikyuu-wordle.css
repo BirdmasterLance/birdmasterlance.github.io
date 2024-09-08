@@ -96,6 +96,10 @@ a:visited{
     color:blue;
 }
 
+.disabled {
+    cursor: not-allowed;
+}
+
 .justify-center {
     display: flex;
     justify-content: center;
@@ -187,8 +191,8 @@ a:visited{
     display: inline-block;
     font-size: 16px;
     border-radius: 7px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 6px;
+    margin-right: 6px;
 }
 
 .option-btn-light {
@@ -431,6 +435,11 @@ a:visited{
 
     opacity: 0;
     transition: .2s opacity;   
+}
+
+.tooltip-light:before {
+    background: #fff;
+    color:  #000;
 }
 
 .tooltip.tooltip-above:before {
