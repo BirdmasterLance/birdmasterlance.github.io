@@ -120,7 +120,7 @@ async function checkCharacter(character) {
     else if(numGuesses === 7) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
-        setupTeamSearchList(numGuesses, '');
+        setupTeamSearchList(numGuesses);
     }
     else if(numGuesses === 9) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
@@ -245,7 +245,7 @@ async function checkCharacter(character) {
         // Update character list if player has won both modes
         if(localStorage.getItem('hasWon') === 'true' && localStorage.getItem('hasWonNormal') === 'true') {
             setupCharacterList(10, '');
-            setupTeamSearchList(10, '');
+            setupTeamSearchList(10);
         } 
     }
 
@@ -1076,7 +1076,7 @@ async function setupCharacterList(guesses, school) {
     }
 }
 
-async function setupTeamSearchList() {
+async function setupTeamSearchList(guesses) {
     
     // Get teams based on mode
     const response = await fetch('./resources/json/haikyuu-characters.json');
@@ -1101,7 +1101,7 @@ async function setupTeamSearchList() {
     // Add a listener for the select in character list
     teamSearch = document.getElementById("team-search");
     teamSearch.addEventListener('change', function() {
-        setupCharacterList(numGuesses, this.value);
+        setupCharacterList(guesses, this.value);
     }, false);
 }
 
