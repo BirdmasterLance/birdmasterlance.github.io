@@ -241,6 +241,7 @@ async function checkCharacter(character) {
 
     if(trueMatch) { 
         setupCharacterList(0);
+        $('#team-search').remove();
         searchBox.style.display = "none";
 
         // Update character list if player has won both modes
