@@ -6,7 +6,7 @@ import readline from "readline";
 import bodyParser from "body-parser";
 
 let currentDate;
-let currentGame = 21;
+let currentGame = 22;
 let numWinners = 0;
 
 let todayCharacter;
@@ -17,7 +17,7 @@ let todayNormalCharacter;
 let maxCharacters = 197;
 let maxNormalCharacters = 138;
 
-let serverVersion = '1.4.1';
+let serverVersion = '1.4.2';
 
 const app = express();
 const port = 3000;
@@ -47,6 +47,21 @@ app.post('/receive', jsonParser, async (request, response) => {
 
     let date = new Date();
     let currentDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
+
+    if(serverJson[currentDate + '-' + data['mode']] === null || serverJson[currentDate + '-' + data['mode']] === undefined) {
+        const initValues = [
+            {"1": 0},
+            {"2": 0},
+            {"3": 0},
+            {"4": 0},
+            {"5": 0},
+            {"6": 0},
+            {"7": 0},
+            {"8": 0},
+            {"9+": 0}
+        ];
+        serverJson[currentDate + '-' + data['mode']] = initValues;
+    }
 
     const data = await request.body;
     switch(data['numGuesses']) {

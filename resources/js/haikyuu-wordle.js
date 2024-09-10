@@ -111,21 +111,22 @@ async function checkCharacter(character) {
         }
     }
 
-    else if(numGuesses === 5) {
+    else if(numGuesses === 3) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
         setupCharacterList(numGuesses, '');
     }
 
-    else if(numGuesses === 7) {
+    else if(numGuesses === 5) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
         setupTeamSearchList(numGuesses);
     }
-    else if(numGuesses === 9) {
+    else if(numGuesses === 7) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
         setupCharacterList(numGuesses, '');
+        setupTeamSearchList(numGuesses);
     } else {
         if(document.getElementById('characters-btn').classList.contains('option-update')) document.getElementById('characters-btn').classList.remove('option-update');
         if(document.getElementById('characters-btn').classList.contains('option-update-light')) document.getElementById('characters-btn').classList.remove('option-update-light');
@@ -796,7 +797,7 @@ async function setupCharacterList(guesses, school) {
 
     let characterNames = mode === 0 ? json['characterNamesNormal'] : json['characterNames'];
 
-    if(guesses < 5) {
+    if(guesses < 3) {
         let sortedCharacters = characterNames.sort();
         sortedCharacters.forEach((characterName) => {
             $('#character-list').append(`<p>${characterName}</p>`);
@@ -819,7 +820,7 @@ async function setupCharacterList(guesses, school) {
             }
             return 0;
         });
-        if(guesses >= 9) {
+        if(guesses >= 7) {
             // Sort again by year
             characters.sort(function (a, b) {
                 if (a.year < b.year) {
@@ -871,7 +872,7 @@ async function setupCharacterList(guesses, school) {
             characterListStr += lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
             wingSpikers.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(guesses >= 9) {
+                if(guesses >= 7) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -885,7 +886,7 @@ async function setupCharacterList(guesses, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
             setters.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(guesses >= 9) {
+                if(guesses >= 7) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -899,7 +900,7 @@ async function setupCharacterList(guesses, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
             middleBlockers.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(guesses >= 9) {
+                if(guesses >= 7) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -913,7 +914,7 @@ async function setupCharacterList(guesses, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
             liberos.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(guesses >= 9) {
+                if(guesses >= 7) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -927,7 +928,7 @@ async function setupCharacterList(guesses, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
             managers.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(guesses >= 9) {
+                if(guesses >= 7) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -941,7 +942,7 @@ async function setupCharacterList(guesses, school) {
             characterListStr += lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
             coaches.forEach((characterName) => {
                 characterListStr +=  `<p>${characterName.name}`;
-                if(guesses >= 9) {
+                if(guesses >= 7) {
                     if(characterName.year === 4) {
                         characterListStr += `, Adult</p>`;
                     } else {
@@ -961,7 +962,7 @@ async function setupCharacterList(guesses, school) {
             wingSpikers.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(guesses >= 9) {
+                    if(guesses >= 7) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -981,7 +982,7 @@ async function setupCharacterList(guesses, school) {
             setters.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(guesses >= 9) {
+                    if(guesses >= 7) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -1000,7 +1001,7 @@ async function setupCharacterList(guesses, school) {
             middleBlockers.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(guesses >= 9) {
+                    if(guesses >= 7) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -1019,7 +1020,7 @@ async function setupCharacterList(guesses, school) {
             liberos.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(guesses >= 9) {
+                    if(guesses >= 7) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -1038,7 +1039,7 @@ async function setupCharacterList(guesses, school) {
             managers.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(guesses >= 9) {
+                    if(guesses >= 7) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
@@ -1057,7 +1058,7 @@ async function setupCharacterList(guesses, school) {
             coaches.forEach((characterName) => {
                 if(characterName.school === school) {
                     characterListStr +=  `<p>${characterName.name}`;
-                    if(guesses >= 9) {
+                    if(guesses >= 7) {
                         if(characterName.year === 4) {
                             characterListStr += `, Adult</p>`;
                         } else {
