@@ -1092,7 +1092,7 @@ async function setupTeamSearchList(guesses) {
     select += '</select>'
     
     // If team filter already exists, remove it
-    if($('#team-search').length === 0) {
+    if($('#team-search').length !== 0) {
         $('#team-search').remove();
     }
 
