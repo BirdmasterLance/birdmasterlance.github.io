@@ -513,7 +513,9 @@ async function getTodayCharacter() {
 
             if(localStorage.getItem('lastPlayed') !== json.currentDate) {
                 localStorage.setItem('guesses', JSON.stringify([]));
+                localStorage.setItem('guessesNormal', JSON.stringify([]));
                 localStorage.setItem('hasWon', false);
+                localStorage.setItem('hasWonNormal', false);
                 $('.share-btn').remove();
             } else {
                 switch (mode) {
