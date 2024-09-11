@@ -306,16 +306,16 @@ function handleWin() {
             }
 
             // Send winner data back to server
-            fetch("https://birdmasterlance-github-io.onrender.com/receive", {
-                method: "POST",
-                body: JSON.stringify({
-                  mode: 'hard',
-                  numGuesses: numGuesses
-                }),
-                headers: {
-                  "Content-type": "application/json; charset=UTF-8"
-                }
-              });
+            // fetch("https://birdmasterlance-github-io.onrender.com/receive", {
+            //     method: "POST",
+            //     body: JSON.stringify({
+            //       mode: 'hard',
+            //       numGuesses: numGuesses
+            //     }),
+            //     headers: {
+            //       "Content-type": "application/json; charset=UTF-8"
+            //     }
+            //   });
                 // .then((response) => response.json())
                 // .then((json) => console.log(json));
         }
@@ -333,16 +333,16 @@ function handleWin() {
             }
 
             // Send winner data back to server
-            fetch("http://localhost:3000/receive", {
-                method: "POST",
-                body: JSON.stringify({
-                  mode: 'normal',
-                  numGuesses: numGuesses
-                }),
-                headers: {
-                  "Content-type": "application/json; charset=UTF-8"
-                }
-              });
+            // fetch("http://localhost:3000/receive", {
+            //     method: "POST",
+            //     body: JSON.stringify({
+            //       mode: 'normal',
+            //       numGuesses: numGuesses
+            //     }),
+            //     headers: {
+            //       "Content-type": "application/json; charset=UTF-8"
+            //     }
+            //   });
             //     // .then((response) => response.json())
             //     // .then((json) => console.log(json));
         }
