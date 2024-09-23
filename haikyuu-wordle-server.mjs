@@ -6,7 +6,7 @@ import readline from "readline";
 import bodyParser from "body-parser";
 
 let currentDate;
-let currentGame = 23;
+let currentGame = 34;
 let numWinners = 0;
 
 let todayCharacter;
@@ -42,63 +42,63 @@ app.get('/test', cors(), (req, res) => {
         version: serverVersion});
 });
 
-app.post('/receive', jsonParser, async (request, response) => {
-    const serverJson = JSON.parse(fs.readFileSync('resources/json/haikyuudle-winners.json', 'utf8'));
+// app.post('/receive', jsonParser, async (request, response) => {
+//     const serverJson = JSON.parse(fs.readFileSync('resources/json/haikyuudle-winners.json', 'utf8'));
 
-    let date = new Date();
-    let currentDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
+//     let date = new Date();
+//     let currentDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
 
-    if(serverJson[currentDate + '-' + data['mode']] === null || serverJson[currentDate + '-' + data['mode']] === undefined) {
-        const initValues = [
-            {"1": 0},
-            {"2": 0},
-            {"3": 0},
-            {"4": 0},
-            {"5": 0},
-            {"6": 0},
-            {"7": 0},
-            {"8": 0},
-            {"9+": 0}
-        ];
-        serverJson[currentDate + '-' + data['mode']] = initValues;
-    }
+//     if(serverJson[currentDate + '-' + data['mode']] === null || serverJson[currentDate + '-' + data['mode']] === undefined) {
+//         const initValues = [
+//             {"1": 0},
+//             {"2": 0},
+//             {"3": 0},
+//             {"4": 0},
+//             {"5": 0},
+//             {"6": 0},
+//             {"7": 0},
+//             {"8": 0},
+//             {"9+": 0}
+//         ];
+//         serverJson[currentDate + '-' + data['mode']] = initValues;
+//     }
 
-    const data = await request.body;
-    switch(data['numGuesses']) {
-        case 1:
-            serverJson[currentDate + '-' + data['mode']][0]['1'] += 1;
-            break;
-        case 2:
-            serverJson[currentDate + '-' + data['mode']][1]['2'] += 1;
-            break;
-        case 3:
-            serverJson[currentDate + '-' + data['mode']][2]['3'] += 1;
-            break;
-        case 4:
-            serverJson[currentDate + '-' + data['mode']][3]['4'] += 1;
-            break;
-        case 5:
-            serverJson[currentDate + '-' + data['mode']][4]['5'] += 1;
-            break;
-        case 6:
-            serverJson[currentDate + '-' + data['mode']][5]['6'] += 1;
-            break;
-        case 7:
-            serverJson[currentDate + '-' + data['mode']][6]['7'] += 1;
-            break;
-        case 8:
-            serverJson[currentDate + '-' + data['mode']][7]['8'] += 1;
-            break;
-        default:
-            serverJson[currentDate + '-' + data['mode']][8]['9+'] += 1;
-            break;
-    }
+//     const data = await request.body;
+//     switch(data['numGuesses']) {
+//         case 1:
+//             serverJson[currentDate + '-' + data['mode']][0]['1'] += 1;
+//             break;
+//         case 2:
+//             serverJson[currentDate + '-' + data['mode']][1]['2'] += 1;
+//             break;
+//         case 3:
+//             serverJson[currentDate + '-' + data['mode']][2]['3'] += 1;
+//             break;
+//         case 4:
+//             serverJson[currentDate + '-' + data['mode']][3]['4'] += 1;
+//             break;
+//         case 5:
+//             serverJson[currentDate + '-' + data['mode']][4]['5'] += 1;
+//             break;
+//         case 6:
+//             serverJson[currentDate + '-' + data['mode']][5]['6'] += 1;
+//             break;
+//         case 7:
+//             serverJson[currentDate + '-' + data['mode']][6]['7'] += 1;
+//             break;
+//         case 8:
+//             serverJson[currentDate + '-' + data['mode']][7]['8'] += 1;
+//             break;
+//         default:
+//             serverJson[currentDate + '-' + data['mode']][8]['9+'] += 1;
+//             break;
+//     }
 
-    fs.writeFile('resources/json/haikyuudle-winners.json', JSON.stringify(serverJson), (error) => {
-        if (error) throw error;
-    });
+//     fs.writeFile('resources/json/haikyuudle-winners.json', JSON.stringify(serverJson), (error) => {
+//         if (error) throw error;
+//     });
 
-});
+// });
 
 // Starts the server
 app.listen(port, () => {
