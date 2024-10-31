@@ -90,6 +90,7 @@ async function checkCharacter(character) {
     if(numGuesses === 1) {
         if(lightMode) {
             answerRow.append(`<div id="category-row" class="flex flex-row justify-center width-auto">
+                <div class="square square-light">Image</div>
                 <div class="square square-light">Name</div>
                 <div class="square square-light">Gender</div>
                 <div class="square square-light">School</div>
@@ -100,6 +101,7 @@ async function checkCharacter(character) {
             </div>`);
         } else {
             answerRow.append(`<div id="category-row" class="flex flex-row justify-center width-auto">
+                <div class="square">Image</div>
                 <div class="square">Name</div>
                 <div class="square">Gender</div>
                 <div class="square">School</div>
@@ -140,18 +142,20 @@ async function checkCharacter(character) {
         charNameSlice = charNameSlice.slice(0, -11);
     }
     if(character.name === checkToCharacter.name || checkToCharacter.name.includes(character.name) || charNameSlice === checkToCharacter.name) {
-        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 200ms;">' + character.name + '</div>';
+        rowHTML += '<img src="resources/images/character_images/' + character.image + '" class="square correct-square-image animation-fade-in" style="animation-delay: 150ms;">';
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 300ms;">' + character.name + '</div>';
     } else {
-        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 200ms;">' + character.name + '</div>';
+        rowHTML += '<img src="resources/images/character_images/' + character.image + '" class="square incorrect-square-image animation-fade-in" style="animation-delay: 150ms;">';
+        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 300ms;">' + character.name + '</div>';
         trueMatch = false;
     }
 
     // Check school
     if(character.gender === checkToCharacter.gender) {
-        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 400ms;">' + character.gender + '</div>';
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 450ms;">' + character.gender + '</div>';
     }
     else {
-        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 400ms;">' + character.gender + '</div>';
+        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 450ms;">' + character.gender + '</div>';
         trueMatch = false;
     }
 
@@ -166,65 +170,65 @@ async function checkCharacter(character) {
 
     // Check position
     if(character.position === checkToCharacter.position) {
-        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 800ms;">' + character.position + '</div>';
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 750ms;">' + character.position + '</div>';
     }
     else {
-        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 800ms;">' + character.position + '</div>';
+        rowHTML += '<div class="square incorrect-square animation-fade-in" style="animation-delay: 750ms;">' + character.position + '</div>';
         trueMatch = false;
     }
 
     // Check jersey number
     if(character.number === checkToCharacter.number) {
         if(character.number === -1) {
-            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + 'N/A' + ' ✓</div>';
+            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 900ms; font-size: 18px;">' + 'N/A' + ' ✓</div>';
         } else {
-            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + character.number + ' ✓</div>';
+            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 900ms; font-size: 18px;">' + character.number + ' ✓</div>';
         }
     }
     else if(character.number > checkToCharacter.number) {
-        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + character.number + ' ▼</div>';
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 900ms; font-size: 18px;">' + character.number + ' ▼</div>';
         trueMatch = false;
     }
     else if(character.number < checkToCharacter.number) {
         if(character.number === -1) {
-            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + 'N/A' + ' ▲</div>';
+            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 900ms; font-size: 18px;">' + 'N/A' + ' ▲</div>';
         } else {
-            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1000ms; font-size: 18px;">' + character.number + ' ▲</div>';
+            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 900ms; font-size: 18px;">' + character.number + ' ▲</div>';
         }
         trueMatch = false;
     }
 
     // Check height
     if(character.height === checkToCharacter.height) {
-        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.height + ' ✓</div>';
+        rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1050ms; font-size: 18px;">' + character.height + ' ✓</div>';
     }
     else if(character.height > checkToCharacter.height) {
-        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.height + ' ▼</div>';
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1050ms; font-size: 18px;">' + character.height + ' ▼</div>';
         trueMatch = false;
     }
     else if(character.height < checkToCharacter.height) {
-        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.height + ' ▲</div>';
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1050ms; font-size: 18px;">' + character.height + ' ▲</div>';
         trueMatch = false;
     }
 
     // Check year
     if(character.year === checkToCharacter.year) {
         if(character.year === 4) {
-            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + 'Adult' + ' ✓</div>';
+            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + 'Adult' + ' ✓</div>';
         } else {
-            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + character.year + ' ✓</div>';
+            rowHTML += '<div class="square correct-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.year + ' ✓</div>';
         }
     }
     else if(character.year > checkToCharacter.year) {
         if(character.year === 4) {
-            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + 'Adult' + ' ▼</div>';
+            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + 'Adult' + ' ▼</div>';
         } else {
-            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + character.year + ' ▼</div>';
+            rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.year + ' ▼</div>';
         }
         trueMatch = false;
     }
     else if(character.year < checkToCharacter.year) {
-        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1400ms; font-size: 18px;">' + character.year + ' ▲</div>';
+        rowHTML += '<div class="square higher-lower-square animation-fade-in" style="animation-delay: 1200ms; font-size: 18px;">' + character.year + ' ▲</div>';
         trueMatch = false;
     }
 
@@ -243,12 +247,6 @@ async function checkCharacter(character) {
         setupCharacterList(0);
         $('#team-search').remove();
         searchBox.style.display = "none";
-
-        // Update character list if player has won both modes
-        if(localStorage.getItem('hasWon') === 'true' && localStorage.getItem('hasWonNormal') === 'true') {
-            setupCharacterList(10, '');
-            setupTeamSearchList(10);
-        } 
     }
 
     searchBox.disabled = true;
@@ -258,6 +256,13 @@ async function checkCharacter(character) {
         // searchBox.style.display = "";
 
         if(trueMatch) { 
+            // if(mode === 0) {
+            //     if(localStorage.getItem('hasWon') === 'false') {
+            //         if(lightMode) document.getElementById('mode-btn').classList.add('option-update-light');
+            //         else document.getElementById('mode-btn').classList.add('option-update');
+            //     }
+            // }
+            // document.getElementById('mode-btn').disabled = false;
             searchBox.style.display = "none";
             handleWin();
         }
@@ -272,6 +277,9 @@ async function checkCharacter(character) {
 
 function handleWin() {
     // Add the winning animation to the final row
+    $('#row' + numGuesses).children('img').each(function() {
+        $(this).addClass('animation-square-jump');
+    });
     $('#row' + numGuesses).children('div').each(function() {
         $(this).addClass('animation-square-jump');
     });
@@ -347,6 +355,12 @@ function handleWin() {
             //     // .then((json) => console.log(json));
         }
 
+        // Update character list if player has won both modes
+        if(localStorage.getItem('hasWon') === 'true' && localStorage.getItem('hasWonNormal') === 'true') {
+            setupCharacterList(10, '');
+            setupTeamSearchList(10);
+        } 
+
         updateChart();
         
     }, 2600);
@@ -420,8 +434,10 @@ function generateShare(discord) {
         // Check name
         if(character.name === checkToCharacter.name) {
             shareText += "🟩";
+            shareText += "🟩";
         }
         else {
+            shareText += "🟥";
             shareText += "🟥";
         }
 
@@ -803,7 +819,7 @@ async function setupCharacterList(guesses, school) {
     if(guesses < 3) {
         let sortedCharacters = characterNames.sort();
         sortedCharacters.forEach((characterName) => {
-            $('#character-list').append(`<p>${characterName}</p>`);
+            $('#character-list').append(`<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName}.png"><p>${characterName}</p></div>`);
         });
         $('#team-search').remove();
     } else {
@@ -874,85 +890,85 @@ async function setupCharacterList(guesses, school) {
             // List of every character without any school sorting
             characterListStr += lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
             wingSpikers.forEach((characterName) => {
-                characterListStr +=  `<p>${characterName.name}`;
+                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                 if(guesses >= 7) {
                     if(characterName.year === 4) {
-                        characterListStr += `, Adult</p>`;
+                        characterListStr += `, Adult</p></div>`;
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p>`;
+                        characterListStr += `, Year ${characterName.year}</p></div>`;
                     }
                 } else {
-                    characterListStr += '</p>'
+                    characterListStr += '</p></div>'
                 }
             });
 
             characterListStr += lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
             setters.forEach((characterName) => {
-                characterListStr +=  `<p>${characterName.name}`;
+                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                 if(guesses >= 7) {
                     if(characterName.year === 4) {
-                        characterListStr += `, Adult</p>`;
+                        characterListStr += `, Adult</p></div>`;
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p>`;
+                        characterListStr += `, Year ${characterName.year}</p></div>`;
                     }
                 } else {
-                    characterListStr += '</p>'
+                    characterListStr += '</p></div>'
                 }
             }); 
 
             characterListStr += lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
             middleBlockers.forEach((characterName) => {
-                characterListStr +=  `<p>${characterName.name}`;
+                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                 if(guesses >= 7) {
                     if(characterName.year === 4) {
-                        characterListStr += `, Adult</p>`;
+                        characterListStr += `, Adult</p></div>`;
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p>`;
+                        characterListStr += `, Year ${characterName.year}</p></div>`;
                     }
                 } else {
-                    characterListStr += '</p>'
+                    characterListStr += '</p></div>'
                 }
             });
 
             characterListStr += lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
             liberos.forEach((characterName) => {
-                characterListStr +=  `<p>${characterName.name}`;
+                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                 if(guesses >= 7) {
                     if(characterName.year === 4) {
-                        characterListStr += `, Adult</p>`;
+                        characterListStr += `, Adult</p></div>`;
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p>`;
+                        characterListStr += `, Year ${characterName.year}</p></div>`;
                     }
                 } else {
-                    characterListStr += '</p>'
+                    characterListStr += '</p></div>'
                 }
             });
             
             characterListStr += lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
             managers.forEach((characterName) => {
-                characterListStr +=  `<p>${characterName.name}`;
+                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                 if(guesses >= 7) {
                     if(characterName.year === 4) {
-                        characterListStr += `, Adult</p>`;
+                        characterListStr += `, Adult</p></div>`;
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p>`;
+                        characterListStr += `, Year ${characterName.year}</p></div>`;
                     }
                 } else {
-                    characterListStr += '</p>'
+                    characterListStr += '</p></div>'
                 }
             });
 
             characterListStr += lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
             coaches.forEach((characterName) => {
-                characterListStr +=  `<p>${characterName.name}`;
+                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                 if(guesses >= 7) {
                     if(characterName.year === 4) {
-                        characterListStr += `, Adult</p>`;
+                        characterListStr += `, Adult</p></div>`;
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p>`;
+                        characterListStr += `, Year ${characterName.year}</p></div>`;
                     }
                 } else {
-                    characterListStr += '</p>'
+                    characterListStr += '</p></div>'
                 }
             });
             $('#character-list').append(characterListStr);
@@ -964,15 +980,15 @@ async function setupCharacterList(guesses, school) {
             characterListStr = lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
             wingSpikers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr +=  `<p>${characterName.name}`;
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                     if(guesses >= 7) {
                         if(characterName.year === 4) {
-                            characterListStr += `, Adult</p>`;
+                            characterListStr += `, Adult</p></div>`;
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p>`;
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
                         }
                     } else {
-                        characterListStr += '</p>'
+                        characterListStr += '</p></div>'
                     }
                     addedCharacter = true;
                 }
@@ -984,15 +1000,15 @@ async function setupCharacterList(guesses, school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
             setters.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr +=  `<p>${characterName.name}`;
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                     if(guesses >= 7) {
                         if(characterName.year === 4) {
-                            characterListStr += `, Adult</p>`;
+                            characterListStr += `, Adult</p></div>`;
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p>`;
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
                         }
                     } else {
-                        characterListStr += '</p>'
+                        characterListStr += '</p></div>'
                     }
                     addedCharacter = true;
                 }
@@ -1003,15 +1019,15 @@ async function setupCharacterList(guesses, school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
             middleBlockers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr +=  `<p>${characterName.name}`;
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                     if(guesses >= 7) {
                         if(characterName.year === 4) {
-                            characterListStr += `, Adult</p>`;
+                            characterListStr += `, Adult</p></div>`;
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p>`;
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
                         }
                     } else {
-                        characterListStr += '</p>'
+                        characterListStr += '</p></div>'
                     }
                     addedCharacter = true;
                 }
@@ -1022,15 +1038,15 @@ async function setupCharacterList(guesses, school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
             liberos.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr +=  `<p>${characterName.name}`;
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                     if(guesses >= 7) {
                         if(characterName.year === 4) {
-                            characterListStr += `, Adult</p>`;
+                            characterListStr += `, Adult</p></div>`;
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p>`;
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
                         }
                     } else {
-                        characterListStr += '</p>'
+                        characterListStr += '</p></div>'
                     }
                     addedCharacter = true;
                 }
@@ -1041,15 +1057,15 @@ async function setupCharacterList(guesses, school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
             managers.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr +=  `<p>${characterName.name}`;
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                     if(guesses >= 7) {
                         if(characterName.year === 4) {
-                            characterListStr += `, Adult</p>`;
+                            characterListStr += `, Adult</p></div>`;
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p>`;
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
                         }
                     } else {
-                        characterListStr += '</p>'
+                        characterListStr += '</p></div>'
                     }
                     addedCharacter = true;
                 }
@@ -1060,15 +1076,15 @@ async function setupCharacterList(guesses, school) {
             characterListStr = lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
             coaches.forEach((characterName) => {
                 if(characterName.school === school) {
-                    characterListStr +=  `<p>${characterName.name}`;
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
                     if(guesses >= 7) {
                         if(characterName.year === 4) {
-                            characterListStr += `, Adult</p>`;
+                            characterListStr += `, Adult</p></div>`;
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p>`;
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
                         }
                     } else {
-                        characterListStr += '</p>'
+                        characterListStr += '</p></div>'
                     }
                     addedCharacter = true;
                 }
@@ -1201,6 +1217,10 @@ function toggleLightMode(alreadyLightMode) {
     for(let i = 0; i < tooltipElements.length; i++) {
         tooltipElements.item(i).classList.toggle('tooltip-light');
     }
+    const squareImageElements = document.getElementsByClassName('list-square-image');
+    for(let i = 0; i < squareElements.length; i++) {
+        squareImageElements.item(i).classList.toggle('list-square-image-light');
+    }
 }
 
 // jQuery autocomplete library
@@ -1282,11 +1302,18 @@ if(localStorage.getItem('lightMode') === 'true') {
 if(localStorage.getItem('version') === null) {
     localStorage.setItem('version', '1.0.0');
     $('#help-modal').css('display', 'block');
-    // If the playe is a first time player, you can do something here
+    // If the player is a first time player, you can do something here
 }
 
 $('#mode-btn').click(function() {
     mode = mode === 0 ? 1 : 0;
+
+    if(document.getElementById('mode-btn').classList.contains('option-update')) {
+        document.getElementById('mode-btn').classList.remove('option-update');
+    }
+    if(document.getElementById('mode-btn').classList.contains('option-update-light')) {
+        document.getElementById('mode-btn').classList.remove('option-update-light');
+    }
 
     // Hide and display share and search if necessary
     let answerRow = document.getElementById('answer-row');

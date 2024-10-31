@@ -6,7 +6,7 @@ import readline from "readline";
 import bodyParser from "body-parser";
 
 let currentDate;
-let currentGame = 34;
+let currentGame = 73;
 let numWinners = 0;
 
 let todayCharacter;
@@ -14,10 +14,10 @@ let characterData;
 
 let todayNormalCharacter;
 
-let maxCharacters = 197;
-let maxNormalCharacters = 138;
+let maxCharacters = 198;
+let maxNormalCharacters = 139;
 
-let serverVersion = '1.4.3';
+let serverVersion = '1.5.0';
 
 const app = express();
 const port = 3000;
@@ -133,6 +133,7 @@ const resetDay = schedule.scheduleJob(rule, () => {
     if(currentGame % serverJson['maxCharacters'] === 0) {
         console.log('Reset')
         shuffleCharacters('resources/txt/characters.txt', 'resources/txt/randomized.txt', 'hard');
+    } else if(currentGame % serverJson['maxNormalCharacters'] === 0) {
         shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'normal');
     }
     else {

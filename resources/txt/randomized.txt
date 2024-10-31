@@ -62,7 +62,6 @@ Goshiki Tsutomu
 Kawanishi Taichi
 Ikejiri Hayato
 Sakurai Taiga
-Ginjima Hitoshi
 Hakuba Gao (Timeskip)
 Meian Shugo
 Alexander Joffe
@@ -72,126 +71,129 @@ Natsuse Ibuki
 Akama So
 Aone Takanobu
 Minamida Taishi
-Kiryu Wakatsu (Timeskip)
-Nekomata Yasufumi
-Takeda Ittetsu
-Miya Osamu
-Fukunaga Shohei
-Towada Yoshiki
-Inagaki Isao
-Akagi Michinari
-Suzumeda Kaori
-Tokura Liam
-Karamatsu Takumi
-Oikawa Tooru
-Ohira Reon (Timeskip)
-Yamamoto Taketora (Timeskip)
-Yamamoto Taketora
-Chaya Kazuma
-Hanayama Kazumasa
-Kindaichi Yuutaro
-Shirofuku Yukie
-Iwaizumi Hajime
-Tanaka Ryunosuke
-Ushijima Wakatoshi
-Matsukawa Issei
-Konoha Akinori
 Bessho Kazuyoshi
-Unnan Keisuke
-Sawamura Daichi
-Yamashiro Soji
-Washio Tatsuki (Timeskip)
-Goshiki Tsutomu (Timeskip)
-Bokuto Kotaro (Timeskip)
-Miya Atsumu (Timeskip)
+Matsukawa Issei
+Kai Ryosei (Timeskip)
+Washijo Tanji
+Inagaki Isao
+Takachiho Yoshiya
+Onaga Wataru
+Kita Shinsuke
+Tanaka Ryunosuke
+Kunimi Akira
+Nekomata Yasufumi
+Bishin Haruma
+Obara Yutaka
 Shiroishi Yuki
-Teradomari Motoki
-Nurukawa Yoshiaki
+Haiba Lev
+Iizuna Tsukasa
+Tazawa Yuki
+Sakusa Kiyoomi
+Teshiro Tamahiko
+Sakusa Kiyoomi (Timeskip)
+Sakunami Kosuke
+Karamatsu Takumi
+Ukai Keishin
+Fukunaga Shohei
+Takeda Ittetsu
+Kiryu Wakatsu (Timeskip)
+Sokolov Tatsuto
+Yamagata Hayato (Timeskip)
+Inunaki Shion
+Kageyama Tobio (Timeskip)
 Futakuchi Kenji
 Komaki Yuzuru
-Ushijima Wakatoshi (Timeskip)
-Hirugami Sachiro
-Kageyama Tobio
-Amanai Kanoka
-Yaku Morisuke
-Haga Yoshiharu
+Fukatani Kenro
+Hanamaki Takahiro
+Ohira Reon
+Komori Motoya (Timeskip)
+Hyakuzawa Yudai (Timeskip)
+Maiko Yushi
+Aaron Murphy
 Akiu Kazuteru
+Ennoshita Chikara
+Asamushi Kaito
+Washio Tatsuki (Timeskip)
+Daisho Suguru
+Hinata Shoyo (Timeskip)
+Adriah Tomas
 Moniwa Kaname
+Yamamoto Taketora
+Miya Atsumu (Timeskip)
+Wajima Tomokazu
+Ginjima Hitoshi
+Washio Tatsuki
+Misaki Hana
+Miya Osamu
+Maruyama Kazuki
+Ushijima Wakatoshi (Timeskip)
+Numajiri Rintaro
+Suna Rintaro (Timeskip)
+Miyanoshita Eri
+Usuri Michiru
+Kyotani Kentaro (Timeskip)
+Nakashima Takeru
+Yamamoto Taketora (Timeskip)
+Yaku Morisuke (Timeskip)
+Haga Yoshiharu
+Unnan Keisuke
+Kiryu Wakatsu
+Akagi Michinari
+Teradomari Motoki
+Ezota Naoharu
+Suna Rintaro
+Riseki Heisuke
+Towada Yoshiki
+Ginjima Hitoshi
+Yamagata Hayato
+Goshiki Tsutomu (Timeskip)
+Tokura Liam
+Hanayama Kazumasa
+Yamaguchi Tadashi
+Yamashiro Soji
+Wakura Hisahiko
+Chaya Kazuma
+Matsushima Tsyuoshi
+Hyakuzawa Yudai
+Bokuto Kotaro (Timeskip)
+Kanazawa Iori
+Kozume Kenma
+Yachi Hitoka
+Ohira Reon (Timeskip)
+Tendo Satori
+Oikawa Tooru (Timeskip)
+Miya Atsumu
+Kindaichi Yuutaro
+Koganegawa Kanji (Timeskip)
+Echigo Sakae
+Komori Motoya
+Amanai Kanoka
+Azumane Asahi
+Makado Eiji
+Shirofuku Yukie
+Kageyama Tobio
+Sawamura Daichi
+Kinoshita Hisashi
+Aone Takanobu (Timeskip)
+Hiroo Koji
+Hirugami Sachiro
+Shiramine Itaru
+Konoha Akinori
+Yaku Morisuke
 Koganegawa Kanji
+Iwaizumi Hajime
+Sugawara Koshi
+Yahaba Shigeru
+Shirabu Kenjiro
+Oikawa Tooru
 Hakuba Gao
 Kosaku Yuto
-Kyotani Kentaro (Timeskip)
-Echigo Sakae
-Inuoka So
-Matsushima Tsyuoshi
-Oikawa Tooru (Timeskip)
-Aaron Murphy
-Asamushi Kaito
-Usuri Michiru
-Suna Rintaro
-Wajima Tomokazu
-Ezota Naoharu
-Sugawara Koshi
-Inunaki Shion
-Washijo Tanji
-Fukatani Kenro
-Suna Rintaro (Timeskip)
-Kuguri Naoyasu
-Maiko Yushi
-Hiroo Koji
-Suwa Aikichi
-Adriah Tomas
-Ennoshita Chikara
-Watari Shinji
-Nakashima Takeru
-Kai Ryosei (Timeskip)
-Hyakuzawa Yudai
-Kunimi Akira
-Yamaguchi Tadashi
-Hinata Shoyo (Timeskip)
-Azumane Asahi
-Onaga Wataru
 Daisho Suguru (Timeskip)
-Teshiro Tamahiko
-Ohira Reon
-Obara Yutaka
-Makado Eiji
-Sakunami Kosuke
-Yamagata Hayato
-Kanazawa Iori
-Kinoshita Hisashi
-Shiramine Itaru
-Kiryu Wakatsu
-Takachiho Yoshiya
-Yahaba Shigeru
-Miya Atsumu
-Wakura Hisahiko
-Tazawa Yuki
-Koganegawa Kanji (Timeskip)
-Yachi Hitoka
-Komori Motoya (Timeskip)
-Bishin Haruma
-Sokolov Tatsuto
-Numajiri Rintaro
-Ukai Keishin
-Hanamaki Takahiro
-Hyakuzawa Yudai (Timeskip)
-Kozume Kenma
-Riseki Heisuke
-Kageyama Tobio (Timeskip)
-Miyanoshita Eri
-Sakusa Kiyoomi
-Washio Tatsuki
-Daisho Suguru
+Suzumeda Kaori
+Nurukawa Yoshiaki
 Ojiro Aran (Timeskip)
-Sakusa Kiyoomi (Timeskip)
-Iizuna Tsukasa
-Yaku Morisuke (Timeskip)
-Tendo Satori
-Shirabu Kenjiro
-Haiba Lev
-Misaki Hana
-Maruyama Kazuki
-Kita Shinsuke
-Yamagata Hayato (Timeskip)
-Komori Motoya
+Inuoka So
+Kuguri Naoyasu
+Suwa Aikichi
+Watari Shinji
+Ushijima Wakatoshi
