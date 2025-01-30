@@ -577,8 +577,7 @@ function showRandomButton() {
 // Get the data on today's character
 async function getTodayCharacter() {
 
-    // https://birdmasterlance-github-io.onrender.com/test
-    await fetch('http://localhost:3000/test', {method:'GET'})
+    await fetch('https://birdmasterlance-github-io.onrender.com/test', {method:'GET'})
     .then(async function(response){
         if (response.ok) {
             const json = await response.json();
