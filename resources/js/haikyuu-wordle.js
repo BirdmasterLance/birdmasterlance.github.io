@@ -1,14 +1,18 @@
 
 var todayCharacter;
 var todayNormalCharacter;
+var endlessCharacter;
 var numGuesses = 0;
 var currentGame = 0;
 var lightMode = false;
 var mode = 0; // 0 = normal mode, 1 = hard mode
 var chart;
 var timeouts = [];
+var searchSelectedTeam = '';
+var searchSelectedPosition = '';
+var goToTopOfCharacters = false;
 
-// Get the character that matches the quert
+// Get the character that matches the query
 // from a list of character names
 async function getCharacters(query, doneCallback) {
     const response = await fetch('./resources/json/haikyuu-characters.json');
@@ -39,6 +43,22 @@ async function getCharacters(query, doneCallback) {
     doneCallback( { suggestions: results } );
 }
 
+// Gets a random character from the JSON
+async function getRandomCharacter() {
+    const response = await fetch('./resources/json/haikyuu-characters.json');
+    const json = await response.json();
+    let characterNames = json['characterNames'];
+    let randomIndex = Math.floor(Math.random() * characterNames.length);
+    endlessCharacterName = characterNames[randomIndex];
+    let characters = json['characterData'];
+    for(let i = 0; i < characters.length; i++) {
+        if(characters[i].name === endlessCharacterName) {
+            localStorage.setItem('endlessChar', JSON.stringify(characters[i]));
+            break;
+        }
+    }
+}
+
 // Do something when a character is selected
 async function getResults(suggestion) {
 
@@ -63,6 +83,11 @@ async function getResults(suggestion) {
                     guesses.push(character);
                     localStorage.setItem('guesses', JSON.stringify(guesses));
                     break;
+                case 2:
+                    let guessesEndless = JSON.parse(localStorage.getItem('guessesEndless'));
+                    guessesEndless.push(character);
+                    localStorage.setItem('guessesEndless', JSON.stringify(guessesEndless));
+                    break;
             }
 
             checkCharacter(character) 
@@ -74,7 +99,18 @@ async function getResults(suggestion) {
 // And give the player information so they can guess again
 async function checkCharacter(character) {
 
-    checkToCharacter = mode === 0 ? todayNormalCharacter : todayCharacter;
+    // TOOD: update this so it can also take games from previous days
+    switch(mode) {
+        case 0:
+            checkToCharacter = todayNormalCharacter;
+            break;
+        case 1:
+            checkToCharacter = todayCharacter;
+            break;
+        case 2:
+            checkToCharacter = JSON.parse(localStorage.getItem('endlessChar'));
+            break;
+    }
 
     // Increment the number of guesses for stat keeping
     numGuesses += 1;
@@ -116,18 +152,23 @@ async function checkCharacter(character) {
     else if(numGuesses === 3) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
+        goToTopOfCharacters = true;
         setupCharacterList(numGuesses, '');
+        setupPositionSearchList(numGuesses);
     }
 
     else if(numGuesses === 5) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
+        goToTopOfCharacters = true;
         setupTeamSearchList(numGuesses);
     }
     else if(numGuesses === 7) {
         if(lightMode) document.getElementById('characters-btn').classList.add('option-update-light');
         else document.getElementById('characters-btn').classList.add('option-update');
+        goToTopOfCharacters = true;
         setupCharacterList(numGuesses, '');
+        setupPositionSearchList(numGuesses);
         setupTeamSearchList(numGuesses);
     } else {
         if(document.getElementById('characters-btn').classList.contains('option-update')) document.getElementById('characters-btn').classList.remove('option-update');
@@ -245,7 +286,8 @@ async function checkCharacter(character) {
 
     if(trueMatch) { 
         setupCharacterList(0);
-        $('#team-search').remove();
+        $('#team-div').remove();
+        $('#position-div').remove();
         searchBox.style.display = "none";
     }
 
@@ -294,75 +336,83 @@ function handleWin() {
 
     // Do stuff after that winning animations is done
     let timeout = window.setTimeout(function() {
-        showShareButton();
+
+        if(mode === 0 || mode === 1) {
+            showShareButton();
+            if(mode === 1 && localStorage.getItem('hasWon') === 'false') {
+                // Save the stats in local storage
+                localStorage.setItem('hasWon', 'true');
+                let stats = JSON.parse(localStorage.getItem('statistics'));
+                if(numGuesses < 9) {
+                    stats[numGuesses]++;
+                    localStorage.setItem('statistics', JSON.stringify(stats));
+                } else {
+                    stats['9+']++;
+                    localStorage.setItem('statistics', JSON.stringify(stats));
+                }
+    
+                // Send winner data back to server
+                // fetch("https://birdmasterlance-github-io.onrender.com/receive", {
+                //     method: "POST",
+                //     body: JSON.stringify({
+                //       mode: 'hard',
+                //       numGuesses: numGuesses
+                //     }),
+                //     headers: {
+                //       "Content-type": "application/json; charset=UTF-8"
+                //     }
+                //   });
+                    // .then((response) => response.json())
+                    // .then((json) => console.log(json));
+            }
+    
+            if(mode === 0 && localStorage.getItem('hasWonNormal') === 'false') {
+                // Save the stats in local storage
+                localStorage.setItem('hasWonNormal', 'true');
+                let stats = JSON.parse(localStorage.getItem('statisticsNormal'));
+                if(numGuesses < 9) {
+                    stats[numGuesses]++;
+                    localStorage.setItem('statisticsNormal', JSON.stringify(stats));
+                } else {
+                    stats['9+']++;
+                    localStorage.setItem('statisticsNormal', JSON.stringify(stats));
+                }
+                $('#endless-btn').prop('disabled', false);
+    
+                // Send winner data back to server
+                // fetch("http://localhost:3000/receive", {
+                //     method: "POST",
+                //     body: JSON.stringify({
+                //       mode: 'normal',
+                //       numGuesses: numGuesses
+                //     }),
+                //     headers: {
+                //       "Content-type": "application/json; charset=UTF-8"
+                //     }
+                //   });
+                //     // .then((response) => response.json())
+                //     // .then((json) => console.log(json));
+            }
+    
+            // Update character list if player has won both modes
+            if(localStorage.getItem('hasWon') === 'true' && localStorage.getItem('hasWonNormal') === 'true') {
+                setupCharacterList(10, '');
+                setupPositionSearchList(10);
+                setupTeamSearchList(10);
+            } 
+    
+            updateChart();
+        } else if(mode === 2) {
+            showRandomButton();
+        } else if(mode === 3) {
+            
+        }
         // const searchBox = document.getElementById('autocomplete');
         // searchBox.value = "";
         // searchBox.style.display = 'none';
 
         $('#autocomplete').hide();
 
-        if(mode === 1 && localStorage.getItem('hasWon') === 'false') {
-            // Save the stats in local storage
-            localStorage.setItem('hasWon', 'true');
-            let stats = JSON.parse(localStorage.getItem('statistics'));
-            if(numGuesses < 9) {
-                stats[numGuesses]++;
-                localStorage.setItem('statistics', JSON.stringify(stats));
-            } else {
-                stats['9+']++;
-                localStorage.setItem('statistics', JSON.stringify(stats));
-            }
-
-            // Send winner data back to server
-            // fetch("https://birdmasterlance-github-io.onrender.com/receive", {
-            //     method: "POST",
-            //     body: JSON.stringify({
-            //       mode: 'hard',
-            //       numGuesses: numGuesses
-            //     }),
-            //     headers: {
-            //       "Content-type": "application/json; charset=UTF-8"
-            //     }
-            //   });
-                // .then((response) => response.json())
-                // .then((json) => console.log(json));
-        }
-
-        if(mode === 0 && localStorage.getItem('hasWonNormal') === 'false') {
-            // Save the stats in local storage
-            localStorage.setItem('hasWonNormal', 'true');
-            let stats = JSON.parse(localStorage.getItem('statisticsNormal'));
-            if(numGuesses < 9) {
-                stats[numGuesses]++;
-                localStorage.setItem('statisticsNormal', JSON.stringify(stats));
-            } else {
-                stats['9+']++;
-                localStorage.setItem('statisticsNormal', JSON.stringify(stats));
-            }
-
-            // Send winner data back to server
-            // fetch("http://localhost:3000/receive", {
-            //     method: "POST",
-            //     body: JSON.stringify({
-            //       mode: 'normal',
-            //       numGuesses: numGuesses
-            //     }),
-            //     headers: {
-            //       "Content-type": "application/json; charset=UTF-8"
-            //     }
-            //   });
-            //     // .then((response) => response.json())
-            //     // .then((json) => console.log(json));
-        }
-
-        // Update character list if player has won both modes
-        if(localStorage.getItem('hasWon') === 'true' && localStorage.getItem('hasWonNormal') === 'true') {
-            setupCharacterList(10, '');
-            setupTeamSearchList(10);
-        } 
-
-        updateChart();
-        
     }, 2600);
     timeouts.push(timeout);
 
@@ -507,10 +557,28 @@ function generateShare(discord) {
     navigator.clipboard.writeText(shareText);
 }
 
+function showRandomButton() {
+    if($('.random-btn').length === 0) {
+        const topRow = jQuery('#top-row');
+        let shareBtn = '<div class="random-btn" id="random-btn">Get a new character!</div>'
+        topRow.append(shareBtn);
+    }
+
+
+    // Generate the text upon clicking the share button
+    $('#random-btn').click(function() {
+        resetBoard();
+        localStorage.setItem('guessesEndless', JSON.stringify([]));
+        getRandomCharacter();
+        $('.random-btn').remove();
+    });
+}
+
 // Get the data on today's character
 async function getTodayCharacter() {
 
-    await fetch('https://birdmasterlance-github-io.onrender.com/test', {method:'GET'})
+    // https://birdmasterlance-github-io.onrender.com/test
+    await fetch('http://localhost:3000/test', {method:'GET'})
     .then(async function(response){
         if (response.ok) {
             const json = await response.json();
@@ -530,9 +598,13 @@ async function getTodayCharacter() {
             if(localStorage.getItem('lastPlayed') !== json.currentDate) {
                 localStorage.setItem('guesses', JSON.stringify([]));
                 localStorage.setItem('guessesNormal', JSON.stringify([]));
+                localStorage.setItem('guessesEndless', JSON.stringify([]));
+                localStorage.setItem('guessesPast', JSON.stringify([]));
                 localStorage.setItem('hasWon', false);
                 localStorage.setItem('hasWonNormal', false);
                 $('.share-btn').remove();
+                $('#endless-btn').prop('disabled', true);
+                getRandomCharacter();
             } else {
                 switch (mode) {
                     case 0:
@@ -763,12 +835,20 @@ async function setupModal() {
         if(document.getElementById('characters-btn').classList.contains('option-update')) document.getElementById('characters-btn').classList.remove('option-update');
         if(document.getElementById('characters-btn').classList.contains('option-update-light')) document.getElementById('characters-btn').classList.remove('option-update-light');
         $('#characters-modal').css('display', 'block');
-        $('.characters-modal').scrollTop(0);
+        if(goToTopOfCharacters === true)
+        {
+            goToTopOfCharacters = false;
+            $('.characters-modal').scrollTop(0);
+        }
     });
     
     $('#stats-btn').click(function() {
         updateChart();
         $('#stats-modal').css('display', 'block');
+    });
+
+    $('#mode-btn').click(function() {
+        $('#mode-modal').css('display', 'block');
     });
 
     $('#news-btn').click(function() {
@@ -783,6 +863,7 @@ async function setupModal() {
     var helpModal = document.getElementById("help-modal");
     var charactersModal = document.getElementById("characters-modal");
     var statsModal = document.getElementById("stats-modal");
+    var modeModal = document.getElementById("mode-modal")
     var newsModal = document.getElementById("news-modal");
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
@@ -795,6 +876,9 @@ async function setupModal() {
         else if (event.target == statsModal) {
             statsModal.style.display = 'none';
         }
+        else if(event.target == modeModal) {
+            modeModal.style.display = 'none';
+        }
         else if(event.target == newsModal) {
             newsModal.style.display = 'none';
         }
@@ -804,11 +888,12 @@ async function setupModal() {
         helpModal.style.display = 'none';
         charactersModal.style.display = 'none';
         statsModal.style.display = 'none';
+        modeModal.style.display = 'none';
         newsModal.style.display = 'none';
     });
 }
 
-async function setupCharacterList(guesses, school) {
+async function setupCharacterList(guesses, school, position) {
 
     const response = await fetch('./resources/json/haikyuu-characters.json');
     const json = await response.json();
@@ -821,7 +906,8 @@ async function setupCharacterList(guesses, school) {
         sortedCharacters.forEach((characterName) => {
             $('#character-list').append(`<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName}.png"><p>${characterName}</p></div>`);
         });
-        $('#team-search').remove();
+        $('#position-div').remove();
+        $('#team-div').remove();
     } else {
         let characterData = json['characterData'];
         let characters = [];
@@ -887,213 +973,431 @@ async function setupCharacterList(guesses, school) {
 
         if(school === '') {
                     
-            // List of every character without any school sorting
-            characterListStr += lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
-            wingSpikers.forEach((characterName) => {
-                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                if(guesses >= 7) {
-                    if(characterName.year === 4) {
-                        characterListStr += `, Adult</p></div>`;
+            if(position === 'Wing Spiker') {
+                // List of every character without any school sorting
+                characterListStr += lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
+                wingSpikers.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p></div>`;
+                        characterListStr += '</p></div>'
                     }
-                } else {
-                    characterListStr += '</p></div>'
-                }
-            });
-
-            characterListStr += lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
-            setters.forEach((characterName) => {
-                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                if(guesses >= 7) {
-                    if(characterName.year === 4) {
-                        characterListStr += `, Adult</p></div>`;
+                });
+            } else if(position === 'Setter') {
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
+                setters.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p></div>`;
+                        characterListStr += '</p></div>'
                     }
-                } else {
-                    characterListStr += '</p></div>'
-                }
-            }); 
-
-            characterListStr += lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
-            middleBlockers.forEach((characterName) => {
-                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                if(guesses >= 7) {
-                    if(characterName.year === 4) {
-                        characterListStr += `, Adult</p></div>`;
+                }); 
+            } else if(position === 'Middle Blocker') {
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
+                middleBlockers.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p></div>`;
+                        characterListStr += '</p></div>'
                     }
-                } else {
-                    characterListStr += '</p></div>'
-                }
-            });
-
-            characterListStr += lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
-            liberos.forEach((characterName) => {
-                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                if(guesses >= 7) {
-                    if(characterName.year === 4) {
-                        characterListStr += `, Adult</p></div>`;
+                });
+            } else if(position === 'Libero') {
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
+                liberos.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p></div>`;
+                        characterListStr += '</p></div>'
                     }
-                } else {
-                    characterListStr += '</p></div>'
-                }
-            });
-            
-            characterListStr += lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
-            managers.forEach((characterName) => {
-                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                if(guesses >= 7) {
-                    if(characterName.year === 4) {
-                        characterListStr += `, Adult</p></div>`;
+                });
+            } else if(position === 'Manager') {
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
+                managers.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p></div>`;
+                        characterListStr += '</p></div>'
                     }
-                } else {
-                    characterListStr += '</p></div>'
-                }
-            });
-
-            characterListStr += lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
-            coaches.forEach((characterName) => {
-                characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                if(guesses >= 7) {
-                    if(characterName.year === 4) {
-                        characterListStr += `, Adult</p></div>`;
+                });
+            } else if(position === 'Coach') {
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
+                coaches.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
                     } else {
-                        characterListStr += `, Year ${characterName.year}</p></div>`;
+                        characterListStr += '</p></div>'
                     }
-                } else {
-                    characterListStr += '</p></div>'
-                }
-            });
+                });
+            } else {
+                // Make wing spiker the default case
+                characterListStr += lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
+                wingSpikers.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
+                    } else {
+                        characterListStr += '</p></div>'
+                    }
+                });
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
+                setters.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
+                    } else {
+                        characterListStr += '</p></div>'
+                    }
+                }); 
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
+                middleBlockers.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
+                    } else {
+                        characterListStr += '</p></div>'
+                    }
+                });
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
+                liberos.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
+                    } else {
+                        characterListStr += '</p></div>'
+                    }
+                });
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
+                managers.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
+                    } else {
+                        characterListStr += '</p></div>'
+                    }
+                });
+                characterListStr += lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
+                coaches.forEach((characterName) => {
+                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                    if(guesses >= 7) {
+                        if(characterName.year === 4) {
+                            characterListStr += `, Adult</p></div>`;
+                        } else {
+                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                        }
+                    } else {
+                        characterListStr += '</p></div>'
+                    }
+                });
+            }
             $('#character-list').append(characterListStr);
 
         } else {
             
             // List of characters per school
-
-            characterListStr = lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
-            wingSpikers.forEach((characterName) => {
-                if(characterName.school === school) {
-                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                    if(guesses >= 7) {
-                        if(characterName.year === 4) {
-                            characterListStr += `, Adult</p></div>`;
+            if(position === 'Wing Spiker') {
+                characterListStr = lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
+                wingSpikers.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                            characterListStr += '</p></div>'
                         }
-                    } else {
-                        characterListStr += '</p></div>'
+                        addedCharacter = true;
                     }
-                    addedCharacter = true;
-                }
-            });
-            if(addedCharacter) $('#character-list').append(characterListStr);
-            addedCharacter = false;
-
-
-            characterListStr = lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
-            setters.forEach((characterName) => {
-                if(characterName.school === school) {
-                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                    if(guesses >= 7) {
-                        if(characterName.year === 4) {
-                            characterListStr += `, Adult</p></div>`;
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+            } else if(position === 'Setter') {
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
+                setters.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                            characterListStr += '</p></div>'
                         }
-                    } else {
-                        characterListStr += '</p></div>'
+                        addedCharacter = true;
                     }
-                    addedCharacter = true;
-                }
-            });
-            if(addedCharacter) $('#character-list').append(characterListStr);
-            addedCharacter = false;
-
-            characterListStr = lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
-            middleBlockers.forEach((characterName) => {
-                if(characterName.school === school) {
-                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                    if(guesses >= 7) {
-                        if(characterName.year === 4) {
-                            characterListStr += `, Adult</p></div>`;
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+            } else if(position === 'Middle Blocker') {
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
+                middleBlockers.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                            characterListStr += '</p></div>'
                         }
-                    } else {
-                        characterListStr += '</p></div>'
+                        addedCharacter = true;
                     }
-                    addedCharacter = true;
-                }
-            });
-            if(addedCharacter) $('#character-list').append(characterListStr);
-            addedCharacter = false;
-
-            characterListStr = lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
-            liberos.forEach((characterName) => {
-                if(characterName.school === school) {
-                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                    if(guesses >= 7) {
-                        if(characterName.year === 4) {
-                            characterListStr += `, Adult</p></div>`;
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+            } else if(position === 'Libero') {
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
+                liberos.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                            characterListStr += '</p></div>'
                         }
-                    } else {
-                        characterListStr += '</p></div>'
+                        addedCharacter = true;
                     }
-                    addedCharacter = true;
-                }
-            });
-            if(addedCharacter) $('#character-list').append(characterListStr);
-            addedCharacter = false;
-            
-            characterListStr = lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
-            managers.forEach((characterName) => {
-                if(characterName.school === school) {
-                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                    if(guesses >= 7) {
-                        if(characterName.year === 4) {
-                            characterListStr += `, Adult</p></div>`;
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+            } else if(position === 'Manager') {
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
+                managers.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                            characterListStr += '</p></div>'
                         }
-                    } else {
-                        characterListStr += '</p></div>'
+                        addedCharacter = true;
                     }
-                    addedCharacter = true;
-                }
-            });
-            if(addedCharacter) $('#character-list').append(characterListStr);
-            addedCharacter = false;
-
-            characterListStr = lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
-            coaches.forEach((characterName) => {
-                if(characterName.school === school) {
-                    characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
-                    if(guesses >= 7) {
-                        if(characterName.year === 4) {
-                            characterListStr += `, Adult</p></div>`;
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+            } else if(position === 'Coach') {
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
+                coaches.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
                         } else {
-                            characterListStr += `, Year ${characterName.year}</p></div>`;
+                            characterListStr += '</p></div>'
                         }
-                    } else {
-                        characterListStr += '</p></div>'
+                        addedCharacter = true;
                     }
-                    addedCharacter = true;
-                }
-            });
-            if(addedCharacter) $('#character-list').append(characterListStr);
-            addedCharacter = false;
-
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+            } else {
+                characterListStr = lightMode ? '<h2 class="h2-light">Wing Spikers</h2>' : '<h2>Wing Spikers</h2>';
+                wingSpikers.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
+                        } else {
+                            characterListStr += '</p></div>'
+                        }
+                        addedCharacter = true;
+                    }
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Setters</h2>' : '<br><h2>Setters</h2>';
+                setters.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
+                        } else {
+                            characterListStr += '</p></div>'
+                        }
+                        addedCharacter = true;
+                    }
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Middle Blockers</h2>' : '<br><h2>Middle Blockers</h2>';
+                middleBlockers.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
+                        } else {
+                            characterListStr += '</p></div>'
+                        }
+                        addedCharacter = true;
+                    }
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Liberos</h2>' : '<br><h2>Liberos</h2>';
+                liberos.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
+                        } else {
+                            characterListStr += '</p></div>'
+                        }
+                        addedCharacter = true;
+                    }
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Managers</h2>' : '<br><h2>Managers</h2>';
+                managers.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
+                        } else {
+                            characterListStr += '</p></div>'
+                        }
+                        addedCharacter = true;
+                    }
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+                characterListStr = lightMode ? '<br><h2 class="h2-light">Coaches</h2>' : '<br><h2>Coaches</h2>';
+                coaches.forEach((characterName) => {
+                    if(characterName.school === school) {
+                        characterListStr +=  `<div class="flex flex-row"><img class="square list-square-image" src="resources/images/character_images/${characterName.image}"><p>${characterName.name}`;
+                        if(guesses >= 7) {
+                            if(characterName.year === 4) {
+                                characterListStr += `, Adult</p></div>`;
+                            } else {
+                                characterListStr += `, Year ${characterName.year}</p></div>`;
+                            }
+                        } else {
+                            characterListStr += '</p></div>'
+                        }
+                        addedCharacter = true;
+                    }
+                });
+                if(addedCharacter) $('#character-list').append(characterListStr);
+                addedCharacter = false;
+            }
         }
     }
+}
+
+async function setupPositionSearchList(guesses) {
+    // Create select list HTML
+    let select = '<div id="position-div"><p>Position Sort</p><select id="position-search">' +
+    '<option value="">All</option>' +
+    '<option value="Wing Spiker">Wing Spiker</option>' +
+    '<option value="Setter">Setter</option>' +
+    '<option value="Middle Blocker">Middle Blocker</option>' +
+    '<option value="Libero">Libero</option>' +
+    '<option value="Manager">Manager</option>' +
+    '<option value="Coach">Coach</option>' +
+    '</select></div>';
+
+    // If position filter already exists, remove it
+    if($('#position-div').length !== 0) {
+        $('#position-div').remove();
+    }
+
+    // Add position filter to the modal
+    $('.characters-modal').find('h1').after(select);
+
+    // Add a listener for the select in character list
+    positionSearch = document.getElementById("position-search");
+    positionSearch.addEventListener('change', function() {
+        searchSelectedPosition = this.value;
+        setupCharacterList(guesses, searchSelectedTeam, this.value);
+    }, false);
 }
 
 async function setupTeamSearchList(guesses) {
@@ -1104,15 +1408,15 @@ async function setupTeamSearchList(guesses) {
     let teams = mode === 0 ? json['teamNamesNormal'] : json['teamNames'];
 
     // Create select list HTML
-    let select = '<select id="team-search"><option value="">All</option>';
+    let select = '<div id="team-div"><p>Team Sort</p><select id="team-search"><option value="">All</option>';
     teams.forEach((teamName) => {
         select +=  `<option value="${teamName}">${teamName}</option>`;
     });
-    select += '</select>'
+    select += '</select><br></div>'
     
     // If team filter already exists, remove it
-    if($('#team-search').length !== 0) {
-        $('#team-search').remove();
+    if($('#team-div').length !== 0) {
+        $('#team-div').remove();
     }
 
     // Add team filter to the modal
@@ -1121,8 +1425,91 @@ async function setupTeamSearchList(guesses) {
     // Add a listener for the select in character list
     teamSearch = document.getElementById("team-search");
     teamSearch.addEventListener('change', function() {
-        setupCharacterList(guesses, this.value);
+        searchSelectedTeam = this.value;
+        setupCharacterList(guesses, this.value, searchSelectedPosition);
     }, false);
+}
+
+async function changeMode(modeNum) {
+    mode = modeNum;
+
+    await resetBoard();
+
+    switch (mode) {
+        case 0:
+            $('#current-day').text = `Haikyuudle No. ${currentGame}`;
+            $('#title').text("WORDLE (Normal Mode)");
+            $('#stats-title').text("Statistics (Normal Mode)");
+            const guessesNormal = JSON.parse(localStorage.getItem('guessesNormal'));
+            guessesNormal.forEach(character => {
+                checkCharacter(character);
+            });
+            break;
+        case 1:
+            $('#current-day').text = `Haikyuudle No. ${currentGame}`;
+            $('#title').text("WORDLE (Hard Mode)");
+            $('#stats-title').text("Statistics (Hard Mode)");
+            const guesses = JSON.parse(localStorage.getItem('guesses'));
+            guesses.forEach(character => {
+                checkCharacter(character);
+            });
+            break;
+        case 2:
+            $('#current-day').text = `Haikyuudle No. ${currentGame}`;
+            $('#title').text("WORDLE (Endless Mode)");
+            const guessesEndless = JSON.parse(localStorage.getItem('guessesEndless'));
+            guessesEndless.forEach(character => {
+                checkCharacter(character);
+            });
+            break;
+        case 3:
+            $('#title').text("WORDLE (Past Normal Mode)");
+            const guessesPastNormal = JSON.parse(localStorage.getItem('guessesPastNormal'));
+            guessesPastNormal.forEach(character => {
+                checkCharacter(character);
+            });
+            break;
+        case 4:
+            $('#title').text("WORDLE (Past Hard Mode)");
+            const guessesPastHard = JSON.parse(localStorage.getItem('guessesPastHard'));
+            guessesPastHard.forEach(character => {
+                checkCharacter(character);
+            });
+            break;
+    }
+}
+
+// Resets the guesses and search on screen
+async function resetBoard() {
+    if(document.getElementById('mode-btn').classList.contains('option-update')) {
+        document.getElementById('mode-btn').classList.remove('option-update');
+    }
+    if(document.getElementById('mode-btn').classList.contains('option-update-light')) {
+        document.getElementById('mode-btn').classList.remove('option-update-light');
+    }
+
+    // Hide and display share and search if necessary
+    let answerRow = document.getElementById('answer-row');
+    answerRow.textContent = '';
+    $('.share-btn').remove();
+    $('.random-btn').remove();
+    $('#autocomplete').show();
+    $('#autocomplete').prop('disabled', false);
+    $('#autocomplete').prop('placeholder', 'Search a character here');
+    $('#autocomplete').removeClass('disabled');
+
+    goToTopOfCharacters = true;
+
+    for(let i = 0; i < timeouts.length; i++) {
+        clearTimeout(timeouts[i]);
+    }
+
+    // Reset search when switching modes
+    searchSelectedPosition = '';
+    searchSelectedTeam = '';
+    await setupCharacterList(0);
+
+    numGuesses = 0;
 }
 
 function toggleLightMode(alreadyLightMode) {
@@ -1179,6 +1566,14 @@ function toggleLightMode(alreadyLightMode) {
     for(let i = 0; i < optElements.length; i++) {
         optElements.item(i).classList.toggle('option-btn-light');
     }
+    const topElements = document.getElementsByClassName('top-btn');
+    for(let i = 0; i < topElements.length; i++) {
+        topElements.item(i).classList.toggle('top-btn-light');
+    }
+    const modeBtnElements = document.getElementsByClassName('mode-btn');
+    for(let i = 0; i < modeBtnElements.length; i++) {
+        modeBtnElements.item(i).classList.toggle('mode-btn-light');
+    }
     
     const suggElements = document.getElementsByClassName('autocomplete-suggestions');
     for(let i = 0; i < suggElements.length; i++) {
@@ -1200,6 +1595,10 @@ function toggleLightMode(alreadyLightMode) {
     const statsElements = document.getElementsByClassName('stats-modal');
     for(let i = 0; i < statsElements.length; i++) {
         statsElements.item(i).classList.toggle('stats-modal-light');
+    }
+    const modeElements = document.getElementsByClassName('mode-modal');
+    for(let i = 0; i < modeElements.length; i++) {
+        modeElements.item(i).classList.toggle('mode-modal-light');
     }
     const newsElements = document.getElementsByClassName('news-modal');
     for(let i = 0; i < newsElements.length; i++) {
@@ -1242,6 +1641,22 @@ if(localStorage.getItem('guessesNormal') === null) {
     var emptyArray = [];
     localStorage.setItem('guessesNormal', JSON.stringify(emptyArray));
 }
+if(localStorage.getItem('guessesEndless') === null) {
+    var emptyArray = [];
+    localStorage.setItem('guessesEndless', JSON.stringify(emptyArray));
+}
+if(localStorage.getItem('guessesPastNormal') === null) {
+    var emptyArray = [];
+    localStorage.setItem('guessesPastNormal', JSON.stringify(emptyArray));
+}
+if(localStorage.getItem('guessesPastHard') === null) {
+    var emptyArray = [];
+    localStorage.setItem('guessesPastHard', JSON.stringify(emptyArray));
+}
+
+if(localStorage.getItem('endlessChar') === null) {
+    getRandomCharacter();
+}
 
 if(localStorage.getItem('hasWon') === null) {
     localStorage.setItem('hasWon', 'false');
@@ -1282,12 +1697,11 @@ if(localStorage.getItem('statisticsNormal') === null) {
 }
 
 // Show the necessary elements if someone has already won and is reloading the page
-if(localStorage.getItem('hasWon') === 'true' || localStorage.getItem('hasWonNormal') === 'true') {
-    $('.autocomplete').hide();
-    showShareButton();
-} else {
-    $('.share-btn').remove();
-}
+// $('.share-btn').remove();
+// if(localStorage.getItem('hasWon') === 'true' || localStorage.getItem('hasWonNormal') === 'true') {
+//     $('.autocomplete').hide();
+//     showShareButton();
+// }
 
 if(localStorage.getItem('lightMode') === null) {
     localStorage.setItem('lightMode', false);
@@ -1305,53 +1719,33 @@ if(localStorage.getItem('version') === null) {
     // If the player is a first time player, you can do something here
 }
 
-$('#mode-btn').click(function() {
-    mode = mode === 0 ? 1 : 0;
+$('.top-btn').click(function() {
+    $('.characters-modal').scrollTop(0);
+});
 
-    if(document.getElementById('mode-btn').classList.contains('option-update')) {
-        document.getElementById('mode-btn').classList.remove('option-update');
-    }
-    if(document.getElementById('mode-btn').classList.contains('option-update-light')) {
-        document.getElementById('mode-btn').classList.remove('option-update-light');
-    }
+$('#normal-mode-btn').click(function() {
+    $('#mode-modal').css('display', 'none');
+    changeMode(0);
+});
 
-    // Hide and display share and search if necessary
-    let answerRow = document.getElementById('answer-row');
-    answerRow.textContent = '';
-    $('.share-btn').remove();
-    $('#autocomplete').show();
-    $('#autocomplete').prop('disabled', false);
-    $('#autocomplete').prop('placeholder', 'Search a character here');
-    $('#autocomplete').removeClass('disabled');
+$('#hard-mode-btn').click(function() {
+    $('#mode-modal').css('display', 'none');
+    changeMode(1);
+});
 
-    for(let i = 0; i < timeouts.length; i++) {
-        clearTimeout(timeouts[i]);
-    }
+$('#endless-btn').click(function() {
+    $('#mode-modal').css('display', 'none');
+    changeMode(2);
+});
 
-    // Remove team search when switching modes
-    ($('#team-search')).remove();
-    setupCharacterList(0);
+$('#past-normal-btn').click(function() {
+    $('#mode-modal').css('display', 'none');
+    changeMode(3);
+});
 
-    numGuesses = 0;
-    switch (mode) {
-        case 0:
-            $('#title').text("WORDLE (Normal Mode)");
-            $('#stats-title').text("Statistics (Normal Mode)");
-            const guessesNormal = JSON.parse(localStorage.getItem('guessesNormal'));
-            guessesNormal.forEach(character => {
-                checkCharacter(character);
-            });
-            break;
-        case 1:
-            $('#title').text("WORDLE (Hard Mode)");
-            $('#stats-title').text("Statistics (Hard Mode)");
-            const guesses = JSON.parse(localStorage.getItem('guesses'));
-            guesses.forEach(character => {
-                checkCharacter(character);
-            });
-            break;
-    }
-      
+$('#past-hard-btn').click(function() {
+    $('#mode-modal').css('display', 'none');
+    changeMode(4);
 });
 
 

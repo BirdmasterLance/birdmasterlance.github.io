@@ -63,6 +63,7 @@
                     <br>
                     <p><b>Normal Mode</b> contains only characters and schools who have had major screentime in the series.</p>
                     <p><b>Hard Mode</b> contains every character in the series who had enough information to fill out each category.</p>
+                    <p><b>Endless Mode</b> allows you to guess a random character forever. Unlocks after Normal and Hard Mode are cleared for the day.</p>
                     <br>
                     <br>
                     <p>Character information was taken from the Haikyuu Wiki.</p>
@@ -83,6 +84,9 @@
                     <div>
                         <button class="close-btn">
                             <span class="material-symbols-outlined">close</span>
+                        </button>
+                        <button class="top-btn">
+                            <span class="material-symbols-outlined">arrow_upward</span>
                         </button>
                         <h1>Characters</h1>
                     </div>
@@ -112,6 +116,35 @@
             <button id='mode-btn' class="option-btn tooltip tooltip-above" data-tip="Change Mode">
                 <span class="material-symbols-outlined">reduce_capacity</span>
             </button>
+            <dialog id="mode-modal" class="modal">
+                <div class="mode-modal">
+                    <button class="close-btn">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                    <h1 id="mode-title">Select Mode</h1>
+                    <div class="grid-mode">
+                        <button id='normal-mode-btn' class="mode-btn">
+                            <span class="material-symbols-outlined">reduce_capacity</span>
+                            Normal Mode
+                        </button>
+                        <button id='hard-mode-btn' class="mode-btn">
+                            <span class="material-symbols-outlined">groups</span>
+                            Hard Mode
+                        </button>
+                        <button id='endless-btn' class="mode-btn" disabled>
+                            <span class="material-symbols-outlined">all_inclusive</span>
+                            Endless Mode
+                        </button>
+                        <!-- <button id='past-normal-btn' class="option-btn tooltip tooltip-above" data-tip="Past (Normal)">
+                            <span class="material-symbols-outlined">history</span>
+                        </button>
+                        <button id='past-hard-btn' class="option-btn tooltip tooltip-above" data-tip="Past (Hard)">
+                            <span class="material-symbols-outlined">history</span>
+                        </button> -->
+                    </div>
+                    <p>*Endless Mode unlocks after beating Normal Mode for the day</p>
+                </div>
+            </dialog>
 
             <button id='news-btn' class="option-btn tooltip tooltip-above" data-tip="News">
                 <span class="material-symbols-outlined">newspaper</span>
@@ -124,6 +157,17 @@
                         </button>
                         <h1>News</h1>
                     </div>
+                    <br>
+                    <h2>Version 1.6.0 1/29/2025</h2>
+                    <p>
+First update of the new year! Thank you to all who have continued to play Haikyuudle!! This update focuses on some quality of life in the character list, as well as the addition of Endless Mode! I hope I can continue to make Haikyuudle!! even better based on everyone's feedback this year. Thanks again for the support!
+
+- Character List can now be sorted by a position filter, showing only characters that have a specific position. This also works with the team sort as well.
+- Character List now saves where you last scrolled to, so that players don't have to scroll back down to where they were
+- Added a button in the Character List at the bottom right corner that puts players to the top of the Character List
+- Added Endless Mode, which starts out as locked, but is unlocked once players clear Normal Mode. Endless Mode gives players random characters to guess from Hard Mode's selection of characters.
+                    </p>
+                    <br>
                     <br>
                     <h2>Version 1.5.1 11/11/2024</h2>
                     <p>

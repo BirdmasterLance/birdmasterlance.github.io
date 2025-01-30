@@ -6,7 +6,7 @@ import readline from "readline";
 import bodyParser from "body-parser";
 
 let currentDate;
-let currentGame = 108;
+let currentGame = 163;
 let numWinners = 0;
 
 let todayCharacter;
@@ -17,7 +17,7 @@ let todayNormalCharacter;
 let maxCharacters = 198;
 let maxNormalCharacters = 139;
 
-let serverVersion = '1.5.1';
+let serverVersion = '1.6.0';
 
 const app = express();
 const port = 3000;
@@ -41,6 +41,12 @@ app.get('/test', cors(), (req, res) => {
         normalModeCharacter: todayNormalCharacter,
         version: serverVersion});
 });
+
+// app.get('/infopast', cors(), (req, res) => {
+//     res.json({
+//         character: todayCharacter, 
+//         normalModeCharacter: todayNormalCharacter});
+// });
 
 // app.post('/receive', jsonParser, async (request, response) => {
 //     const serverJson = JSON.parse(fs.readFileSync('resources/json/haikyuudle-winners.json', 'utf8'));
