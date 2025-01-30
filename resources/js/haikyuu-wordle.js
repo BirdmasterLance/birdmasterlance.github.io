@@ -1644,14 +1644,14 @@ if(localStorage.getItem('guessesEndless') === null) {
     var emptyArray = [];
     localStorage.setItem('guessesEndless', JSON.stringify(emptyArray));
 }
-if(localStorage.getItem('guessesPastNormal') === null) {
-    var emptyArray = [];
-    localStorage.setItem('guessesPastNormal', JSON.stringify(emptyArray));
-}
-if(localStorage.getItem('guessesPastHard') === null) {
-    var emptyArray = [];
-    localStorage.setItem('guessesPastHard', JSON.stringify(emptyArray));
-}
+// if(localStorage.getItem('guessesPastNormal') === null) {
+//     var emptyArray = [];
+//     localStorage.setItem('guessesPastNormal', JSON.stringify(emptyArray));
+// }
+// if(localStorage.getItem('guessesPastHard') === null) {
+//     var emptyArray = [];
+//     localStorage.setItem('guessesPastHard', JSON.stringify(emptyArray));
+// }
 
 if(localStorage.getItem('endlessChar') === null) {
     getRandomCharacter();
