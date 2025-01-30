@@ -1480,8 +1480,8 @@ async function changeMode(modeNum) {
 
 // Resets the guesses and search on screen
 async function resetBoard() {
-    if(document.getElementById('mode-btn').classList.contains('option-update')) {
-        document.getElementById('mode-btn').classList.remove('option-update');
+    if(document.getElementById('characters-btn').classList.contains('option-update')) {
+        document.getElementById('characters-btn').classList.remove('option-update');
     }
     if(document.getElementById('mode-btn').classList.contains('option-update-light')) {
         document.getElementById('mode-btn').classList.remove('option-update-light');
