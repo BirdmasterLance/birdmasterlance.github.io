@@ -404,6 +404,14 @@ function handleWin() {
             updateChart();
         } else if(mode === 2) {
             showRandomButton();
+            let stats = JSON.parse(localStorage.getItem('statisticsEndless'));
+                if(numGuesses < 9) {
+                    stats[numGuesses]++;
+                    localStorage.setItem('statisticsEndless', JSON.stringify(stats));
+                } else {
+                    stats['9+']++;
+                    localStorage.setItem('statisticsEndless', JSON.stringify(stats));
+                }
         } else if(mode === 3) {
             
         }
@@ -481,8 +489,12 @@ function generateShare(discord) {
 
     for(let i = guesses.length-1; i >= 0; i--) {
         let character = guesses[i];
+        let charNameSlice = character.name;
         // Check name
-        if(character.name === checkToCharacter.name) {
+        if(character.name.includes("(Timeskip)")) {
+            charNameSlice = charNameSlice.slice(0, -11);
+        }
+        if(character.name === checkToCharacter.name || checkToCharacter.name.includes(character.name) || charNameSlice === checkToCharacter.name) {
             shareText += "🟩";
             shareText += "🟩";
         }
@@ -730,6 +742,8 @@ function updateChart() {
         stats = JSON.parse(localStorage.getItem('statisticsNormal'));
     } else if(mode === 1) {
         stats = JSON.parse(localStorage.getItem('statistics'));
+    } else if(mode === 2) {
+        stats = JSON.parse(localStorage.getItem('statisticsEndless'));
     }
 
     for(var i in stats) {
@@ -750,6 +764,7 @@ function updateChart() {
     }
 
     chart.data.datasets[0].data = yValues;
+    chart.data.datasets[0].backgroundColor = chartColor;
 
     chart.options = {
         responsive: true,
@@ -1456,6 +1471,7 @@ async function changeMode(modeNum) {
         case 2:
             $('#current-day').text = `Haikyuudle No. ${currentGame}`;
             $('#title').text("WORDLE (Endless Mode)");
+            $('#stats-title').text("Statistics (Endless Mode)");
             const guessesEndless = JSON.parse(localStorage.getItem('guessesEndless'));
             guessesEndless.forEach(character => {
                 checkCharacter(character);
@@ -1693,6 +1709,10 @@ if(localStorage.getItem('statistics') === null) {
 
 if(localStorage.getItem('statisticsNormal') === null) {
     localStorage.setItem('statisticsNormal', JSON.stringify({"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9+": 0}));
+}
+
+if(localStorage.getItem('statisticsEndless') === null) {
+    localStorage.setItem('statisticsEndless', JSON.stringify({"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9+": 0}));
 }
 
 // Show the necessary elements if someone has already won and is reloading the page
