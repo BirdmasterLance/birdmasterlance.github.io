@@ -1721,6 +1721,9 @@ if(localStorage.getItem('statisticsEndless') === null) {
 //     $('.autocomplete').hide();
 //     showShareButton();
 // }
+if(localStorage.getItem('hasWonNormal') === 'true') {
+    $('#endless-btn').prop('disabled', false);
+}
 
 if(localStorage.getItem('lightMode') === null) {
     localStorage.setItem('lightMode', false);
