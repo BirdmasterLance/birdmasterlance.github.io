@@ -110,7 +110,8 @@ app.get('/test', cors(), (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 
-    let date = new Date();
+    let pstDate = new Date().toLocaleString('en-US', { timeZone: 'US/Pacific' });
+    let date = new Date(pstDate);
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     console.log(`Today is ${currentDate}`);
 
