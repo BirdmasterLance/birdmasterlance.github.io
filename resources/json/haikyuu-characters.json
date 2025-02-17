@@ -164,7 +164,7 @@
         "Hanayama Kazumasa",
         "Naruko Teppei",
         "Akiu Kazuteru",
-        "Matsushima Tsyuoshi",
+        "Matsushima Tsuyoshi",
 
         "Komaki Hikaru",
         "Chaya Kazuma",
@@ -1635,14 +1635,14 @@
             "image": "Akiu Kazuteru.png"
         },
         {
-            "name": "Matsushima Tsyuoshi",
+            "name": "Matsushima Tsuyoshi",
             "gender": "Male",
             "school": "Wakutani Minami High",
             "number": 11,
             "position": "Middle Blocker",
             "height": 186.2,
             "year": 1,
-            "image": "Matsushima Tsyuoshi.png"
+            "image": "Matsushima Tsuyoshi.png"
         },
 
         {
