@@ -6,7 +6,7 @@ import readline from "readline";
 import bodyParser from "body-parser";
 
 let currentDate;
-let currentGame = 186;
+let currentGame = 211;
 let numWinners = 0;
 
 let todayCharacter;
@@ -17,7 +17,7 @@ let todayNormalCharacter;
 let maxCharacters = 198;
 let maxNormalCharacters = 139;
 
-let serverVersion = '1.6.3.0';
+let serverVersion = '1.6.4';
 
 const app = express();
 const port = 3000;
