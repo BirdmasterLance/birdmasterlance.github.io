@@ -6,7 +6,7 @@ import readline from "readline";
 import bodyParser from "body-parser";
 
 let currentDate;
-let currentGame = 262;
+let currentGame;
 let numWinners = 0;
 
 let todayCharacter;
@@ -118,6 +118,24 @@ app.listen(port, () => {
     const json = JSON.parse(fs.readFileSync('resources/json/haikyuu-characters.json', 'utf8'));
     characterData = json['characterData'];
 
+    // Create file if it doesn't exist
+    if(!fs.existsSync('resources/txt/randomized.txt')) {
+        var fd = fs.openSync('resources/txt/randomized.txt', 'w');
+        fs.closeSync(fd);
+        shuffleCharacters('resources/txt/characters.txt', 'resources/txt/randomized.txt', 'hard');
+    }
+
+    if(!fs.existsSync('resources/txt/randomizedNormal.txt')) {
+        var fd = fs.openSync('resources/txt/randomizedNormal.txt', 'w');
+        fs.closeSync(fd);
+        shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'hard');
+    }
+
+    if(!fs.existsSync('resources/json/haikyuu-server-info.json')) {
+        var fd = fs.openSync('resources/json/haikyuu-server-info.json', 'w');
+        fs.closeSync(fd);
+    }
+
     getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
     getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
 
@@ -136,6 +154,9 @@ const resetDay = schedule.scheduleJob(rule, () => {
     numWinners = 0;
 
     const serverJson = JSON.parse(fs.readFileSync('resources/json/haikyuu-server-info.json', 'utf8'));
+
+    currentGame = serverJson['currentDay'];
+
     maxCharacters = serverJson['maxCharacters'];
     if(currentGame % serverJson['maxCharacters'] === 0) {
         console.log('Reset')
@@ -149,7 +170,7 @@ const resetDay = schedule.scheduleJob(rule, () => {
     }
 
     // Save today's information in the server JSON
-    serverJson['currentDay'] = currentGame;
+    serverJson['currentDay'] = currentGame++;
     serverJson['currentCharacter'] = todayCharacter.name;
     serverJson['currentNormalCharacter'] = todayNormalCharacter.name;
     serverJson['maxCharacters'] = maxCharacters;
@@ -216,12 +237,6 @@ async function getNewCharacter(inputFile, limit, mode) {
 }
 
 async function shuffleCharacters(input, output, mode) {
-
-    // Create file if it doesn't exist
-    if(!fs.existsSync(input)) {
-        fs.writeFileSync(input, "");
-        fs.closeSync(input);
-    }
 
     const fileStream = fs.createReadStream(input);
     const rl = readline.createInterface({
