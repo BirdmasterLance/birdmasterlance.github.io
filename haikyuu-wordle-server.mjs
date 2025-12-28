@@ -17,7 +17,7 @@ let todayNormalCharacter;
 let maxCharacters = 198;
 let maxNormalCharacters = 139;
 
-let serverVersion = '1.6.4';
+let serverVersion = '1.7.0';
 
 const app = express();
 const port = 3000;
@@ -216,6 +216,13 @@ async function getNewCharacter(inputFile, limit, mode) {
 }
 
 async function shuffleCharacters(input, output, mode) {
+
+    // Create file if it doesn't exist
+    if(!fs.existsSync(input)) {
+        fs.writeFileSync(input, "");
+        fs.closeSync(input);
+    }
+
     const fileStream = fs.createReadStream(input);
     const rl = readline.createInterface({
         input: fileStream,
