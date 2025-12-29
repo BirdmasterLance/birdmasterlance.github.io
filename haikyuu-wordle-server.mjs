@@ -223,12 +223,12 @@ async function getNewCharacter(inputFile, limit, mode) {
                     if(mode === 'normal') {
                        todayNormalCharacter = character;
                        console.log(`${currentGame} Today's Normal Mode character: ${todayNormalCharacter.name}`);
-                       fs.appendFile('/disk/haikyuudle/past-games-normal.txt', `"${currentGame}":"${character}"`);
+                       fs.appendFile('/disk/haikyuudle/past-games-normal.txt', `"${currentGame}":"${character}\n"`);
                     }
                     else if(mode === 'hard') {
                         todayCharacter = character;
-                       console.log(`${currentGame} Today's Hard Mode character: ${todayCharacter.name}`);
-                       fs.appendFile('/disk/haikyuudle/past-games-hard.txt', `${currentGame}":"${character}"`);
+                        console.log(`${currentGame} Today's Hard Mode character: ${todayCharacter.name}`);
+                        fs.appendFile('/disk/haikyuudle/past-games-hard.txt', `${currentGame}":"${character}\n"`);
                     }
                 }
             });
