@@ -35,7 +35,7 @@ app.use(setCorsHeaders);
 app.get('/test', cors(), (req, res) => {
     res.json({
         currentDate: currentDate, 
-        currentGame: currentGame+1, 
+        currentGame: currentGame, 
         numWinners: numWinners, 
         character: todayCharacter, 
         normalModeCharacter: todayNormalCharacter,
@@ -115,10 +115,11 @@ app.listen(port, () => {
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     console.log(`Today is ${currentDate}`);
 
-    const json = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
+    const json = JSON.parse(fs.readFileSync('resources/json/haikyuu-characters.json', 'utf8'));
     characterData = json['characterData'];
-    currentGame = json['currentDay'];
 
+    const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
+    currentGame = serverJson['currentDay'];
     console.log(`Today's game number is ${currentGame}`);
     
 
