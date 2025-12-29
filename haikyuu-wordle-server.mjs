@@ -133,7 +133,7 @@ app.listen(port, () => {
     if(!fs.existsSync('resources/txt/randomizedNormal.txt')) {
         var fd = fs.openSync('resources/txt/randomizedNormal.txt', 'w');
         fs.closeSync(fd);
-        shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'hard');
+        shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'normal');
     }
 
     getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
