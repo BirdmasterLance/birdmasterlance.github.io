@@ -115,7 +115,7 @@ app.listen(port, () => {
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     console.log(`Today is ${currentDate}`);
 
-    const json = JSON.parse(fs.readFileSync('resources/json/haikyuu-characters.json', 'utf8'));
+    const json = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-characters.json', 'utf8'));
     characterData = json['characterData'];
 
     // Create file if it doesn't exist
@@ -129,11 +129,6 @@ app.listen(port, () => {
         var fd = fs.openSync('resources/txt/randomizedNormal.txt', 'w');
         fs.closeSync(fd);
         shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'hard');
-    }
-
-    if(!fs.existsSync('resources/json/haikyuu-server-info.json')) {
-        var fd = fs.openSync('resources/json/haikyuu-server-info.json', 'w');
-        fs.closeSync(fd);
     }
 
     getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
@@ -153,7 +148,7 @@ const resetDay = schedule.scheduleJob(rule, () => {
     currentGame++;
     numWinners = 0;
 
-    const serverJson = JSON.parse(fs.readFileSync('resources/json/haikyuu-server-info.json', 'utf8'));
+    const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/json/haikyuu-server-info.json', 'utf8'));
 
     currentGame = serverJson['currentDay'];
 
@@ -176,7 +171,7 @@ const resetDay = schedule.scheduleJob(rule, () => {
     serverJson['maxCharacters'] = maxCharacters;
     serverJson['maxNormalCharacters'] = maxNormalCharacters;
 
-    fs.writeFile('resources/json/haikyuu-server-info.json', JSON.stringify(serverJson), (error) => {
+    fs.writeFile('/disk/haikyuudle/json/haikyuu-server-info.json', JSON.stringify(serverJson), (error) => {
         if (error) throw error;
     });
 
