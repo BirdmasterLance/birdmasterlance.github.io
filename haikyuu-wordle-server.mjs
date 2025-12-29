@@ -117,6 +117,10 @@ app.listen(port, () => {
 
     const json = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
     characterData = json['characterData'];
+    currentGame = json['currentDay'];
+
+    console.log(`Today's game number is ${currentGame}`);
+    
 
     // Create file if it doesn't exist
     if(!fs.existsSync('resources/txt/randomized.txt')) {
@@ -145,7 +149,6 @@ rule.tz = 'US/Pacific';
 const resetDay = schedule.scheduleJob(rule, () => {
     let date = new Date();
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
-    currentGame++;
     numWinners = 0;
 
     const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
