@@ -115,7 +115,7 @@ app.listen(port, () => {
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     console.log(`Today is ${currentDate}`);
 
-    const json = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-characters.json', 'utf8'));
+    const json = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-sever-info.json', 'utf8'));
     characterData = json['characterData'];
 
     // Create file if it doesn't exist
