@@ -148,6 +148,7 @@ rule.minute = 0;
 rule.tz = 'US/Pacific';
 
 const resetDay = schedule.scheduleJob(rule, async () => {
+    console.log("Starting new day");
     let date = new Date();
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     numWinners = 0;
