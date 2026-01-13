@@ -139,6 +139,8 @@ app.listen(port, () => {
     getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
     getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
 
+    writeToServerInfoFile();
+
 });
 
 // Reset the stats for the day
