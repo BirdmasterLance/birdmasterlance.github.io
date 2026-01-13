@@ -278,16 +278,24 @@ function shuffle(array) {
 }
 
 async function writeToServerInfoFile() {
-    const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
+    //const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
+
+    let serverJson = { 
+        currentDay: currentGame + 1, 
+        currentCharacter: todayCharacter.name,
+        currentNormalCharacter: todayNormalCharacter.name,
+        maxCharacters: maxCharacters,
+        maxNormalCharacters: maxNormalCharacters
+    }
 
     // Save today's information in the server JSON
-    serverJson['currentDay'] = currentGame + 1;
-    serverJson['currentCharacter'] = todayCharacter.name;
-    serverJson['currentNormalCharacter'] = todayNormalCharacter.name;
-    serverJson['maxCharacters'] = maxCharacters;
-    serverJson['maxNormalCharacters'] = maxNormalCharacters;
+    // serverJson['currentDay'] = currentGame + 1;
+    // serverJson['currentCharacter'] = todayCharacter.name;
+    // serverJson['currentNormalCharacter'] = todayNormalCharacter.name;
+    // serverJson['maxCharacters'] = maxCharacters;
+    // serverJson['maxNormalCharacters'] = maxNormalCharacters;
 
-    fs.writeFileSync('/disk/haikyuudle/haikyuu-server-info.json', JSON.stringify(serverJson), (error) => {
-        if (error) throw error;
-    });
+    console.log(`Saving ${JSON.stringify(serverJson)} to file`);
+
+    fs.writeFileSync('/disk/haikyuudle/haikyuu-server-info.json', JSON.stringify(serverJson));
 }
