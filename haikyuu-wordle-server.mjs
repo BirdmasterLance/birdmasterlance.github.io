@@ -139,8 +139,6 @@ app.listen(port, async () => {
     await getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
     await getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
 
-    await writeToServerInfoFile();
-
 });
 
 // Reset the stats for the day
