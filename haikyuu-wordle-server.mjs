@@ -169,7 +169,7 @@ const resetDay = schedule.scheduleJob(rule, () => {
     }
 
     // Save today's information in the server JSON
-    serverJson['currentDay'] = currentGame++;
+    serverJson['currentDay'] = currentGame + 1;
     serverJson['currentCharacter'] = todayCharacter.name;
     serverJson['currentNormalCharacter'] = todayNormalCharacter.name;
     serverJson['maxCharacters'] = maxCharacters;
