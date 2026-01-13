@@ -17,7 +17,7 @@ let todayNormalCharacter;
 let maxCharacters = 198;
 let maxNormalCharacters = 139;
 
-let serverVersion = '1.7.0';
+let serverVersion = '1.7.1';
 
 const app = express();
 const port = 3000;
@@ -168,16 +168,7 @@ const resetDay = schedule.scheduleJob(rule, () => {
         getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
     }
 
-    // Save today's information in the server JSON
-    serverJson['currentDay'] = currentGame + 1;
-    serverJson['currentCharacter'] = todayCharacter.name;
-    serverJson['currentNormalCharacter'] = todayNormalCharacter.name;
-    serverJson['maxCharacters'] = maxCharacters;
-    serverJson['maxNormalCharacters'] = maxNormalCharacters;
-
-    fs.writeFileSync('/disk/haikyuudle/haikyuu-server-info.json', JSON.stringify(serverJson), (error) => {
-        if (error) throw error;
-    });
+    writeToServerInfoFile();
 
     // Now that the day has reset, make a new day entry in the winner JSON
     const winnerJson = JSON.parse(fs.readFileSync('resources/json/haikyuudle-winners.json', 'utf8'));
@@ -223,12 +214,12 @@ async function getNewCharacter(inputFile, limit, mode) {
                     if(mode === 'normal') {
                        todayNormalCharacter = character;
                        console.log(`${currentGame} Today's Normal Mode character: ${todayNormalCharacter.name}`);
-                       fs.appendFileSync('/disk/haikyuudle/past-games-normal.txt', `"${currentGame}":"${character.name}\n"`);
+                       fs.appendFileSync('/disk/haikyuudle/past-games-normal.txt', `"${currentGame}":"${character.name}"\n`);
                     }
                     else if(mode === 'hard') {
                         todayCharacter = character;
                         console.log(`${currentGame} Today's Hard Mode character: ${todayCharacter.name}`);
-                        fs.appendFileSync('/disk/haikyuudle/past-games-hard.txt', `${currentGame}":"${character.name}\n"`);
+                        fs.appendFileSync('/disk/haikyuudle/past-games-hard.txt', `${currentGame}":"${character.name}"\n`);
                     }
                 }
             });
@@ -284,4 +275,19 @@ function shuffle(array) {
     [array[currentIndex], array[randomIndex]] = [
       array[randomIndex], array[currentIndex]];
   }
+}
+
+async function writeToServerInfoFile() {
+    const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
+
+    // Save today's information in the server JSON
+    serverJson['currentDay'] = currentGame + 1;
+    serverJson['currentCharacter'] = todayCharacter.name;
+    serverJson['currentNormalCharacter'] = todayNormalCharacter.name;
+    serverJson['maxCharacters'] = maxCharacters;
+    serverJson['maxNormalCharacters'] = maxNormalCharacters;
+
+    fs.writeFileSync('/disk/haikyuudle/haikyuu-server-info.json', JSON.stringify(serverJson), (error) => {
+        if (error) throw error;
+    });
 }
