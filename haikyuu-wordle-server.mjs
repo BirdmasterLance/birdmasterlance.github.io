@@ -107,7 +107,7 @@ app.get('/test', cors(), (req, res) => {
 // });
 
 // Starts the server
-app.listen(port, () => {
+app.listen(port, async () => {
     console.log(`Server is running on port ${port}`);
 
     let pstDate = new Date().toLocaleString('en-US', { timeZone: 'US/Pacific' });
@@ -127,19 +127,19 @@ app.listen(port, () => {
     if(!fs.existsSync('resources/txt/randomized.txt')) {
         var fd = fs.openSync('resources/txt/randomized.txt', 'w');
         fs.closeSync(fd);
-        shuffleCharacters('resources/txt/characters.txt', 'resources/txt/randomized.txt', 'hard');
+        await shuffleCharacters('resources/txt/characters.txt', 'resources/txt/randomized.txt', 'hard');
     }
 
     if(!fs.existsSync('resources/txt/randomizedNormal.txt')) {
         var fd = fs.openSync('resources/txt/randomizedNormal.txt', 'w');
         fs.closeSync(fd);
-        shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'normal');
+        await shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'normal');
     }
 
-    getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
-    getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
+    await getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
+    await getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
 
-    writeToServerInfoFile();
+    await writeToServerInfoFile();
 
 });
 
@@ -149,7 +149,7 @@ rule.hour = 0;
 rule.minute = 0;
 rule.tz = 'US/Pacific';
 
-const resetDay = schedule.scheduleJob(rule, () => {
+const resetDay = schedule.scheduleJob(rule, async () => {
     let date = new Date();
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
     numWinners = 0;
@@ -161,16 +161,16 @@ const resetDay = schedule.scheduleJob(rule, () => {
     maxCharacters = serverJson['maxCharacters'];
     if(currentGame % serverJson['maxCharacters'] === 0) {
         console.log('Reset')
-        shuffleCharacters('resources/txt/characters.txt', 'resources/txt/randomized.txt', 'hard');
+        await shuffleCharacters('resources/txt/characters.txt', 'resources/txt/randomized.txt', 'hard');
     } else if(currentGame % serverJson['maxNormalCharacters'] === 0) {
-        shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'normal');
+        await shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'normal');
     }
     else {
-        getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
-        getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
+        await getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
+        await getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
     }
 
-    writeToServerInfoFile();
+    await writeToServerInfoFile();
 
     // Now that the day has reset, make a new day entry in the winner JSON
     const winnerJson = JSON.parse(fs.readFileSync('resources/json/haikyuudle-winners.json', 'utf8'));
