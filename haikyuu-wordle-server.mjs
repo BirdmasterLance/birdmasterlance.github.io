@@ -156,6 +156,7 @@ const resetDay = schedule.scheduleJob(rule, async () => {
     const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
 
     currentGame = serverJson['currentDay'];
+    currentGame = currentGame + 1;
 
     maxCharacters = serverJson['maxCharacters'];
     if(currentGame % serverJson['maxCharacters'] === 0) {
@@ -282,7 +283,7 @@ async function writeToServerInfoFile() {
     //const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
 
     let serverJson = { 
-        currentDay: currentGame + 1, 
+        currentDay: currentGame, 
         currentCharacter: todayCharacter.name,
         currentNormalCharacter: todayNormalCharacter.name,
         maxCharacters: maxCharacters,
