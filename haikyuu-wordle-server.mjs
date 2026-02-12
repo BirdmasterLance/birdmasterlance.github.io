@@ -17,7 +17,7 @@ let todayNormalCharacter;
 let maxCharacters = 198;
 let maxNormalCharacters = 139;
 
-let serverVersion = '1.7.1';
+let serverVersion = '1.7.2';
 
 const app = express();
 const port = 3000;
