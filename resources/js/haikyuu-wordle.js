@@ -346,12 +346,14 @@ function handleWin() {
         if(mode === 0 && localStorage.getItem('hasWonNormal') === 'false') {
             localStorage.setItem('hasWonNormal', 'true');
             saveWinDataToLocal("statisticsNormal");
+            sendWinDataToServer("normal")
             updateChart();
             $('#endless-btn').prop('disabled', false); // Endless mode enable after beating normal mode
         }
         else if(mode === 1 && localStorage.getItem('hasWon') === 'false') {
             localStorage.setItem('hasWon', 'true');
             saveWinDataToLocal("statistics");
+            sendWinDataToServer("hard")
             updateChart();
         }
         else if(mode === 2) {
@@ -374,20 +376,19 @@ function handleWin() {
     removeUpdateLight('characters-btn');
     
 }
-
-function sendWinDataToServer() {
-    // fetch("https://birdmasterlance-github-io.onrender.com/receive", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       mode: 'hard',
-    //       numGuesses: numGuesses
-    //     }),
-    //     headers: {
-    //       "Content-type": "application/json; charset=UTF-8"
-    //     }
-    //   });
-        // .then((response) => response.json())
-        // .then((json) => console.log(json));
+function sendWinDataToServer(mode) {
+    fetch("https://birdmasterlance-github-io.onrender.com/sendHaikyuuWin", {
+        method: "POST",
+        body: JSON.stringify({
+          mode: mode,
+          numGuesses: numGuesses
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        }
+      })
+    .then((response) => response.json())
+    .then((json) => console.log(json));
 }
 
 function playWinAnimation() {
@@ -563,7 +564,6 @@ function showRandomButton() {
 
 // Get the data on today's character
 async function getTodayCharacter() {
-
     await fetch('https://birdmasterlance-github-io.onrender.com/test', {method:'GET'})
     .then(async function(response){
         if (response.ok) {
@@ -923,6 +923,8 @@ async function setupCharacterList(guesses, school, position='') {
     let liberos = [];
     let managers = [];
     let coaches = [];
+    let nones = [];
+    let unknowns = [];
     characters.forEach((character) => {
         switch(character.position) {
             case 'Wing Spiker':
@@ -943,6 +945,10 @@ async function setupCharacterList(guesses, school, position='') {
             case 'Coach':
                 coaches.push(character);
                 break;
+            case 'None':
+                nones.push(character)
+            case 'Unknown':
+                unknowns.push(character)
         }
     });
 
@@ -964,6 +970,12 @@ async function setupCharacterList(guesses, school, position='') {
     }
     if(position === 'Coach' || position === '') {
         characterListStr += buildCharacterListText('Coaches', coaches, school, guesses);
+    }
+    if(position === 'None' || position === '') {
+        characterListStr += buildCharacterListText('None', nones, school, guesses);
+    }
+    if(position === 'Unknown' || position === '') {
+        characterListStr += buildCharacterListText('Unknown', unknowns, school, guesses);
     }
 
     $('#character-list').append(characterListStr);
@@ -1004,6 +1016,8 @@ async function setupPositionSearchList(guesses) {
     '<option value="Libero">Libero</option>' +
     '<option value="Manager">Manager</option>' +
     '<option value="Coach">Coach</option>' +
+    '<option value="None">None</option>' +
+    '<option value="Uknown">Unknown</option>' +
     '</select></div>';
 
     // If position filter already exists, remove it

@@ -7,20 +7,41 @@ import bodyParser from "body-parser";
 
 let currentDate;
 let currentGame;
-let numWinners = 0;
+let numWinnersNormal = 0;
+let numWinnersHard = 0;
 
 let todayCharacter;
 let characterData;
 
 let todayNormalCharacter;
 
-let maxCharacters = 198;
-let maxNormalCharacters = 139;
+let maxCharacters = 214;
+let maxNormalCharacters = 155;
 
-let serverVersion = '1.7.2';
+let serverVersion = '1.8.0';
+
+let winnersFile = '/disk/haikyuudle/haikyuu-winners.json'
+//winnersFile = 'resources' + winnersFile
+
+let serverInfoFile = '/disk/haikyuudle/haikyuu-server-info.json'
+//serverInfoFile = 'resources' + serverInfoFile
+
+let pastGamesNormalFile  = '/disk/haikyuudle/past-games-normal.txt'
+//pastGamesNormalFile = 'resources' + pastGamesNormalFile
+
+let pastGamesHardFile = '/disk/haikyuudle/past-games-hard.txt'
+//pastGamesHardFile = 'resources' + pastGamesHardFile
+
+let randomCharactersFile = '/disk/haikyuudle/randomized.txt'
+//randomCharactersFile = 'resources' + randomCharactersFile
+
+let randomCharactersNormalFile = '/disk/haikyuudle/randomizedNormal.txt'
+//randomCharactersNormalFile = 'resources' + randomCharactersNormalFile
 
 const app = express();
 const port = 3000;
+
+app.use(express.json())
 
 var jsonParser = bodyParser.json()
 
@@ -36,7 +57,8 @@ app.get('/test', cors(), (req, res) => {
     res.json({
         currentDate: currentDate, 
         currentGame: currentGame, 
-        numWinners: numWinners, 
+        numWinnersNormal: numWinnersNormal,
+        numWinnersHard: numWinnersHard, 
         character: todayCharacter, 
         normalModeCharacter: todayNormalCharacter,
         version: serverVersion});
@@ -48,63 +70,52 @@ app.get('/test', cors(), (req, res) => {
 //         normalModeCharacter: todayNormalCharacter});
 // });
 
-// app.post('/receive', jsonParser, async (request, response) => {
-//     const serverJson = JSON.parse(fs.readFileSync('resources/json/haikyuudle-winners.json', 'utf8'));
+app.post('/sendHaikyuuWin', jsonParser, async (request, response) => {
+    console.log(request.body)
+    const serverJson = JSON.parse(fs.readFileSync(winnersFile, 'utf8'));
+    
+    let date = new Date();
+    let currentDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
 
-//     let date = new Date();
-//     let currentDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
+    const { body } = request;
 
-//     if(serverJson[currentDate + '-' + data['mode']] === null || serverJson[currentDate + '-' + data['mode']] === undefined) {
-//         const initValues = [
-//             {"1": 0},
-//             {"2": 0},
-//             {"3": 0},
-//             {"4": 0},
-//             {"5": 0},
-//             {"6": 0},
-//             {"7": 0},
-//             {"8": 0},
-//             {"9+": 0}
-//         ];
-//         serverJson[currentDate + '-' + data['mode']] = initValues;
-//     }
+    if(serverJson[currentDate + '-' + body['mode']] === null || serverJson[currentDate + '-' + body['mode']] === undefined) {
+        const initValues = {
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0,
+            "7": 0,
+            "8": 0,
+            "9+": 0
+        };
+        serverJson[currentDate + '-' + body['mode']] = initValues;
+    }
 
-//     const data = await request.body;
-//     switch(data['numGuesses']) {
-//         case 1:
-//             serverJson[currentDate + '-' + data['mode']][0]['1'] += 1;
-//             break;
-//         case 2:
-//             serverJson[currentDate + '-' + data['mode']][1]['2'] += 1;
-//             break;
-//         case 3:
-//             serverJson[currentDate + '-' + data['mode']][2]['3'] += 1;
-//             break;
-//         case 4:
-//             serverJson[currentDate + '-' + data['mode']][3]['4'] += 1;
-//             break;
-//         case 5:
-//             serverJson[currentDate + '-' + data['mode']][4]['5'] += 1;
-//             break;
-//         case 6:
-//             serverJson[currentDate + '-' + data['mode']][5]['6'] += 1;
-//             break;
-//         case 7:
-//             serverJson[currentDate + '-' + data['mode']][6]['7'] += 1;
-//             break;
-//         case 8:
-//             serverJson[currentDate + '-' + data['mode']][7]['8'] += 1;
-//             break;
-//         default:
-//             serverJson[currentDate + '-' + data['mode']][8]['9+'] += 1;
-//             break;
-//     }
+    if(body['mode'] == 'normal') {
+        numWinnersNormal += 1
+        serverJson[currentDate + '-' + body['mode']]['numWinners'] = numWinnersNormal
+    }
+    if(body['mode'] == 'hard') {
+        numWinnersHard += 1
+        serverJson[currentDate + '-' + body['mode']]['numWinners'] = numWinnersHard
+    }
 
-//     fs.writeFile('resources/json/haikyuudle-winners.json', JSON.stringify(serverJson), (error) => {
-//         if (error) throw error;
-//     });
+    if(body['numGuesses'] < 9) {
+        serverJson[currentDate + '-' + body['mode']][body['numGuesses'].toString()] += 1;
+    } else {
+        serverJson[currentDate + '-' + body['mode']]['9+'] += 1;
+    }
 
-// });
+    fs.writeFileSync(winnersFile, JSON.stringify(serverJson), (error) => {
+        if (error) throw error;
+    });
+
+    return response.send(200)
+
+});
 
 // Starts the server
 app.listen(port, async () => {
@@ -118,26 +129,26 @@ app.listen(port, async () => {
     const json = JSON.parse(fs.readFileSync('resources/json/haikyuu-characters.json', 'utf8'));
     characterData = json['characterData'];
 
-    const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
+    const serverJson = JSON.parse(fs.readFileSync(serverInfoFile, 'utf8'));
     currentGame = serverJson['currentDay'];
     console.log(`Today's game number is ${currentGame}`);
     
 
     // Create file if it doesn't exist
-    if(!fs.existsSync('resources/txt/randomized.txt')) {
-        var fd = fs.openSync('resources/txt/randomized.txt', 'w');
+    if(!fs.existsSync(randomCharactersFile)) {
+        var fd = fs.openSync(randomCharactersFile , 'w');
         fs.closeSync(fd);
-        await shuffleCharacters('resources/txt/characters.txt', 'resources/txt/randomized.txt', 'hard');
+        await shuffleCharacters('resources/txt/characters.txt', randomCharactersFile , 'hard');
     }
 
-    if(!fs.existsSync('resources/txt/randomizedNormal.txt')) {
-        var fd = fs.openSync('resources/txt/randomizedNormal.txt', 'w');
+    if(!fs.existsSync(randomCharactersNormalFile)) {
+        var fd = fs.openSync(randomCharactersNormalFile, 'w');
         fs.closeSync(fd);
-        await shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'normal');
+        await shuffleCharacters('resources/txt/charactersNormal.txt', randomCharactersNormalFile, 'normal');
     }
 
-    await getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
-    await getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
+    await getNewCharacter(randomCharactersFile, maxCharacters, 'hard');
+    await getNewCharacter(randomCharactersNormalFile, maxNormalCharacters, 'normal');
 
 });
 
@@ -151,9 +162,10 @@ const resetDay = schedule.scheduleJob(rule, async () => {
     console.log("Starting new day");
     let date = new Date();
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
-    numWinners = 0;
+    numWinnersNormal = 0;
+    numWinnersHard = 0;
 
-    const serverJson = JSON.parse(fs.readFileSync('/disk/haikyuudle/haikyuu-server-info.json', 'utf8'));
+    const serverJson = JSON.parse(fs.readFileSync(serverInfoFile, 'utf8'));
 
     currentGame = serverJson['currentDay'];
     currentGame = currentGame + 1;
@@ -161,35 +173,36 @@ const resetDay = schedule.scheduleJob(rule, async () => {
     maxCharacters = serverJson['maxCharacters'];
     if(currentGame % serverJson['maxCharacters'] === 0) {
         console.log('Reset')
-        await shuffleCharacters('resources/txt/characters.txt', 'resources/txt/randomized.txt', 'hard');
+        await shuffleCharacters('resources/txt/characters.txt', randomCharactersFile, 'hard');
     } else if(currentGame % serverJson['maxNormalCharacters'] === 0) {
-        await shuffleCharacters('resources/txt/charactersNormal.txt', 'resources/txt/randomizedNormal.txt', 'normal');
+        await shuffleCharacters('resources/txt/charactersNormal.txt', randomCharactersNormalFile, 'normal');
     }
     else {
-        await getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
-        await getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
+        await getNewCharacter(randomCharactersFile, maxCharacters, 'hard');
+        await getNewCharacter(randomCharactersNormalFile, maxNormalCharacters, 'normal');
     }
 
     await writeToServerInfoFile();
 
     // Now that the day has reset, make a new day entry in the winner JSON
-    const winnerJson = JSON.parse(fs.readFileSync('resources/json/haikyuudle-winners.json', 'utf8'));
+    const winnerJson = JSON.parse(fs.readFileSync(winnersFile, 'utf8'));
     const strDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
-    const initValues = [
-        {"1": 0},
-        {"2": 0},
-        {"3": 0},
-        {"4": 0},
-        {"5": 0},
-        {"6": 0},
-        {"7": 0},
-        {"8": 0},
-        {"9+": 0}
-    ];
+    const initValues = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9+": 0,
+        "numWinners": 0
+    };
     winnerJson[strDate + '-normal'] = initValues;
     winnerJson[strDate + '-hard'] = initValues;
 
-    fs.writeFile('resources/json/haikyuudle-winners.json', JSON.stringify(winnerJson), (error) => {
+    fs.writeFile(winnersFile, JSON.stringify(winnerJson), (error) => {
         if (error) throw error;
     });
 
@@ -197,7 +210,6 @@ const resetDay = schedule.scheduleJob(rule, async () => {
 });
 
 async function getNewCharacter(inputFile, limit, mode) {
-
     const fileStream = fs.createReadStream(inputFile);
     const rl = readline.createInterface({
         input: fileStream,
@@ -214,14 +226,14 @@ async function getNewCharacter(inputFile, limit, mode) {
             characterData.forEach(character => {
                 if(character.name === line.trim()) {
                     if(mode === 'normal') {
-                       todayNormalCharacter = character;
-                       console.log(`${currentGame} Today's Normal Mode character: ${todayNormalCharacter.name}`);
-                       fs.appendFileSync('/disk/haikyuudle/past-games-normal.txt', `"${currentGame}":"${character.name}"\n`);
+                        todayNormalCharacter = character;
+                        console.log(`${currentGame} Today's Normal Mode character: ${todayNormalCharacter.name}`);
+                        fs.appendFileSync(pastGamesNormalFile, `"${currentGame}":"${character.name}"\n`);
                     }
                     else if(mode === 'hard') {
                         todayCharacter = character;
                         console.log(`${currentGame} Today's Hard Mode character: ${todayCharacter.name}`);
-                        fs.appendFileSync('/disk/haikyuudle/past-games-hard.txt', `${currentGame}":"${character.name}"\n`);
+                        fs.appendFileSync(pastGamesHardFile, `${currentGame}":"${character.name}"\n`);
                     }
                 }
             });
@@ -256,11 +268,11 @@ async function shuffleCharacters(input, output, mode) {
     await new Promise(r => setTimeout(r, 200));
 
     if(mode === 'normal') {
-        getNewCharacter('resources/txt/randomizedNormal.txt', maxNormalCharacters, 'normal');
-     }
-     else if(mode === 'hard') {
-        getNewCharacter('resources/txt/randomized.txt', maxCharacters, 'hard');
-     }
+        getNewCharacter(randomCharactersNormalFile, maxNormalCharacters, 'normal');
+    }
+    else if(mode === 'hard') {
+        getNewCharacter(randomCharactersFile, maxCharacters, 'hard');
+    }
 }
 
 function shuffle(array) {
@@ -299,5 +311,5 @@ async function writeToServerInfoFile() {
 
     console.log(`Saving ${JSON.stringify(serverJson)} to file`);
 
-    fs.writeFileSync('/disk/haikyuudle/haikyuu-server-info.json', JSON.stringify(serverJson));
+    fs.writeFileSync(serverInfoFile, JSON.stringify(serverJson));
 }

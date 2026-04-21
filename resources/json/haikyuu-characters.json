@@ -36,7 +36,8 @@
         "Yotsuya Motor Spirits",
         "Kiniro Sports Jumpers",
         "Tigr Ekaterinburg",
-        "VC Date"
+        "VC Date",
+        "Other"
     ],
 
     "characterNames": [
@@ -274,7 +275,25 @@
 
         "Yaku Morisuke (Timeskip)",
 
-        "Aone Takanobu (Timeskip)"
+        "Aone Takanobu (Timeskip)",
+
+        "Tanaka Saeko",
+        "Tsukishima Akiteru",
+        "Udai Tenma",
+        "Kurokawa Hiroki",
+        "Tashiro Hidemi",
+        "Takinoue Yusuke",
+        "Shimada Makoto",
+
+        "Aihara Mao",
+        "Sudo Rinko",
+        "Kikuchi Moe",
+        "Aoki Manami",
+        "Watabe Nozomi",
+        "Sasaki Chizuru",
+
+        "Yamamoto Akane",
+        "Haiba Alisa"
 
     ],
 
@@ -312,7 +331,8 @@
         "Yotsuya Motor Spirits",
         "Tigr Ekaterinburg",
         "Kiniro Sports Jumpers",
-        "VC Date"
+        "VC Date",
+        "Other"
     ],
 
     "characterNamesNormal": [
@@ -488,7 +508,22 @@
 
         "Yaku Morisuke (Timeskip)",
 
-        "Aone Takanobu (Timeskip)"
+        "Aone Takanobu (Timeskip)",
+
+        "Tanaka Saeko",
+        "Tsukishima Akiteru",
+        "Udai Tenma",
+        "Kurokawa Hiroki",
+        "Takinoue Yusuke",
+        "Shimada Makoto",
+
+        "Aihara Mao",
+        "Aoki Manami",
+        "Watabe Nozomi",
+        "Sasaki Chizuru",
+
+        "Yamamoto Akane",
+        "Haiba Alisa"
 
     ],
 
@@ -2518,6 +2553,169 @@
             "height": 196.3,
             "year": 4,
             "image": "Aone Takanobu (Timeskip).png"
+        },
+
+        {
+            "name": "Tanaka Saeko",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": -1,
+            "position": "None",
+            "height": 155.2,
+            "year": 4,
+            "image": "Tanaka Saeko.png"
+        },
+        {
+            "name": "Tsukishima Akiteru",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": -1,
+            "position": "Wing Spiker",
+            "height": 185.2,
+            "year": 4,
+            "image": "Tsukishima Akiteru.png"
+        },
+        {
+            "name": "Udai Tenma",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 10,
+            "position": "Wing Spiker",
+            "height": 170,
+            "year": 4,
+            "image": "Udai Tenma.png"
+        },
+        {
+            "name": "Kurokawa Hiroki",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 2,
+            "position": "Wing Spiker",
+            "height": 183.2,
+            "year": 4,
+            "image": "Kurokawa Hiroki.png"
+        },
+        {
+            "name": "Tashiro Hidemi",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 1,
+            "position": "Unknown",
+            "height": 175.8,
+            "year": 4,
+            "image": "Tashiro Hidemi.png"
+        },
+        {
+            "name": "Takinoue Yusuke",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 9,
+            "position": "Middle Blocker",
+            "height": 185.6,
+            "year": 4,
+            "image": "Takinoue Yusuke.png"
+        },
+        {
+            "name": "Shimada Makoto",
+            "gender": "Male",
+            "school": "Karasuno High",
+            "number": 11,
+            "position": "Wing Spiker",
+            "height": 177.7,
+            "year": 4,
+            "image": "Shimada Makoto.png"
+        },
+
+        {
+            "name": "Aihara Mao",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": 2,
+            "position": "Wing Spiker",
+            "height": 165,
+            "year": 3,
+            "image": "Aihara Mao.png"
+        },
+        {
+            "name": "Sudo Rinko",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": 3,
+            "position": "Unknown",
+            "height": 160.3,
+            "year": 2,
+            "image": "Sudo Rinko.png"
+        },
+        {
+            "name": "Kikuchi Moe",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": 4,
+            "position": "Unknown",
+            "height": 160.3,
+            "year": 2,
+            "image": "Kikuchi Moe.png"
+        },
+        {
+            "name": "Aoki Manami",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": 5,
+            "position": "Setter",
+            "height": 159.3,
+            "year": 2,
+            "image": "Aoki Manami.png"
+        },
+        {
+            "name": "Watabe Nozomi",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": 7,
+            "position": "Libero",
+            "height": 150,
+            "year": 2,
+            "image": "Watabe Nozomi.png"
+        },
+        {
+            "name": "Sasaki Chizuru",
+            "gender": "Female",
+            "school": "Karasuno High",
+            "number": 11,
+            "position": "Wing Spiker",
+            "height": 154.5,
+            "year": 3,
+            "image": "Sasaki Chizuru.png"
+        },
+
+        {
+            "name": "Yamamoto Akane",
+            "gender": "Female",
+            "school": "Other",
+            "number": -1,
+            "position": "None",
+            "height": 144.3,
+            "year": 4,
+            "image": "Yamamoto Akane.png"
+        },
+        {
+            "name": "Haiba Alisa",
+            "gender": "Female",
+            "school": "Other",
+            "number": -1,
+            "position": "None",
+            "height": 178.5,
+            "year": 4,
+            "image": "Haiba Alisa.png"
+        },
+        {
+            "name": "Hinata Natsu (Timeskip)",
+            "gender": "Female",
+            "school": "Niiyama Girls' High",
+            "number": 10,
+            "position": "Wing Spiker",
+            "height": 178.5,
+            "year": 1,
+            "image": "Hinata Natsu (Timeskip).png"
         }
     ]
 }
