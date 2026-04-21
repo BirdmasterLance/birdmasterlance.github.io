@@ -18,7 +18,7 @@ let todayNormalCharacter;
 let maxCharacters = 214;
 let maxNormalCharacters = 155;
 
-let serverVersion = '1.8.0';
+let serverVersion = '1.8.1';
 
 let winnersFile = '/disk/haikyuudle/haikyuu-winners.json'
 //winnersFile = 'resources' + winnersFile

@@ -343,6 +343,7 @@ function handleWin() {
     // Do stuff after that winning animations is done
     let timeout = window.setTimeout(function() {
 
+        showShareButton();
         if(mode === 0 && localStorage.getItem('hasWonNormal') === 'false') {
             localStorage.setItem('hasWonNormal', 'true');
             saveWinDataToLocal("statisticsNormal");
