@@ -74,7 +74,8 @@ app.post('/sendHaikyuuWin', jsonParser, async (request, response) => {
     console.log(request.body)
     const serverJson = JSON.parse(fs.readFileSync(winnersFile, 'utf8'));
     
-    let date = new Date();
+    let pstDate = new Date().toLocaleString('en-US', { timeZone: 'US/Pacific' });
+    let date = new Date(pstDate);
     let currentDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
 
     const { body } = request;
