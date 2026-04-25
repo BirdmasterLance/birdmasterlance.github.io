@@ -948,8 +948,10 @@ async function setupCharacterList(guesses, school, position='') {
                 break;
             case 'None':
                 nones.push(character)
+                break;
             case 'Unknown':
                 unknowns.push(character)
+                break;
         }
     });
 
@@ -975,7 +977,7 @@ async function setupCharacterList(guesses, school, position='') {
     if(position === 'None' || position === '') {
         characterListStr += buildCharacterListText('None', nones, school, guesses);
     }
-    if(position === 'Unknown' || position === '') {
+    if((position === 'Unknown' || position === '') && mode != 0) {
         characterListStr += buildCharacterListText('Unknown', unknowns, school, guesses);
     }
 
@@ -1017,9 +1019,11 @@ async function setupPositionSearchList(guesses) {
     '<option value="Libero">Libero</option>' +
     '<option value="Manager">Manager</option>' +
     '<option value="Coach">Coach</option>' +
-    '<option value="None">None</option>' +
-    '<option value="Uknown">Unknown</option>' +
-    '</select></div>';
+    '<option value="None">None</option>';
+    
+    if(mode != 0) select += '<option value="Unknown">Unknown</option>';
+    
+    select += '</select></div>';
 
     // If position filter already exists, remove it
     if($('#position-div').length !== 0) {
