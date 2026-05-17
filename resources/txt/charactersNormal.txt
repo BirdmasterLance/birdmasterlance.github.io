@@ -34,6 +34,7 @@ Sakunami Kosuke
 Kamasaki Yasushi
 Moniwa Kaname
 Sasaya Takehito
+Nametsu Mai
 Kuroo Tetsuro
 Kai Nobuyuki
 Yaku Morisuke
@@ -141,15 +142,11 @@ Tanaka Saeko
 Tsukishima Akiteru
 Udai Tenma
 Kurokawa Hiroki
-Tashiro Hidemi
 Takinoue Yusuke
 Shimada Makoto
-Yamamoto Akane
-Haiba Alisa
 Aihara Mao
-Sudo Rinko
-Kikuchi Moe
 Aoki Manami
 Watabe Nozomi
 Sasaki Chizuru
-Hinata Natsu
+Yamamoto Akane
+Haiba Alisa

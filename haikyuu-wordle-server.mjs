@@ -6,6 +6,7 @@ import readline from "readline";
 import bodyParser from "body-parser";
 
 let currentDate;
+let currentDateNumerical;
 let currentGame;
 let numWinnersNormal = 0;
 let numWinnersHard = 0;
@@ -16,27 +17,27 @@ let characterData;
 let todayNormalCharacter;
 
 let maxCharacters = 214;
-let maxNormalCharacters = 155;
+let maxNormalCharacters = 152;
 
-let serverVersion = '1.8.2';
+let serverVersion = '1.8.3';
 
 let winnersFile = '/disk/haikyuudle/haikyuu-winners.json'
-//winnersFile = 'resources' + winnersFile
-
 let serverInfoFile = '/disk/haikyuudle/haikyuu-server-info.json'
-//serverInfoFile = 'resources' + serverInfoFile
-
 let pastGamesNormalFile  = '/disk/haikyuudle/past-games-normal.txt'
-//pastGamesNormalFile = 'resources' + pastGamesNormalFile
-
 let pastGamesHardFile = '/disk/haikyuudle/past-games-hard.txt'
-//pastGamesHardFile = 'resources' + pastGamesHardFile
-
 let randomCharactersFile = '/disk/haikyuudle/randomized.txt'
-//randomCharactersFile = 'resources' + randomCharactersFile
-
 let randomCharactersNormalFile = '/disk/haikyuudle/randomizedNormal.txt'
-//randomCharactersNormalFile = 'resources' + randomCharactersNormalFile
+
+// For test purposes
+// let localTest = true
+// if (localTest) {
+//     winnersFile = 'resources' + winnersFile
+//     serverInfoFile = 'resources' + serverInfoFile
+//     pastGamesNormalFile = 'resources' + pastGamesNormalFile
+//     pastGamesHardFile = 'resources' + pastGamesHardFile
+//     randomCharactersFile = 'resources' + randomCharactersFile
+//     randomCharactersNormalFile = 'resources' + randomCharactersNormalFile
+// }
 
 const app = express();
 const port = 3000;
@@ -73,14 +74,10 @@ app.get('/test', cors(), (req, res) => {
 app.post('/sendHaikyuuWin', jsonParser, async (request, response) => {
     console.log(request.body)
     const serverJson = JSON.parse(fs.readFileSync(winnersFile, 'utf8'));
-    
-    let pstDate = new Date().toLocaleString('en-US', { timeZone: 'US/Pacific' });
-    let date = new Date(pstDate);
-    let currentDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
 
     const { body } = request;
 
-    if(serverJson[currentDate + '-' + body['mode']] === null || serverJson[currentDate + '-' + body['mode']] === undefined) {
+    if(serverJson[currentDateNumerical + '-' + body['mode']] === undefined || serverJson[currentDateNumerical + '-' + body['mode']] === undefined) {
         const initValues = {
             "1": 0,
             "2": 0,
@@ -92,22 +89,22 @@ app.post('/sendHaikyuuWin', jsonParser, async (request, response) => {
             "8": 0,
             "9+": 0
         };
-        serverJson[currentDate + '-' + body['mode']] = initValues;
+        serverJson[currentDateNumerical + '-' + body['mode']] = initValues;
     }
 
     if(body['mode'] == 'normal') {
         numWinnersNormal += 1
-        serverJson[currentDate + '-' + body['mode']]['numWinners'] = numWinnersNormal
+        serverJson[currentDateNumerical + '-' + body['mode']]['numWinners'] = numWinnersNormal
     }
     if(body['mode'] == 'hard') {
         numWinnersHard += 1
-        serverJson[currentDate + '-' + body['mode']]['numWinners'] = numWinnersHard
+        serverJson[currentDateNumerical + '-' + body['mode']]['numWinners'] = numWinnersHard
     }
 
     if(body['numGuesses'] < 9) {
-        serverJson[currentDate + '-' + body['mode']][body['numGuesses'].toString()] += 1;
+        serverJson[currentDateNumerical + '-' + body['mode']][body['numGuesses'].toString()] += 1;
     } else {
-        serverJson[currentDate + '-' + body['mode']]['9+'] += 1;
+        serverJson[currentDateNumerical + '-' + body['mode']]['9+'] += 1;
     }
 
     fs.writeFileSync(winnersFile, JSON.stringify(serverJson), (error) => {
@@ -125,6 +122,7 @@ app.listen(port, async () => {
     let pstDate = new Date().toLocaleString('en-US', { timeZone: 'US/Pacific' });
     let date = new Date(pstDate);
     currentDate = date.getFullYear() + ' ' + date.toLocaleString('default', { month: 'long' }) + ' ' + date.getDate();
+    currentDateNumerical = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
     console.log(`Today is ${currentDate}`);
 
     const json = JSON.parse(fs.readFileSync('resources/json/haikyuu-characters.json', 'utf8'));
@@ -151,6 +149,16 @@ app.listen(port, async () => {
     await getNewCharacter(randomCharactersFile, maxCharacters, 'hard');
     await getNewCharacter(randomCharactersNormalFile, maxNormalCharacters, 'normal');
 
+    const winnersJSON = JSON.parse(fs.readFileSync(winnersFile), 'utf-8');
+    if(winnersJSON[currentDateNumerical + '-normal'] !== undefined) {
+        const winnersNormal = winnersJSON[currentDateNumerical + '-normal']['numWinners'];
+        numWinnersNormal = winnersNormal === undefined ? 0 : winnersNormal;
+    }
+    if(winnersJSON[currentDateNumerical + '-hard'] !== undefined) {
+        const winnersHard = winnersJSON[currentDateNumerical + '-hard']['numWinners'];
+        numWinnersHard = winnersHard === undefined ? 0 : winnersHard;
+    }
+
 });
 
 // Reset the stats for the day
@@ -173,9 +181,10 @@ const resetDay = schedule.scheduleJob(rule, async () => {
 
     maxCharacters = serverJson['maxCharacters'];
     if(currentGame % serverJson['maxCharacters'] === 0) {
-        console.log('Reset')
+        console.log('Reset Hard Mode');
         await shuffleCharacters('resources/txt/characters.txt', randomCharactersFile, 'hard');
     } else if(currentGame % serverJson['maxNormalCharacters'] === 0) {
+        console.log('Reset Normal Mode');
         await shuffleCharacters('resources/txt/charactersNormal.txt', randomCharactersNormalFile, 'normal');
     }
     else {
@@ -187,7 +196,6 @@ const resetDay = schedule.scheduleJob(rule, async () => {
 
     // Now that the day has reset, make a new day entry in the winner JSON
     const winnerJson = JSON.parse(fs.readFileSync(winnersFile, 'utf8'));
-    const strDate = date.getFullYear() + '-' + date.toLocaleString('default', { month: 'numeric' }) + '-' + date.getDate();
     const initValues = {
         "1": 0,
         "2": 0,
@@ -200,8 +208,8 @@ const resetDay = schedule.scheduleJob(rule, async () => {
         "9+": 0,
         "numWinners": 0
     };
-    winnerJson[strDate + '-normal'] = initValues;
-    winnerJson[strDate + '-hard'] = initValues;
+    winnerJson[currentDateNumerical + '-normal'] = initValues;
+    winnerJson[currentDateNumerical + '-hard'] = initValues;
 
     fs.writeFile(winnersFile, JSON.stringify(winnerJson), (error) => {
         if (error) throw error;
